@@ -1,0 +1,20 @@
+{
+  "pluginName": "超级 Markdown",
+  "description": "ByteMD驱动 支持多种云同步",
+  "author": "ZiuChen",
+  "homepage": "https://github.com/ZiuChen",
+  "main": "index.html",
+  "preload": "preload.js",
+  "development": {
+    "main": "http://localhost:8082/"
+  },
+  "logo": "logo.png",
+  "platform": ["win32", "darwin", "linux"],
+  "features": [
+    {
+      "code": "超级 Markdown",
+      "explain": "进入Markdown编辑器",
+      "cmds": ["超级Markdown", "MarkDown", "MD"]
+    }
+  ]
+}
