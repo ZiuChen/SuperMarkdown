@@ -1,19 +1,38 @@
 <template>
-  <div class="app">
-    <!-- <NavBar /> -->
-    <router-view v-slot="{ Component }">
-      <transition name="opacity" mode="out-in" appear>
+  <SideBar></SideBar>
+  <router-view v-slot="{ Component }">
+    <transition name="opacity" mode="out-in" appear>
+      <div class="main">
         <component :is="Component" />
-      </transition>
-    </router-view>
-  </div>
+      </div>
+    </transition>
+  </router-view>
 </template>
 
 <script lang="ts" setup>
-import NavBar from './components/NavBar.vue'
+import SideBar from './components/SideBar.vue'
 </script>
 
 <style lang="less" scoped>
+.side-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100%;
+  background-color: var(--bg-color);
+  border-right: 1px solid var(--text-color-lighter);
+}
+
+.main {
+  position: absolute;
+  top: 0;
+  left: 300px;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
 .opacity-enter-active,
 .opacity-leave-active {
   transition: opacity 0.1s;
