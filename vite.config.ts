@@ -63,9 +63,12 @@ export default defineConfig({
           libraryName: '@arco-design/web-vue',
           esModule: true,
           resolveStyle: (name) => {
-            // `@arco-design/web-vue/es/button-group/style/css.js` does not exist
-            // 与button共用样式文件
-            if (name === 'button-group') return
+            if (name === 'button-group') {
+              return `@arco-design/web-vue/es/button/style/css.js`
+            }
+            if (name === 'input-search') {
+              return `@arco-design/web-vue/es/input/style/css.js`
+            }
             return `@arco-design/web-vue/es/${name}/style/css.js`
           }
         }
