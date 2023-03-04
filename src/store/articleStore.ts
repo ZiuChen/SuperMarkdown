@@ -19,7 +19,9 @@ export const useArticleStore = defineStore('ArticleStore', {
     }
   },
   actions: {
-    async loadArticle() {
+    async loadArticle(id: string) {
+      this.id = id
+
       const article = getItem(this.articleKey)
       if (article) {
         this.$state = article
