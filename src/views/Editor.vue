@@ -102,10 +102,16 @@ onMounted(() => {
     },
     // 编辑器初始化完成后，将数据渲染到编辑器中
     after: () => {
-      console.log('after')
       isReady.value = true
       vditor.value!.setValue(store.code)
       $emit(EDITOR_LOADED, store.id)
+    },
+    outline: {
+      enable: true,
+      position: 'right'
+    },
+    counter: {
+      enable: true
     },
     toolbar,
     toolbarConfig: {},
@@ -230,6 +236,7 @@ async function _handleTitleChange() {
 <style lang="less">
 // 调整toolbar的样式
 .vditor-toolbar__item {
+  display: block !important; // 默认都显示 否则outline会隐藏掉
   padding: 0 0.2rem;
   zoom: 90%;
 }

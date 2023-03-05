@@ -21,7 +21,6 @@ export const useArticleStore = defineStore('ArticleStore', {
   },
   actions: {
     async loadArticle(id: string, title?: string) {
-      console.log('loadArticle', id)
       // 初始化默认文章
       if (id === '') {
         this.$state = defaultArticle
@@ -29,7 +28,8 @@ export const useArticleStore = defineStore('ArticleStore', {
         this.saveArticle()
       } else {
         // 从本地存储加载文章
-        const article = getItem(this.articleKey)
+        this.id = id // 先更新id 触发articleKey的更新
+        const article = getItem(this.articleKey) // 根据articleKey取到文章
 
         // 取到文章 直接加载
         if (article) {
@@ -51,7 +51,6 @@ export const useArticleStore = defineStore('ArticleStore', {
       return new Promise((resolve) => {
         setItem(this.articleKey, unref(this.$state))
         resolve(true)
-        console.log('saveArticle', this.articleKey, unref(this.$state))
       })
     }
   }

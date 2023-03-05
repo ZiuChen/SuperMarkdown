@@ -1,8 +1,8 @@
 <template>
   <div class="side-bar">
-    <a-input-search class="search" v-model="searchKey" placeholder="全局检索关键字..." />
+    <a-input-search class="search" v-model="searchKey" placeholder="检索文章标题" />
 
-    <div class="btn-list" @click="handleCategoryChange">
+    <div class="btn-list">
       <a-button @click="addFile">
         <template #icon>
           <icon-file />
@@ -23,13 +23,22 @@
           <icon-edit />
         </template>
       </a-button>
-      <a-button class="words">文章字数: </a-button>
+      <a-button class="words">文章字数:</a-button>
     </div>
 
     <a-tree
       :data="treeData"
       :selected-keys="selectedKeys"
       @select="handleSelect"
+      @drop="drop"
+      :allow-drop="
+        ({ dropNode }) => {
+          if (dropNode.children) {
+            return true
+          }
+          return false
+        }
+      "
       showLine
       draggable
       block-node
@@ -42,6 +51,7 @@
 import { sidebar, SidebarItem } from '@/data/sidebar'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData } from '@/hooks/useTreeData'
+import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
 import { setItem, getItem } from '@/utils'
 import { SWITCH_FILE, CATEGORY_CHANGE, EDITOR_LOADED, CHANGE_TITLE } from '@/common/symbol'
@@ -59,6 +69,7 @@ const selectedKeys = computed(() => {
 
 const store = useArticleStore()
 const { addFile, addFolder, handleDelete, handleRename } = useTreeData(selectedNode, originTreeData)
+const { drop } = useTreeDrag(originTreeData)
 
 const treeData = computed(() => {
   const o = originTreeData.value
@@ -132,7 +143,7 @@ function searchData(keyword: string, treeData: SidebarItem[]) {
 }
 
 function findNodeByKey(key: string, treeData: SidebarItem[]) {
-  const loop = (data: any[]) => {
+  const loop: (...args: any[]) => any = (data: SidebarItem[]) => {
     for (let i = 0; i < data.length; i++) {
       const item = data[i]
       if (item.key === key) {

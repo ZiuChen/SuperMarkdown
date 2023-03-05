@@ -13,6 +13,9 @@ import {
   CATEGORY_CHANGE
 } from '@/common/symbol'
 
+const DEFAULT_FILE_NAME = '默认文章'
+const DEFAULT_FOLDER_NAME = '新建文件夹'
+
 export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<SidebarItem[]>) {
   function preCheck() {
     if (!activeNode.value) {
@@ -34,7 +37,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     // 如果当前节点是文件夹 则添加到当前节点下
     if (activeNode.value?.children) {
       activeNode.value.children.push({
-        title: '新建文件',
+        title: DEFAULT_FILE_NAME,
         key
       })
       $emit(CREATE_FILE, key)
@@ -43,10 +46,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     } else {
       // 如果当前节点是文件 则添加到当前节点的父节点下
       const parent = findParent(activeNode.value.key, treeData.value)
-      console.log('parent', parent)
       if (parent.length) {
         parent[0].children?.push({
-          title: '新建文件',
+          title: DEFAULT_FILE_NAME,
           key
         })
         $emit(CREATE_FILE, key)
@@ -68,11 +70,11 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     // 如果当前节点是文件夹 则添加到当前节点下
     if (activeNode.value?.children) {
       activeNode.value.children.push({
-        title: '新建文件夹',
+        title: DEFAULT_FOLDER_NAME,
         key: t.toString(),
         children: [
           {
-            title: '新建文件',
+            title: DEFAULT_FILE_NAME,
             key: (t + 1).toString()
           }
         ]
@@ -86,11 +88,11 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
 
       if (parent.length) {
         parent[0].children?.push({
-          title: '新建文件夹',
+          title: DEFAULT_FOLDER_NAME,
           key: t.toString(),
           children: [
             {
-              title: '新建文件',
+              title: DEFAULT_FILE_NAME,
               key: (t + 1).toString()
             }
           ]
@@ -187,7 +189,6 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     if (!res) return
 
     let title = activeNode.value.title
-    console.log(title)
 
     Modal.info({
       title: `重命名${activeNode.value.children ? '文件夹' : '文章'}：【${

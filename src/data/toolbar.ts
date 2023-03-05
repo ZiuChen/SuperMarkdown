@@ -18,6 +18,7 @@ export const toolbar = [
   'check',
 
   'table',
+  'outline',
 
   'fullscreen',
   'edit-mode'
