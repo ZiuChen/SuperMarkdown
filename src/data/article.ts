@@ -15,9 +15,7 @@ export const article = {
   
   ### 作者主页
   
-  [Github: ZiuChen](https://ZiuChen.github.com)
-  
-  `,
+  [Github: ZiuChen](https://github.com/ZiuChen)`,
   createAt: 1677900764969,
   id: '1677900764969',
   lastSavedAt: 1677900764969,

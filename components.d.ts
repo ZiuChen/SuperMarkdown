@@ -10,11 +10,9 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AButton: typeof import('@arco-design/web-vue')['Button']
-    AButtonGroup: typeof import('@arco-design/web-vue')['ButtonGroup']
     AInput: typeof import('@arco-design/web-vue')['Input']
     AInputSearch: typeof import('@arco-design/web-vue')['InputSearch']
     ASpin: typeof import('@arco-design/web-vue')['Spin']
-    ATag: typeof import('@arco-design/web-vue')['Tag']
     ATree: typeof import('@arco-design/web-vue')['Tree']
     NavBar: typeof import('./src/components/NavBar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

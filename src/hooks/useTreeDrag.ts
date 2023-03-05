@@ -10,9 +10,9 @@ export function useTreeDrag(treeData: Ref<SidebarItem[]>) {
     dropNode,
     dropPosition
   }: {
-    dragNode: SidebarItem
-    dropNode: SidebarItem
-    dropPosition: number
+    dragNode: any // SidebarItem
+    dropNode: any // SidebarItem
+    dropPosition: any // number
   }) {
     const data = treeData.value
     const loop = (data: any, key: string, callback: any) => {

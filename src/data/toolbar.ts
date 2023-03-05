@@ -35,5 +35,6 @@ export const toolbar = [
 
   'fullscreen',
   'outline',
-  'edit-mode'
+  'edit-mode',
+  'export'
 ]

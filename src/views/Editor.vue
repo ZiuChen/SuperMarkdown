@@ -11,12 +11,6 @@
         :max-length="100"
         :show-word-limit="true"
       ></a-input>
-
-      <div class="right-box">
-        <div class="save-tip">
-          <span>{{ statusMap[isSaving] }}</span>
-        </div>
-      </div>
     </div>
     <div
       id="vditor"
@@ -40,32 +34,15 @@ import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { useArticleStore } from '@/store'
 import { toolbar } from '@/data/toolbar'
-import { formatTime, isElectron, setItem } from '@/utils'
+import { isElectron, setItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE } from '@/common/symbol'
 
 const store = useArticleStore()
-const isSaving = ref<0 | 1 | 2 | 3>(0) // 0: 保存成功 1: 保存中 2: 保存失败 3: 上次保存时间
 const isCtrl = ref(false)
 const isReady = ref(false) // 编辑器是否初始化完成
 const vditor = ref<Vditor | null>(null)
-
-const statusMap = computed(() => ({
-  0: '保存成功',
-  1: '保存中...',
-  2: '保存失败',
-  3: '上次保存时间: ' + formatTime(store.lastSavedAt)
-}))
-
-watchEffect(() => {
-  const val = isSaving.value
-  if (val === 0) {
-    setTimeout(() => {
-      isSaving.value = 3
-    }, 1500)
-  }
-})
 
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
@@ -86,9 +63,7 @@ onMounted(() => {
   // 而数据初始化操作是在SideBar中完成的
   vditor.value = new Vditor('vditor', {
     // 编辑器内容发生变化时，将数据保存到 store 中
-    input: async (value) => {
-      isSaving.value = 1
-
+    input: (value) => {
       store.$patch({
         code: value,
         lastSavedAt: new Date().getTime()
@@ -97,8 +72,7 @@ onMounted(() => {
       // 每次输入文字都把文章id更新到本地
       setItem('lastkey', store.id)
 
-      const res = await store.saveArticle()
-      if (res) isSaving.value = 0
+      store.saveArticle()
     },
     // 编辑器初始化完成后，将数据渲染到编辑器中
     after: () => {
@@ -139,10 +113,9 @@ onMounted(() => {
 
 // 处理标题输入事件
 const handleTitleChange = throttle(_handleTitleChange, 800)
-async function _handleTitleChange() {
-  isSaving.value = 1
-  const res = await store.saveArticle()
-  if (res) isSaving.value = 0
+function _handleTitleChange() {
+  store.saveArticle()
+
   $emit(CHANGE_TITLE, {
     id: store.id,
     title: store.title
@@ -163,7 +136,7 @@ async function _handleTitleChange() {
     padding: 0.5rem;
 
     .title {
-      width: 60%;
+      width: 100%;
       height: 3em;
 
       :deep(.arco-input) {
@@ -178,32 +151,6 @@ async function _handleTitleChange() {
 
       .ant-btn {
         margin-left: 0.5rem;
-      }
-    }
-
-    .right-box {
-      position: absolute;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-
-      .save-tip {
-        margin-right: 1rem;
-        color: #999;
-        font-size: 0.9rem;
-      }
-    }
-
-    // 宽度小于 768px 时，隐藏保存提示
-    @media (max-width: 1000px) {
-      .right-box {
-        display: none;
-      }
-      .title {
-        width: 100%;
       }
     }
   }

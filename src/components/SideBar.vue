@@ -3,24 +3,30 @@
     <a-input-search class="search" v-model="searchKey" placeholder="检索文章标题" />
 
     <div class="btn-list">
-      <a-button @click="addFile">
+      <a-button title="新文章" @click="addFile">
         <template #icon>
           <icon-file />
         </template>
       </a-button>
-      <a-button @click="addFolder">
+      <a-button title="新文件夹" @click="addFolder">
         <template #icon>
           <icon-folder-add />
         </template>
       </a-button>
-      <a-button @click="handleDelete">
+      <a-button title="删除" @click="handleDelete">
         <template #icon>
           <icon-delete />
         </template>
       </a-button>
-      <a-button @click="handleRename">
+      <a-button title="重命名" @click="handleRename">
         <template #icon>
           <icon-edit />
+        </template>
+      </a-button>
+      <a-button :title="expandedKeys.length ? '折叠' : '展开'" @click="toggleExpanded">
+        <template #icon>
+          <icon-double-down v-if="expandedKeys.length" />
+          <icon-double-up v-else />
         </template>
       </a-button>
       <a-button class="words">文章字数:</a-button>
@@ -29,6 +35,7 @@
     <a-tree
       :data="treeData"
       :selected-keys="selectedKeys"
+      v-model:expanded-keys="expandedKeys"
       @select="handleSelect"
       @drop="drop"
       :allow-drop="
@@ -71,6 +78,21 @@ const lastKey = getItem('lastkey') || ''
 const searchKey = ref('')
 const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个选中的节点
 const originTreeData = ref(localTreeData)
+const expandedKeys = ref([])
+const allExpandedKeys = computed(() => {
+  const keys: string[] = []
+  const loop = (data: SidebarItem[]) => {
+    data.forEach((item) => {
+      keys.push(item.key)
+      if (item.children) {
+        loop(item.children)
+      }
+    })
+  }
+  loop(originTreeData.value)
+  return keys
+})
+
 const selectedKeys = computed(() => {
   if (selectedNode.value) return [selectedNode.value.key]
   return []
@@ -126,18 +148,16 @@ useEventBus(CREATE_FOLDER, (key: string) => {
 // 入参key为被删除节点的父节点的key
 useEventBus(DELETE_FILE, (key: string) => {
   // 找到父节点
-  console.log(key)
   const node = findNodeByKey(key, originTreeData.value)
-  console.log(node)
-  if (node && node.length > 0) {
+  if (node && node.children.length > 0) {
     // 选中父节点中的第一个节点
-    selectedNode.value = node[0]
+    selectedNode.value = node.children[0]
   }
 })
 useEventBus(DELETE_FOLDER, (key: string) => {
   const node = findNodeByKey(key, originTreeData.value)
-  if (node && node.length > 0) {
-    selectedNode.value = node[0]
+  if (node && node.children.length > 0) {
+    selectedNode.value = node.children[0]
   }
 })
 
@@ -152,11 +172,23 @@ watch(selectedNode, (val) => {
 
     // 更新本地存储的上次预览内容
     setItem('lastkey', val.key)
+  } else {
+    // 选中的节点是文件夹
+    // 触发事件总线
+    $emit(SWITCH_FILE, {
+      id: '',
+      title: ''
+    })
   }
 })
 
-function handleSelect(_: string[], data: any) {
+function handleSelect(_: any, data: any) {
   selectedNode.value = data.node
+}
+
+function toggleExpanded() {
+  // @ts-ignore
+  expandedKeys.value = expandedKeys?.value.length ? [] : allExpandedKeys.value
 }
 
 // 遍历树，检索匹配的节点

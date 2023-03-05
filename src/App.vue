@@ -18,7 +18,7 @@ import SideBar from './components/SideBar.vue'
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 220px;
   height: 100%;
   background-color: var(--bg-color);
   border-right: 1px solid var(--text-color-lighter);
@@ -27,7 +27,7 @@ import SideBar from './components/SideBar.vue'
 .main {
   position: absolute;
   top: 0;
-  left: 300px;
+  left: 220px;
   right: 0;
   bottom: 0;
   overflow: auto;
