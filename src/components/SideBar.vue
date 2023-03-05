@@ -1,55 +1,82 @@
 <template>
   <div class="side-bar">
-    <a-input-search class="search" v-model="searchKey" />
+    <a-input-search class="search" v-model="searchKey" placeholder="全局检索关键字..." />
+
+    <div class="btn-list">
+      <a-button @click="addFile">
+        <template #icon>
+          <icon-file />
+        </template>
+      </a-button>
+      <a-button @click="addFolder">
+        <template #icon>
+          <icon-folder-add />
+        </template>
+      </a-button>
+      <a-button @click="handleDelete">
+        <template #icon>
+          <icon-delete />
+        </template>
+      </a-button>
+      <a-button @click="handleRename">
+        <template #icon>
+          <icon-edit />
+        </template>
+      </a-button>
+      <a-button class="words">文章字数: </a-button>
+    </div>
+
     <a-tree
-      :checkable="true"
-      v-model:checked-keys="checkedKeys"
       :checked-strategy="'all'"
       :data="treeData"
+      @select="handleSelect"
       showLine
+      draggable
+      block-node
     >
-      <template #extra="nodeData">
-        <div
-          style="position: absolute; right: 8px; font-size: 12px; top: 10px; color: #3370ff"
-          @click="() => onIconClick(nodeData)"
-        >
-          Add
-        </div>
-      </template>
     </a-tree>
   </div>
 </template>
 
 <script setup lang="ts">
-import { sidebar } from '@/data/sidebar'
+import { sidebar, SidebarItem } from '@/data/sidebar'
+import { useTreeData } from '@/hooks/useTreeData'
+import { setItem, getItem } from '@/utils'
+
+const lastKey = getItem('lastKey') || '1677900764969'
 
 const searchKey = ref('')
-const checkedKeys = ref([])
+const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个选中的节点
 const originTreeData = ref(sidebar)
+const currentKey = ref('')
+
+const { addFile, addFolder, handleDelete, handleRename } = useTreeData(selectedNode, originTreeData)
 
 const treeData = computed(() => {
   const o = originTreeData.value
   if (!searchKey.value) return o
-  return searchData(searchKey.value)
+  return searchData(searchKey.value, originTreeData.value)
 })
 
-const strategyOptions = [
-  {
-    value: 'all',
-    label: 'show all'
-  },
-  {
-    value: 'parent',
-    label: 'show parent'
-  },
-  {
-    value: 'child',
-    label: 'show child'
-  }
-]
+watch(selectedNode, (val) => {
+  console.log('selectedNode', val)
 
-// 遍历树，找到匹配的节点
-function searchData(keyword: string) {
+  // 选中的节点是文件
+  if (val && !val.children) {
+    currentKey.value = val.key
+    setItem('lastKey', val.key)
+  }
+})
+
+function handleSelect(_: string[], data: any) {
+  console.log('currentKey', _)
+  console.log('data', data)
+
+  selectedNode.value = data.node
+}
+
+// 遍历树，检索匹配的节点
+function searchData(keyword: string, treeData: SidebarItem[]) {
   const loop = (data: any[]) => {
     const result: any[] = []
     data.forEach((item) => {
@@ -68,27 +95,7 @@ function searchData(keyword: string) {
     return result
   }
 
-  return loop(originTreeData.value)
-}
-
-// 获取匹配的索引
-function getMatchIndex(title: string) {
-  if (!searchKey.value) return -1
-  return title.toLowerCase().indexOf(searchKey.value.toLowerCase())
-}
-
-function onIconClick(nodeData: any) {
-  const children = nodeData.children || []
-
-  children.push({
-    title: 'new tree node',
-    key: nodeData.key + '-' + (children.length + 1)
-  })
-
-  nodeData.children = children
-
-  // 给originTreeData赋值，会触发treeData的更新
-  originTreeData.value = [...originTreeData.value]
+  return loop(treeData)
 }
 </script>
 
@@ -97,6 +104,14 @@ function onIconClick(nodeData: any) {
   .search {
     margin-bottom: 8px;
     width: 100%;
+  }
+
+  .btn-list {
+    display: flex;
+    margin-bottom: 8px;
+    .words {
+      flex: 1;
+    }
   }
 }
 </style>

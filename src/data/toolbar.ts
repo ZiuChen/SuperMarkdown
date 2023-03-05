@@ -52,16 +52,6 @@ export const toolbar = [
     ]
   },
 
-  'content-theme',
-  'code-theme',
-
-  'edit-mode',
   'fullscreen',
-
-  {
-    name: 'more',
-    tip: '更多',
-    tipPosition: 'n',
-    toolbar: ['both', 'export', 'outline', 'preview', import.meta.env.DEV ? 'devtools' : '']
-  }
+  'edit-mode'
 ]

@@ -1,0 +1,6 @@
+export const CREATE_FILE = Symbol('CREATE_FILE')
+export const CREATE_FOLDER = Symbol('CREATE_FOLDER')
+export const DELETE_FILE = Symbol('DELETE_FILE')
+export const DELETE_FOLDER = Symbol('DELETE_FOLDER')
+export const RENAME_FILE = Symbol('RENAME_FILE')
+export const RENAME_FOLDER = Symbol('RENAME_FOLDER')

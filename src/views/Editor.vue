@@ -137,11 +137,11 @@ onMounted(() => {
     padding: 0.5rem;
 
     .title {
-      width: 70%;
-      height: 4em;
+      width: 60%;
+      height: 3em;
 
       :deep(.arco-input) {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
         font-weight: 500;
       }
     }
@@ -168,6 +168,16 @@ onMounted(() => {
         margin-right: 1rem;
         color: #999;
         font-size: 0.9rem;
+      }
+    }
+
+    // 宽度小于 768px 时，隐藏保存提示
+    @media (max-width: 1000px) {
+      .right-box {
+        display: none;
+      }
+      .title {
+        width: 100%;
       }
     }
   }
@@ -201,6 +211,7 @@ onMounted(() => {
 // 调整toolbar的样式
 .vditor-toolbar__item {
   padding: 0 0.2rem;
+  zoom: 90%;
 }
 
 .vditor-reset {
