@@ -1,6 +1,17 @@
 import { Ref, h } from 'vue'
 import { Message, Modal, Input } from '@arco-design/web-vue'
 import { SidebarItem } from '@/data/sidebar'
+import { $emit } from '@/hooks/useEventBus'
+import {
+  CREATE_FILE,
+  CREATE_FOLDER,
+  DELETE_FILE,
+  DELETE_FOLDER,
+  RENAME_FILE,
+  RENAME_FOLDER,
+  SWITCH_FILE,
+  CATEGORY_CHANGE
+} from '@/common/symbol'
 
 export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<SidebarItem[]>) {
   function preCheck() {
@@ -18,12 +29,16 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     const res = preCheck()
     if (!res) return
 
+    const key = Date.now().toString()
+
     // 如果当前节点是文件夹 则添加到当前节点下
     if (activeNode.value?.children) {
       activeNode.value.children.push({
         title: '新建文件',
-        key: Date.now().toString()
+        key
       })
+      $emit(CREATE_FILE, key)
+      $emit(CATEGORY_CHANGE)
       Message.success('创建成功')
     } else {
       // 如果当前节点是文件 则添加到当前节点的父节点下
@@ -32,8 +47,10 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       if (parent.length) {
         parent[0].children?.push({
           title: '新建文件',
-          key: Date.now().toString()
+          key
         })
+        $emit(CREATE_FILE, key)
+        $emit(CATEGORY_CHANGE)
         Message.success('创建成功')
       }
     }
@@ -60,6 +77,8 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           }
         ]
       })
+      $emit(CREATE_FOLDER, t.toString())
+      $emit(CATEGORY_CHANGE)
       Message.success('创建成功')
     } else {
       // 如果当前节点是文件 则添加到当前节点的父节点下
@@ -76,6 +95,8 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
             }
           ]
         })
+        $emit(CREATE_FOLDER, t.toString())
+        $emit(CATEGORY_CHANGE)
         Message.success('创建成功')
       }
     }
@@ -105,6 +126,8 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
               )
               if (index !== undefined) {
                 parent[0].children?.splice(index, 1)
+                $emit(DELETE_FOLDER, activeNode.value.key)
+                $emit(CATEGORY_CHANGE)
                 Message.success('删除成功')
               }
             }
@@ -124,6 +147,8 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
               )
               if (index !== undefined) {
                 parent[0].children?.splice(index, 1)
+                $emit(DELETE_FOLDER, activeNode.value.key)
+                $emit(CATEGORY_CHANGE)
                 Message.success('删除成功')
               }
             }
@@ -144,6 +169,8 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
             )
             if (index !== undefined) {
               parent[0].children?.splice(index, 1)
+              $emit(DELETE_FILE, activeNode.value.key)
+              $emit(CATEGORY_CHANGE)
               Message.success('删除成功')
             }
           }
@@ -163,7 +190,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     console.log(title)
 
     Modal.info({
-      title: '重命名',
+      title: `重命名${activeNode.value.children ? '文件夹' : '文章'}：【${
+        activeNode.value.title
+      }】`,
       content: () =>
         h(Input, {
           defaultValue: title,
@@ -173,15 +202,12 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         }),
       onOk() {
         activeNode.value.title = title
+        // 文件和文件名都用这一个Symbol? 反正都一样
+        $emit(RENAME_FILE, activeNode.value.key)
+        $emit(CATEGORY_CHANGE)
         Message.success('重命名成功')
       }
     })
-
-    // const title = window.prompt('请输入新的文件名', activeNode.value.title)
-    // if (title) {
-    //   activeNode.value.title = title
-    //   Message.success('重命名成功')
-    // }
   }
 
   return {

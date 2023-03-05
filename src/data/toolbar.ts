@@ -19,39 +19,6 @@ export const toolbar = [
 
   'table',
 
-  {
-    name: 'align',
-    icon: '<svg t="1677811472423" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20756" width="200" height="200"><path d="M128 128h768v85.333333H128V128m170.666667 170.666667h426.666666v85.333333H298.666667V298.666667m-170.666667 170.666666h768v85.333334H128v-85.333334m170.666667 170.666667h426.666666v85.333333H298.666667v-85.333333m-170.666667 170.666667h768v85.333333H128v-85.333333z" fill="" p-id="20757"></path></svg>',
-    tip: '对齐方式',
-    tipPosition: 'n',
-    toolbar: [
-      {
-        name: 'align-left',
-        icon: '<svg t="1677811482078" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20898" width="200" height="200"><path d="M128 128h768v85.333333H128V128m0 170.666667h512v85.333333H128V298.666667m0 170.666666h768v85.333334H128v-85.333334m0 170.666667h512v85.333333H128v-85.333333m0 170.666667h768v85.333333H128v-85.333333z" fill="" p-id="20899"></path></svg>',
-        tip: '左对齐',
-        tipPosition: 'n',
-        prefix: '<div style="text-align: left;">',
-        suffix: '</div>'
-      },
-      {
-        name: 'align-center',
-        icon: '<svg t="1677811472423" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="20756" width="200" height="200"><path d="M128 128h768v85.333333H128V128m170.666667 170.666667h426.666666v85.333333H298.666667V298.666667m-170.666667 170.666666h768v85.333334H128v-85.333334m170.666667 170.666667h426.666666v85.333333H298.666667v-85.333333m-170.666667 170.666667h768v85.333333H128v-85.333333z" fill="" p-id="20757"></path></svg>',
-        tip: '居中对齐',
-        tipPosition: 'n',
-        prefix: '<div style="text-align: center;">',
-        suffix: '</div>'
-      },
-      {
-        name: 'align-right',
-        icon: '<svg t="1677811512126" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="21040" width="200" height="200"><path d="M128 128h768v85.333333H128V128m256 170.666667h512v85.333333H384V298.666667m-256 170.666666h768v85.333334H128v-85.333334m256 170.666667h512v85.333333H384v-85.333333m-256 170.666667h768v85.333333H128v-85.333333z" fill="" p-id="21041"></path></svg>',
-        tip: '右对齐',
-        tipPosition: 'n',
-        prefix: '<div style="text-align: right;">',
-        suffix: '</div>'
-      }
-    ]
-  },
-
   'fullscreen',
   'edit-mode'
 ]
