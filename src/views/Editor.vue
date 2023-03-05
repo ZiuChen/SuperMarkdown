@@ -87,8 +87,13 @@ onMounted(() => {
     counter: {
       enable: true
     },
+    hint: {
+      parse: false
+    },
     toolbar,
-    toolbarConfig: {},
+    toolbarConfig: {
+      pin: true
+    },
     placeholder: '输入文章内容...',
     mode: 'sv',
     preview: {
