@@ -45,7 +45,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       Message.success('创建成功')
     } else {
       // 如果当前节点是文件 则添加到当前节点的父节点下
-      const parent = findParent(activeNode.value.key, treeData.value)
+      const parent = findParent(activeNode.value!.key, treeData.value)
       if (parent.length) {
         parent[0].children?.push({
           title: DEFAULT_FILE_NAME,
@@ -84,7 +84,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       Message.success('创建成功')
     } else {
       // 如果当前节点是文件 则添加到当前节点的父节点下
-      const parent = findParent(activeNode.value.key, treeData.value)
+      const parent = findParent(activeNode.value!.key, treeData.value)
 
       if (parent.length) {
         parent[0].children?.push({
@@ -111,6 +111,8 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     const res = preCheck()
     if (!res) return
 
+    const node = activeNode.value!
+
     // 如果当前节点是文件夹 检查文件夹中是否有文件
     // 有文件则提示用户是否删除 无文件则直接删除
     if (activeNode.value?.children) {
@@ -121,14 +123,14 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           content: '删除后无法恢复',
           onOk() {
             // 删除当前节点
-            const parent = findParent(activeNode.value.key, treeData.value)
+            const parent = findParent(node.key, treeData.value)
             if (parent.length) {
-              const index = parent[0].children?.findIndex(
-                (item) => item.key === activeNode.value!.key
-              )
+              const index = parent[0].children?.findIndex((item) => item.key === node.key)
               if (index !== undefined) {
+                // 删除侧栏中数据
                 parent[0].children?.splice(index, 1)
-                $emit(DELETE_FOLDER, activeNode.value.key)
+
+                $emit(DELETE_FOLDER, parent[0].key)
                 $emit(CATEGORY_CHANGE)
                 Message.success('删除成功')
               }
@@ -142,14 +144,12 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           content: '删除后无法恢复',
           onOk() {
             // 删除当前节点
-            const parent = findParent(activeNode.value.key, treeData.value)
+            const parent = findParent(node.key, treeData.value)
             if (parent.length) {
-              const index = parent[0].children?.findIndex(
-                (item) => item.key === activeNode.value!.key
-              )
+              const index = parent[0].children?.findIndex((item) => item.key === node.key)
               if (index !== undefined) {
                 parent[0].children?.splice(index, 1)
-                $emit(DELETE_FOLDER, activeNode.value.key)
+                $emit(DELETE_FOLDER, parent[0].key)
                 $emit(CATEGORY_CHANGE)
                 Message.success('删除成功')
               }
@@ -164,14 +164,12 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         content: '删除后无法恢复',
         onOk() {
           // 删除当前节点
-          const parent = findParent(activeNode.value.key, treeData.value)
+          const parent = findParent(node.key, treeData.value)
           if (parent.length) {
-            const index = parent[0].children?.findIndex(
-              (item) => item.key === activeNode.value!.key
-            )
+            const index = parent[0].children?.findIndex((item) => item.key === node.key)
             if (index !== undefined) {
               parent[0].children?.splice(index, 1)
-              $emit(DELETE_FILE, activeNode.value.key)
+              $emit(DELETE_FILE, parent[0].key)
               $emit(CATEGORY_CHANGE)
               Message.success('删除成功')
             }
@@ -188,12 +186,11 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     const res = preCheck()
     if (!res) return
 
-    let title = activeNode.value.title
+    const node = activeNode.value!
+    let title = activeNode.value!.title
 
     Modal.info({
-      title: `重命名${activeNode.value.children ? '文件夹' : '文章'}：【${
-        activeNode.value.title
-      }】`,
+      title: `重命名${node.children ? '文件夹' : '文章'}：【${node.title}】`,
       content: () =>
         h(Input, {
           defaultValue: title,
@@ -202,9 +199,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           }
         }),
       onOk() {
-        activeNode.value.title = title
+        node.title = title
         // 文件和文件名都用这一个Symbol? 反正都一样
-        $emit(RENAME_FILE, activeNode.value.key)
+        $emit(RENAME_FILE, node.key)
         $emit(CATEGORY_CHANGE)
         Message.success('重命名成功')
       }

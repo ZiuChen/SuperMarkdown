@@ -54,7 +54,16 @@ import { useTreeData } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
 import { setItem, getItem } from '@/utils'
-import { SWITCH_FILE, CATEGORY_CHANGE, EDITOR_LOADED, CHANGE_TITLE } from '@/common/symbol'
+import {
+  SWITCH_FILE,
+  CATEGORY_CHANGE,
+  EDITOR_LOADED,
+  CHANGE_TITLE,
+  CREATE_FILE,
+  CREATE_FOLDER,
+  DELETE_FILE,
+  DELETE_FOLDER
+} from '@/common/symbol'
 
 const localTreeData = getItem('category') || sidebar
 const lastKey = getItem('lastkey') || ''
@@ -97,6 +106,38 @@ useEventBus(CHANGE_TITLE, ({ id, title }: { id: string; title: string }) => {
   if (node) {
     node.title = title
     setItem('category', originTreeData.value)
+  }
+})
+
+// 处理创建文件 | 文件夹事件 新建完成后自动切换到新建的文件
+useEventBus(CREATE_FILE, (key: string) => {
+  selectedNode.value = findNodeByKey(key, originTreeData.value)
+})
+useEventBus(CREATE_FOLDER, (key: string) => {
+  // 创建文件夹传递来的是文件夹的key
+  const parent = findNodeByKey(key, originTreeData.value)
+  if (parent) {
+    selectedNode.value = parent.children?.[0]
+  }
+})
+
+// 处理删除文件 | 文件夹事件 删除完成后自动切换到上一个文件
+// 如果上一个文件不存在 则向上查找
+// 入参key为被删除节点的父节点的key
+useEventBus(DELETE_FILE, (key: string) => {
+  // 找到父节点
+  console.log(key)
+  const node = findNodeByKey(key, originTreeData.value)
+  console.log(node)
+  if (node && node.length > 0) {
+    // 选中父节点中的第一个节点
+    selectedNode.value = node[0]
+  }
+})
+useEventBus(DELETE_FOLDER, (key: string) => {
+  const node = findNodeByKey(key, originTreeData.value)
+  if (node && node.length > 0) {
+    selectedNode.value = node[0]
   }
 })
 
