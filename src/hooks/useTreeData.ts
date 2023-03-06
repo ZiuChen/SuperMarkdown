@@ -122,18 +122,21 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           title: '当前文件夹中有文件，是否删除？',
           content: '删除后无法恢复',
           onOk() {
-            // 删除当前节点
+            // 删除当前文件夹下的所有文件
+            // 同时清理本地存储
             const parent = findParent(node.key, treeData.value)
+            console.log(parent)
             if (parent.length) {
-              const index = parent[0].children?.findIndex((item) => item.key === node.key)
-              if (index !== undefined) {
-                // 删除侧栏中数据
-                parent[0].children?.splice(index, 1)
-
-                $emit(DELETE_FOLDER, parent[0].key)
-                $emit(CATEGORY_CHANGE)
-                Message.success('删除成功')
-              }
+              // const index = parent[0].children?.findIndex((item) => item.key === node.key)
+              // if (index !== undefined) {
+              //   // 获取子节点
+              //   const children = parent[0].children?.[index]?.children
+              //   // 删除侧栏中数据
+              //   parent[0].children?.splice(index, 1)
+              //   $emit(DELETE_FOLDER, parent[0].key)
+              //   $emit(CATEGORY_CHANGE)
+              //   Message.success('删除成功')
+              // }
             }
           }
         })
@@ -217,7 +220,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
 }
 
 // 遍历树，找到匹配的节点的最近父节点
-function findParent(key: string, treeData: SidebarItem[]): SidebarItem[] {
+export function findParent(key: string, treeData: SidebarItem[]): SidebarItem[] {
   const parent: SidebarItem[] = []
   treeData.forEach((item) => {
     if (item.children) {

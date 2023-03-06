@@ -5,10 +5,23 @@ import {
   IconDelete,
   IconEdit,
   IconDoubleDown,
-  IconDoubleUp
+  IconDoubleUp,
+  IconRecord,
+  IconDown,
+  IconFolder
 } from '@arco-design/web-vue/es/icon'
 
-const icons = [IconFile, IconFolderAdd, IconDelete, IconEdit, IconDoubleDown, IconDoubleUp]
+const icons = [
+  IconFile,
+  IconFolderAdd,
+  IconDelete,
+  IconEdit,
+  IconDoubleDown,
+  IconDoubleUp,
+  IconRecord,
+  IconDown,
+  IconFolder
+]
 
 export function registerIcon(app: App) {
   for (const icon of icons) {

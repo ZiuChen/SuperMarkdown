@@ -19,7 +19,7 @@
         loading: !isReady
       }"
     >
-      <div class="loading-tip">
+      <div class="loading-tip" v-show="!isReady">
         <a-spin></a-spin>
         <span>编辑器加载中...</span>
       </div>
@@ -138,7 +138,6 @@ function _handleTitleChange() {
 
   .header {
     position: relative;
-    padding: 0.5rem;
 
     .title {
       width: 100%;

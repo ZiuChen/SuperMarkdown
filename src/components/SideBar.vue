@@ -50,6 +50,13 @@
       draggable
       block-node
     >
+      <template #switcher-icon="node, { isLeaf }">
+        <IconDown v-if="!isLeaf"></IconDown>
+        <template v-else>
+          <IconFile v-if="node?.children === undefined"></IconFile>
+          <IconFolder v-else></IconFolder>
+        </template>
+      </template>
     </a-tree>
   </div>
 </template>
@@ -57,7 +64,7 @@
 <script setup lang="ts">
 import { sidebar, SidebarItem } from '@/data/sidebar'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
-import { useTreeData } from '@/hooks/useTreeData'
+import { useTreeData, findParent } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
 import { setItem, getItem } from '@/utils'
@@ -102,6 +109,7 @@ const store = useArticleStore()
 const { addFile, addFolder, handleDelete, handleRename } = useTreeData(selectedNode, originTreeData)
 const { drop } = useTreeDrag(originTreeData)
 
+// 真实展示在view中的数据
 const treeData = computed(() => {
   const o = originTreeData.value
   if (!searchKey.value) return o
@@ -119,7 +127,14 @@ useEventBus(CATEGORY_CHANGE, () => {
 useEventBus(EDITOR_LOADED, (id: string) => {
   // 选中当前文章对应的节点
   // selectedNode修改后 会触发selectedKeys的计算 进而修改视图
-  selectedNode.value = findNodeByKey(id, originTreeData.value)
+  const node = findNodeByKey(id, originTreeData.value)
+  selectedNode.value = node
+
+  // 展开当前文章对应的父节点
+  const parent = findParent(node, originTreeData.value)
+  if (parent) {
+    expandedKeys.value = [parent.key]
+  }
 })
 
 // 当前文章标题修改 同步到侧栏展示和本地存储
@@ -183,6 +198,14 @@ watch(selectedNode, (val) => {
 })
 
 function handleSelect(_: any, data: any) {
+  // 如果是文件夹 则不选中 直接展开
+  if (data.node.children) {
+    // 将当前节点的key添加到expandedKeys中
+    // @ts-ignore
+    expandedKeys.value = expandedKeys.value.includes(data.node.key)
+      ? expandedKeys.value.filter((item: string) => item !== data.node.key)
+      : [...expandedKeys.value, data.node.key]
+  }
   selectedNode.value = data.node
 }
 
@@ -237,13 +260,11 @@ function findNodeByKey(key: string, treeData: SidebarItem[]) {
 <style lang="less" scoped>
 .side-bar {
   .search {
-    margin-bottom: 8px;
     width: 100%;
   }
 
   .btn-list {
     display: flex;
-    margin-bottom: 8px;
     .words {
       flex: 1;
     }
