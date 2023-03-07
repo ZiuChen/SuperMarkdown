@@ -259,6 +259,7 @@ function findNodeByKey(key: string, treeData: SidebarItem[]) {
 
 <style lang="less" scoped>
 .side-bar {
+  background-color: var(--bg-color);
   .search {
     width: 100%;
   }

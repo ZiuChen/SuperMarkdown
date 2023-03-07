@@ -3,7 +3,7 @@
   <router-view v-slot="{ Component }">
     <transition name="opacity" mode="out-in" appear>
       <div class="main">
-        <component :is="Component" />
+        <component :is="Component" :isDark="isDark" />
       </div>
     </transition>
   </router-view>
@@ -11,6 +11,10 @@
 
 <script lang="ts" setup>
 import SideBar from './components/SideBar.vue'
+import { useDarkMode } from '@/hooks/useDarkMode'
+import { IS_DARK } from './common/symbol'
+
+const isDark = useDarkMode()
 </script>
 
 <style lang="less" scoped>
@@ -31,6 +35,7 @@ import SideBar from './components/SideBar.vue'
   right: 0;
   bottom: 0;
   overflow: auto;
+  background-color: var(--bg-color);
 }
 
 .opacity-enter-active,

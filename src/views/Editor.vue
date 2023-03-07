@@ -16,7 +16,8 @@
       id="vditor"
       :class="{
         vditor: true, // enable style of editor
-        loading: !isReady
+        loading: !isReady,
+        'vditor--dark': props.isDark
       }"
     >
       <div class="loading-tip" v-show="!isReady">
@@ -37,12 +38,20 @@ import { toolbar } from '@/data/toolbar'
 import { isElectron, setItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
-import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE } from '@/common/symbol'
+import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE, IS_DARK } from '@/common/symbol'
 
 const store = useArticleStore()
 const isCtrl = ref(false)
 const isReady = ref(false) // 编辑器是否初始化完成
 const vditor = ref<Vditor | null>(null)
+
+// const isDark = inject<Ref<boolean>>(IS_DARK)
+const props = defineProps({
+  isDark: {
+    type: Boolean as PropType<boolean>,
+    required: true
+  }
+})
 
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
@@ -62,6 +71,7 @@ onMounted(() => {
   // Editor组件挂载后 从ArticleStore中读取文章数据
   // 而数据初始化操作是在SideBar中完成的
   vditor.value = new Vditor('vditor', {
+    theme: props.isDark ? 'dark' : 'classic',
     // 编辑器内容发生变化时，将数据保存到 store 中
     input: (value) => {
       store.$patch({
@@ -101,6 +111,9 @@ onMounted(() => {
       hljs: {
         lineNumber: true,
         style: 'github'
+      },
+      theme: {
+        current: props.isDark ? 'dark' : 'light'
       },
       markdown: {
         toc: true
@@ -192,10 +205,6 @@ function _handleTitleChange() {
   zoom: 90%;
 }
 
-.vditor-reset {
-  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace !important;
-}
-
 .vditor-preview {
   // 预览页顶部工具条
   .vditor-preview__action {
@@ -203,6 +212,8 @@ function _handleTitleChange() {
   }
 
   .vditor-reset {
+    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace !important;
+
     a {
       text-decoration: none;
       color: #0269c8;
