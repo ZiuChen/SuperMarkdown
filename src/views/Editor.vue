@@ -7,12 +7,12 @@
         placeholder="输入文章标题..."
         v-model="store.title"
         @input="handleTitleChange"
-        :disabled="!isReady || store.isEmpty"
+        :disabled="titleInputDisabled"
         :max-length="100"
         :show-word-limit="true"
       ></a-input>
       <a-dropdown>
-        <a-button class="dropdown-btn" :disabled="!isReady || store.isEmpty">
+        <a-button class="dropdown-btn" :disabled="dropdownDisabled">
           <icon-more></icon-more>
         </a-button>
         <template #content>
@@ -45,8 +45,8 @@
       }"
       v-show="!store.isEmpty"
     ></div>
-    <div class="tips" v-show="store.isEmpty">请在左侧选择文章</div>
-    <div class="tips" v-show="!isReady">
+    <div class="tips" v-show="isReady && store.isEmpty">请在左侧选择文章</div>
+    <div class="tips" v-if="!isReady">
       <a-spin></a-spin>
       <span>编辑器加载中...</span>
     </div>
@@ -60,16 +60,21 @@ import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { useArticleStore } from '@/store'
 import { toolbar } from '@/data/toolbar'
-import { isElectron, setItem } from '@/utils'
+import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useArticleDropdown } from '@/hooks/useArticleDropdown'
 import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE, IS_DARK } from '@/common/symbol'
 
+const lastKey = getItem('lastkey') || ''
+
 const store = useArticleStore()
 const isCtrl = ref(false)
 const isReady = ref(false) // 编辑器是否初始化完成
 const vditor = ref<Vditor | null>(null)
+
+const titleInputDisabled = computed(() => !isReady.value || store.isEmpty || store.isReadonly)
+const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
 
 const isDark = inject<Ref<boolean>>(IS_DARK)!
 
@@ -109,9 +114,14 @@ onMounted(() => {
       store.saveArticle()
     },
     // 编辑器初始化完成后，将数据渲染到编辑器中
-    after: () => {
+    after: async () => {
       isReady.value = true
+
+      // 从本地存储加载指定文章到store
+      await store.loadArticle(lastKey)
+
       vditor.value!.setValue(store.code)
+
       $emit(EDITOR_LOADED, store.id)
     },
     outline: {

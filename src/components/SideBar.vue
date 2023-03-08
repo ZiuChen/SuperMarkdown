@@ -61,7 +61,11 @@
       draggable
       block-node
     >
-      <template #switcher-icon="node, { isLeaf }">
+      <template
+        #switcher-icon="// @ts-ignore
+        node,
+        { isLeaf }"
+      >
         <IconDown v-if="!isLeaf"></IconDown>
         <template v-else>
           <IconFile v-if="node?.children === undefined"></IconFile>
@@ -78,7 +82,7 @@ import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
-import { setItem, getItem, removeItem, openLink } from '@/utils'
+import { setItem, getItem, removeItem, openLink, removeFeature } from '@/utils'
 import {
   SWITCH_FILE,
   CATEGORY_CHANGE,
@@ -87,11 +91,12 @@ import {
   CREATE_FILE,
   CREATE_FOLDER,
   DELETE_FILE,
-  DELETE_FOLDER
+  DELETE_FOLDER,
+  FILE_ENTER
 } from '@/common/symbol'
+import { Message } from '@arco-design/web-vue'
 
 const localTreeData = getItem('category') || sidebar
-const lastKey = getItem('lastkey') || ''
 
 const searchKey = ref('')
 const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个选中的节点
@@ -128,9 +133,6 @@ const treeData = computed(() => {
   return searchData(searchKey.value, originTreeData.value)
 })
 
-// 从本地存储加载指定文章到store
-store.loadArticle(lastKey)
-
 // 增删改查操作 都应当触发目录保存
 useEventBus(CATEGORY_CHANGE, () => {
   setItem('category', originTreeData.value)
@@ -156,6 +158,24 @@ useEventBus(CHANGE_TITLE, ({ id, title }: { id: string; title: string }) => {
     node.title = title
     setItem('category', originTreeData.value)
   }
+})
+
+// 通过全局关键字进入插件
+useEventBus(FILE_ENTER, (key: string) => {
+  const node = findNodeByKey(key, originTreeData.value)
+  if (!node) {
+    // 处理边界情况
+    removeFeature(`note/${key}`)
+    Message.error('未找到对应文章')
+    return
+  }
+
+  // 激活侧栏 同时将触发watch 继而$emit(SWITCH_FILE)
+  selectedNode.value = node
+
+  // 展开所有相关父节点
+  const keys = collectAllParentKeys(key, originTreeData.value)
+  expandedKeys.value = keys
 })
 
 useEventBus(CREATE_FILE, handleCreate)

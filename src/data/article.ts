@@ -2,7 +2,7 @@ export const article = {
   code: `[toc]
 
 <div align="center">
-    <img src="/logo.png" width="150px" />
+    <img src="./logo.png" width="150px" />
     <h1>你好，超级Markdown！</h1>
 </div>
 

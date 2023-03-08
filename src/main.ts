@@ -4,6 +4,9 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import { registerIcon } from '@/common/registerIcon'
+import { registerCallback } from '@/common/registerCallback'
+
+registerCallback()
 
 const pinia = createPinia()
 

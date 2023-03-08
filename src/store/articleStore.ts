@@ -42,7 +42,8 @@ export const useArticleStore = defineStore('ArticleStore', {
   },
   actions: {
     async loadArticle(id: string, title?: string) {
-      // 初始化默认文章 由SideBar中的lastKey传入 id
+      // 初始化默认文章
+      // id为''是SideBar取laskKey时为null 通过逻辑或算出来的
       if (id === '') {
         this.$patch(defaultArticle)
         setItem('lastkey', defaultArticle.id)
@@ -56,7 +57,9 @@ export const useArticleStore = defineStore('ArticleStore', {
         if (article) {
           this.$patch(article)
         } else {
-          // 未取到文章 证明是新创建的
+          // 根据id未取到文章
+          // 要么是新建的文章 侧栏已经建好了
+          // 要么是边界情况: 文章被删除后没有重置lastKey
           this.$patch({
             id,
             code: '',
@@ -64,6 +67,7 @@ export const useArticleStore = defineStore('ArticleStore', {
             createAt: parseInt(id),
             lastSavedAt: parseInt(id)
           })
+
           this.saveArticle()
         }
       }
