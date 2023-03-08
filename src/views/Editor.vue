@@ -11,6 +11,7 @@
         :max-length="100"
         :show-word-limit="true"
       ></a-input>
+
       <a-dropdown>
         <a-button class="dropdown-btn" :disabled="dropdownDisabled">
           <icon-more></icon-more>
@@ -37,16 +38,17 @@
         </template>
       </a-dropdown>
     </div>
+
     <div
       id="vditor"
       :class="{
         vditor: true, // enable style of editor
         'vditor--dark': isDark
       }"
-      v-show="!store.isEmpty"
+      v-show="isReady && !store.isEmpty"
     ></div>
     <div class="tips" v-show="isReady && store.isEmpty">请在左侧选择文章</div>
-    <div class="tips" v-if="!isReady">
+    <div class="tips" v-show="!isReady">
       <a-spin></a-spin>
       <span>编辑器加载中...</span>
     </div>
@@ -79,6 +81,8 @@ const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
 const isDark = inject<Ref<boolean>>(IS_DARK)!
 
 const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleDropdown(store)
+
+store.loadArticle(lastKey)
 
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
@@ -114,14 +118,10 @@ onMounted(() => {
       store.saveArticle()
     },
     // 编辑器初始化完成后，将数据渲染到编辑器中
-    after: async () => {
+    after: () => {
       isReady.value = true
 
-      // 从本地存储加载指定文章到store
-      await store.loadArticle(lastKey)
-
       vditor.value!.setValue(store.code)
-
       $emit(EDITOR_LOADED, store.id)
     },
     outline: {

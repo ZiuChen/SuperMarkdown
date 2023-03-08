@@ -74,25 +74,28 @@ export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
 }
 
 export function readonlySideEffect(val: boolean) {
-  if (val) {
-    // 模式切换为分屏预览
-    const btn = document.querySelector('.vditor-hint > button[data-mode=sv]') as HTMLElement
-    btn.click()
+  // 统一处理DOM可能为null的报错
+  try {
+    if (val) {
+      // 模式切换为分屏预览
+      const btn = document.querySelector('.vditor-hint > button[data-mode=sv]') as HTMLElement
+      btn.click()
 
-    // 隐藏工具栏
-    const t = document.querySelector('.vditor-toolbar') as HTMLElement
-    t.style.display = 'none'
+      // 隐藏工具栏
+      const t = document.querySelector('.vditor-toolbar') as HTMLElement
+      t.style.display = 'none'
 
-    // 隐藏编辑区
-    const e = document.querySelector('.vditor-sv') as HTMLElement
-    e.style.display = 'none'
-  } else {
-    // 模式切换为即时渲染
-    const btn = document.querySelector('.vditor-hint > button[data-mode=ir]') as HTMLElement
-    btn.click()
+      // 隐藏编辑区
+      const e = document.querySelector('.vditor-sv') as HTMLElement
+      e.style.display = 'none'
+    } else {
+      // 模式切换为即时渲染
+      const btn = document.querySelector('.vditor-hint > button[data-mode=ir]') as HTMLElement
+      btn.click()
 
-    // 显示工具栏
-    const t = document.querySelector('.vditor-toolbar') as HTMLElement
-    t.style.display = 'block'
-  }
+      // 显示工具栏
+      const t = document.querySelector('.vditor-toolbar') as HTMLElement
+      t.style.display = 'block'
+    }
+  } catch (error) {}
 }

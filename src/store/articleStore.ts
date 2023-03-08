@@ -41,7 +41,7 @@ export const useArticleStore = defineStore('ArticleStore', {
     }
   },
   actions: {
-    async loadArticle(id: string, title?: string) {
+    loadArticle(id: string, title?: string) {
       // 初始化默认文章
       // id为''是SideBar取laskKey时为null 通过逻辑或算出来的
       if (id === '') {
