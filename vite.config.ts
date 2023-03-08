@@ -69,6 +69,7 @@ export default defineConfig({
             if (name === 'input-search') {
               return `@arco-design/web-vue/es/input/style/css.js`
             }
+            if (name === 'doption') return ''
             return `@arco-design/web-vue/es/${name}/style/css.js`
           }
         }

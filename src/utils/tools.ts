@@ -29,6 +29,14 @@ export function notification(options: string | ICustomMessageConfig) {
   }
 }
 
+export function openLink(url: string) {
+  if (isElectron) {
+    utools.shellOpenExternal(url)
+  } else {
+    window.open(url)
+  }
+}
+
 export function classof(o: any) {
   if (o === null) return 'Null'
   if (o === undefined) return 'Undefined'

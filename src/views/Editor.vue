@@ -106,7 +106,7 @@ onMounted(() => {
       delay: 250,
       hljs: {
         lineNumber: true,
-        style: 'github'
+        style: 'solarized-dark'
       },
       theme: {
         current: isDark.value ? 'dark' : 'light'
@@ -116,6 +116,7 @@ onMounted(() => {
       }
     },
     link: {
+      isOpen: false,
       click: (bom) => {
         if (!isCtrl.value) return
         const link = bom.innerHTML

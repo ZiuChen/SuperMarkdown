@@ -118,9 +118,11 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     if (node.children) {
       // 当前文件夹中有文件
       if (node.children.length) {
-        Modal.confirm({
+        Modal.warning({
           title: '当前文件夹中有文件，是否删除？',
           content: '删除后无法恢复',
+          hideCancel: false,
+          cancelText: '取消',
           onOk() {
             // 删除当前文件夹下的所有文件
             const parent = findParent(node.key, treeData.value)
@@ -159,9 +161,11 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       }
     } else {
       // 当前节点是文件
-      Modal.confirm({
+      Modal.warning({
         title: '是否删除当前文件？',
         content: '删除后无法恢复',
+        hideCancel: false,
+        cancelText: '取消',
         onOk() {
           // 删除当前节点
           const parent = findParent(node.key, treeData.value)
@@ -189,8 +193,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     const node = activeNode.value!
     let title = activeNode.value!.title
 
-    Modal.info({
+    Modal.confirm({
       title: `重命名${node.children ? '文件夹' : '文章'}：【${node.title}】`,
+      cancelText: '取消',
       content: () =>
         h(Input, {
           defaultValue: title,

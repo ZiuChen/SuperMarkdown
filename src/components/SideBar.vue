@@ -29,7 +29,17 @@
           <icon-double-up v-else />
         </template>
       </a-button>
-      <a-button class="blank"> </a-button>
+      <a-dropdown :popup-max-height="false">
+        <a-button class="drop-down">更多</a-button>
+        <template #content>
+          <a-doption @click="openLink('http://localhost:5173/project/Markdown/shortcut/')">
+            快捷键一览
+          </a-doption>
+          <a-doption @click="openLink('https://ziuchen.gitee.io/project/Markdown/')">
+            插件主页
+          </a-doption>
+        </template>
+      </a-dropdown>
     </div>
 
     <a-tree
@@ -68,7 +78,7 @@ import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
-import { setItem, getItem, removeItem } from '@/utils'
+import { setItem, getItem, removeItem, openLink } from '@/utils'
 import {
   SWITCH_FILE,
   CATEGORY_CHANGE,
@@ -243,9 +253,8 @@ function handleCreate(key: string) {
 
   .btn-list {
     display: flex;
-    .blank {
+    .drop-down {
       flex: 1;
-      cursor: default;
     }
   }
 }
