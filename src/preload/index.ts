@@ -1,3 +1,2 @@
-import fs from 'fs'
-
-export { fs }
+// @ts-ignore
+window.preload.__dirname = __dirname

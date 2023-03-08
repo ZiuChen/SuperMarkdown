@@ -55,6 +55,16 @@
   </div>
 </template>
 
+<script lang="ts">
+declare global {
+  interface Window {
+    preload: {
+      __dirname: string
+    }
+  }
+}
+</script>
+
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { throttle } from 'lodash-es'
@@ -104,6 +114,8 @@ onMounted(() => {
   // Editor组件挂载后 从ArticleStore中读取文章数据
   // 而数据初始化操作是在SideBar中完成的
   vditor.value = new Vditor('vditor', {
+    _lutePath: `${window.preload.__dirname}/dist/js/lute/lute.min.js`,
+    cdn: `${window.preload.__dirname}`,
     theme: isDark.value ? 'dark' : 'classic',
     // 编辑器内容发生变化时，将数据保存到 store 中
     input: (value) => {
@@ -147,7 +159,8 @@ onMounted(() => {
         style: 'solarized-dark'
       },
       theme: {
-        current: isDark.value ? 'dark' : 'light'
+        current: isDark.value ? 'dark' : 'light',
+        path: `${window.preload.__dirname}/dist/css/content-theme`
       },
       markdown: {
         toc: true
