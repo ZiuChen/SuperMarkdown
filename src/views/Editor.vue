@@ -16,8 +16,8 @@
       id="vditor"
       :class="{
         vditor: true, // enable style of editor
-        loading: !isReady,
-        'vditor--dark': props.isDark
+        loading: !isReady, // 给加载提示布局
+        'vditor--dark': isDark
       }"
     >
       <div class="loading-tip" v-show="!isReady">
@@ -45,13 +45,7 @@ const isCtrl = ref(false)
 const isReady = ref(false) // 编辑器是否初始化完成
 const vditor = ref<Vditor | null>(null)
 
-// const isDark = inject<Ref<boolean>>(IS_DARK)
-const props = defineProps({
-  isDark: {
-    type: Boolean as PropType<boolean>,
-    required: true
-  }
-})
+const isDark = inject<Ref<boolean>>(IS_DARK)!
 
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
@@ -71,7 +65,7 @@ onMounted(() => {
   // Editor组件挂载后 从ArticleStore中读取文章数据
   // 而数据初始化操作是在SideBar中完成的
   vditor.value = new Vditor('vditor', {
-    theme: props.isDark ? 'dark' : 'classic',
+    theme: isDark.value ? 'dark' : 'classic',
     // 编辑器内容发生变化时，将数据保存到 store 中
     input: (value) => {
       store.$patch({
@@ -113,7 +107,7 @@ onMounted(() => {
         style: 'github'
       },
       theme: {
-        current: props.isDark ? 'dark' : 'light'
+        current: isDark.value ? 'dark' : 'light'
       },
       markdown: {
         toc: true
