@@ -39,11 +39,12 @@
       @select="handleSelect"
       @drop="drop"
       :allow-drop="
-        ({ dropNode }) => {
+        ({ dropNode, dropPosition }) => {
           if (dropNode.children) {
             return true
           }
-          return false
+          // 不允许向子节点内部拖拽 但是-1 | 1可以修改顺序
+          return dropPosition !== 0
         }
       "
       showLine
