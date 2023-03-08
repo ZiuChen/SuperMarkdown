@@ -7,7 +7,7 @@
         placeholder="输入文章标题..."
         v-model="store.title"
         @input="handleTitleChange"
-        :disabled="!isReady"
+        :disabled="!isReady || store.isEmpty"
         :max-length="100"
         :show-word-limit="true"
       ></a-input>
@@ -16,14 +16,14 @@
       id="vditor"
       :class="{
         vditor: true, // enable style of editor
-        loading: !isReady, // 给加载提示布局
         'vditor--dark': isDark
       }"
-    >
-      <div class="loading-tip" v-show="!isReady">
-        <a-spin></a-spin>
-        <span>编辑器加载中...</span>
-      </div>
+      v-show="!store.isEmpty"
+    ></div>
+    <div class="tips" v-show="store.isEmpty">请在左侧选择文章</div>
+    <div class="tips" v-show="!isReady">
+      <a-spin></a-spin>
+      <span>编辑器加载中...</span>
     </div>
   </div>
 </template>
@@ -51,7 +51,9 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
   store.id = id
   store.title = title
+
   store.loadArticle(id, title)
+
   vditor.value!.setValue(store.code)
   vditor.value!.focus()
 })
@@ -145,6 +147,7 @@ function _handleTitleChange() {
 
   .header {
     position: relative;
+    padding: 8px;
 
     .title {
       width: 100%;
@@ -166,27 +169,23 @@ function _handleTitleChange() {
     }
   }
 
+  .tips {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    font-size: 1.2rem;
+
+    & > span {
+      margin-left: 0.5rem;
+    }
+  }
+
   .vditor,
   #vditor {
     flex: 1;
-
-    // 编辑器加载中 给loading-tip布局
-    &.loading {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      .loading-tip {
-        color: #999;
-        font-size: 1.2rem;
-
-        & > span {
-          margin-left: 0.5rem;
-        }
-      }
-    }
   }
 }
 </style>

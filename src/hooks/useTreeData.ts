@@ -79,7 +79,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           }
         ]
       })
-      $emit(CREATE_FOLDER, t.toString())
+      $emit(CREATE_FOLDER, (t + 1).toString())
       $emit(CATEGORY_CHANGE)
       Message.success('创建成功')
     } else {
@@ -97,7 +97,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
             }
           ]
         })
-        $emit(CREATE_FOLDER, t.toString())
+        $emit(CREATE_FOLDER, (t + 1).toString())
         $emit(CATEGORY_CHANGE)
         Message.success('创建成功')
       }
@@ -115,53 +115,50 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
 
     // 如果当前节点是文件夹 检查文件夹中是否有文件
     // 有文件则提示用户是否删除 无文件则直接删除
-    if (activeNode.value?.children) {
+    if (node.children) {
       // 当前文件夹中有文件
-      if (activeNode.value.children.length) {
+      if (node.children.length) {
         Modal.confirm({
           title: '当前文件夹中有文件，是否删除？',
           content: '删除后无法恢复',
           onOk() {
             // 删除当前文件夹下的所有文件
-            // 同时清理本地存储
-            const parent = findParent(node.key, treeData.value)
-            console.log(parent)
-            if (parent.length) {
-              // const index = parent[0].children?.findIndex((item) => item.key === node.key)
-              // if (index !== undefined) {
-              //   // 获取子节点
-              //   const children = parent[0].children?.[index]?.children
-              //   // 删除侧栏中数据
-              //   parent[0].children?.splice(index, 1)
-              //   $emit(DELETE_FOLDER, parent[0].key)
-              //   $emit(CATEGORY_CHANGE)
-              //   Message.success('删除成功')
-              // }
-            }
-          }
-        })
-      } else {
-        // 无文件 直接删除
-        Modal.confirm({
-          title: '是否删除当前文件夹？',
-          content: '删除后无法恢复',
-          onOk() {
-            // 删除当前节点
             const parent = findParent(node.key, treeData.value)
             if (parent.length) {
+              // 取到当前文件夹在其父节点的索引
               const index = parent[0].children?.findIndex((item) => item.key === node.key)
               if (index !== undefined) {
+                // 从侧栏中删除此文件夹
                 parent[0].children?.splice(index, 1)
-                $emit(DELETE_FOLDER, parent[0].key)
+                // 将此文件夹下所有文件的key作为payload emit出去
+                $emit(
+                  DELETE_FOLDER,
+                  node.children!.map((item) => item.key)
+                )
                 $emit(CATEGORY_CHANGE)
                 Message.success('删除成功')
               }
             }
           }
         })
+      } else {
+        // 空文件夹 直接删除
+        const parent = findParent(node.key, treeData.value)
+        if (parent.length) {
+          const index = parent[0].children?.findIndex((item) => item.key === node.key)
+          if (index !== undefined) {
+            parent[0].children?.splice(index, 1)
+            $emit(
+              DELETE_FOLDER,
+              node.children!.map((item) => item.key)
+            )
+            $emit(CATEGORY_CHANGE)
+            Message.success('删除成功')
+          }
+        }
       }
     } else {
-      // 当前节点是文件 直接删除
+      // 当前节点是文件
       Modal.confirm({
         title: '是否删除当前文件？',
         content: '删除后无法恢复',
@@ -232,4 +229,32 @@ export function findParent(key: string, treeData: SidebarItem[]): SidebarItem[] 
     }
   })
   return parent
+}
+
+export function findNodeByKey(key: string, treeData: SidebarItem[]) {
+  const loop: (...args: any[]) => SidebarItem | undefined = (data: SidebarItem[]) => {
+    for (let i = 0; i < data.length; i++) {
+      const item = data[i]
+      if (item.key === key) {
+        return item
+      } else if (item.children) {
+        const filterData = loop(item.children)
+        if (filterData) {
+          return filterData
+        }
+      }
+    }
+  }
+
+  return loop(treeData)
+}
+
+export function collectAllParentKeys(key: string, treeData: SidebarItem[]): string[] {
+  const keys = []
+  let parent = findParent(key, treeData)
+  while (parent.length) {
+    keys.push(parent[0].key)
+    parent = findParent(parent[0].key, treeData)
+  }
+  return keys
 }

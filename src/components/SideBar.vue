@@ -64,10 +64,10 @@
 <script setup lang="ts">
 import { sidebar, SidebarItem } from '@/data/sidebar'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
-import { useTreeData, findParent } from '@/hooks/useTreeData'
+import { useTreeData, findNodeByKey, findParent, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
-import { setItem, getItem } from '@/utils'
+import { setItem, getItem, removeItem } from '@/utils'
 import {
   SWITCH_FILE,
   CATEGORY_CHANGE,
@@ -126,20 +126,15 @@ useEventBus(CATEGORY_CHANGE, () => {
 
 // 文章加载完毕 切换active状态
 useEventBus(EDITOR_LOADED, (id: string) => {
-  console.log(id)
   // 选中当前文章对应的节点
   // selectedNode修改后 会触发selectedKeys的计算 进而修改视图
   const node = findNodeByKey(id, originTreeData.value)
+  if (!node) return
   selectedNode.value = node
 
   // 从当前文章向上找到所有父节点 并展开
-  const parentKeys = []
-  let parent = findParent(id, originTreeData.value)
-  while (parent.length) {
-    parentKeys.push(parent[0].key)
-    parent = findParent(parent[0].key, originTreeData.value)
-  }
-  expandedKeys.value = parentKeys
+  const keys = collectAllParentKeys(id, originTreeData.value)
+  expandedKeys.value = keys
 })
 
 // 当前文章标题修改 同步到侧栏展示和本地存储
@@ -151,33 +146,26 @@ useEventBus(CHANGE_TITLE, ({ id, title }: { id: string; title: string }) => {
   }
 })
 
-// 处理创建文件 | 文件夹事件 新建完成后自动切换到新建的文件
-useEventBus(CREATE_FILE, (key: string) => {
-  selectedNode.value = findNodeByKey(key, originTreeData.value)
-})
-useEventBus(CREATE_FOLDER, (key: string) => {
-  // 创建文件夹传递来的是文件夹的key
-  const parent = findNodeByKey(key, originTreeData.value)
-  if (parent) {
-    selectedNode.value = parent.children?.[0]
-  }
-})
+useEventBus(CREATE_FILE, handleCreate)
+useEventBus(CREATE_FOLDER, handleCreate)
 
-// 处理删除文件 | 文件夹事件 删除完成后自动切换到上一个文件
-// 如果上一个文件不存在 则向上查找
-// 入参key为被删除节点的父节点的key
+// 处理文件删除事件 删除完成后直接失焦 提醒用户自己切换文章
 useEventBus(DELETE_FILE, (key: string) => {
-  // 找到父节点
-  const node = findNodeByKey(key, originTreeData.value)
-  if (node && node.children.length > 0) {
-    // 选中父节点中的第一个节点
-    selectedNode.value = node.children[0]
-  }
+  // 首先从本地存储中删除此文章
+  removeItem(`note/${key}`)
+
+  // 切换当前编辑器状态
+  store.isEmpty = true
 })
 useEventBus(DELETE_FOLDER, (key: string) => {
   const node = findNodeByKey(key, originTreeData.value)
-  if (node && node.children.length > 0) {
-    selectedNode.value = node.children[0]
+  if (!node) return
+
+  if (node.children && node.children.length > 0) {
+    // 删除文件夹下的所有文件
+    for (const child of node.children) {
+      removeItem(`note/${child.key}`)
+    }
   }
 })
 
@@ -194,11 +182,8 @@ watch(selectedNode, (val) => {
     setItem('lastkey', val.key)
   } else {
     // 选中的节点是文件夹
-    // 触发事件总线
-    $emit(SWITCH_FILE, {
-      id: '',
-      title: ''
-    })
+    // 切换当前编辑器状态
+    store.isEmpty = true
   }
 })
 
@@ -241,22 +226,13 @@ function searchData(keyword: string, treeData: SidebarItem[]) {
   return loop(treeData)
 }
 
-function findNodeByKey(key: string, treeData: SidebarItem[]) {
-  const loop: (...args: any[]) => any = (data: SidebarItem[]) => {
-    for (let i = 0; i < data.length; i++) {
-      const item = data[i]
-      if (item.key === key) {
-        return item
-      } else if (item.children) {
-        const filterData = loop(item.children)
-        if (filterData) {
-          return filterData
-        }
-      }
-    }
-  }
-
-  return loop(treeData)
+// 处理创建文件 | 文件夹事件 新建完成后自动切换到新建的文件
+// 传递的key都为新建文件的key
+function handleCreate(key: string) {
+  selectedNode.value = findNodeByKey(key, originTreeData.value)!
+  // 展开所有相关节点
+  const keys = collectAllParentKeys(key, originTreeData.value)
+  expandedKeys.value = keys
 }
 </script>
 
