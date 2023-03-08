@@ -85,7 +85,7 @@ const lastKey = getItem('lastkey') || ''
 const searchKey = ref('')
 const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个选中的节点
 const originTreeData = ref(localTreeData)
-const expandedKeys = ref([])
+const expandedKeys = ref<string[]>([])
 const allExpandedKeys = computed(() => {
   const keys: string[] = []
   const loop = (data: SidebarItem[]) => {
@@ -116,6 +116,7 @@ const treeData = computed(() => {
   return searchData(searchKey.value, originTreeData.value)
 })
 
+// 从本地存储加载指定文章到store
 store.loadArticle(lastKey)
 
 // 增删改查操作 都应当触发目录保存
@@ -125,16 +126,20 @@ useEventBus(CATEGORY_CHANGE, () => {
 
 // 文章加载完毕 切换active状态
 useEventBus(EDITOR_LOADED, (id: string) => {
+  console.log(id)
   // 选中当前文章对应的节点
   // selectedNode修改后 会触发selectedKeys的计算 进而修改视图
   const node = findNodeByKey(id, originTreeData.value)
   selectedNode.value = node
 
-  // 展开当前文章对应的父节点
-  const parent = findParent(node, originTreeData.value)
-  if (parent) {
-    expandedKeys.value = [parent.key]
+  // 从当前文章向上找到所有父节点 并展开
+  const parentKeys = []
+  let parent = findParent(id, originTreeData.value)
+  while (parent.length) {
+    parentKeys.push(parent[0].key)
+    parent = findParent(parent[0].key, originTreeData.value)
   }
+  expandedKeys.value = parentKeys
 })
 
 // 当前文章标题修改 同步到侧栏展示和本地存储
@@ -201,7 +206,6 @@ function handleSelect(_: any, data: any) {
   // 如果是文件夹 则不选中 直接展开
   if (data.node.children) {
     // 将当前节点的key添加到expandedKeys中
-    // @ts-ignore
     expandedKeys.value = expandedKeys.value.includes(data.node.key)
       ? expandedKeys.value.filter((item: string) => item !== data.node.key)
       : [...expandedKeys.value, data.node.key]
@@ -210,7 +214,6 @@ function handleSelect(_: any, data: any) {
 }
 
 function toggleExpanded() {
-  // @ts-ignore
   expandedKeys.value = expandedKeys?.value.length ? [] : allExpandedKeys.value
 }
 
