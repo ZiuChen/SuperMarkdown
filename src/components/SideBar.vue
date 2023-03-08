@@ -157,16 +157,12 @@ useEventBus(DELETE_FILE, (key: string) => {
   // 切换当前编辑器状态
   store.isEmpty = true
 })
-useEventBus(DELETE_FOLDER, (key: string) => {
-  const node = findNodeByKey(key, originTreeData.value)
-  if (!node) return
-
-  if (node.children && node.children.length > 0) {
-    // 删除文件夹下的所有文件
-    for (const child of node.children) {
-      removeItem(`note/${child.key}`)
-    }
+useEventBus(DELETE_FOLDER, (keys: string[]) => {
+  // 删除文件夹下的所有文件
+  for (const key of keys) {
+    removeItem(`note/${key}`)
   }
+  // 当前选中的是文件夹 已经失焦了 所以不必像DELETE_FILE那样切换状态
 })
 
 watch(selectedNode, (val) => {

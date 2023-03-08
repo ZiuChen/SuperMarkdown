@@ -169,7 +169,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
             const index = parent[0].children?.findIndex((item) => item.key === node.key)
             if (index !== undefined) {
               parent[0].children?.splice(index, 1)
-              $emit(DELETE_FILE, parent[0].key)
+              $emit(DELETE_FILE, node.key)
               $emit(CATEGORY_CHANGE)
               Message.success('删除成功')
             }
