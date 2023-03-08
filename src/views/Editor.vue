@@ -86,11 +86,6 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   vditor.value!.focus()
 })
 
-useEventBus(EDITOR_LOADED, () => {
-  // 编辑器实例挂载到store.editor上
-  store.editor = vditor.value
-})
-
 useEventListener(document, 'keydown', (e: KeyboardEvent) => {
   const { metaKey, ctrlKey } = e
   isCtrl.value = metaKey || ctrlKey

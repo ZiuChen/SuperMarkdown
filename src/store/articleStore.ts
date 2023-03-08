@@ -2,12 +2,10 @@ import { defineStore } from 'pinia'
 import { setItem, getItem } from '@/utils'
 import { IArticle } from '@/types'
 import { article as defaultArticle } from '@/data/article'
-import Vditor from 'vditor'
 
 // 运行时接口定义
 interface IArticleRuntimeExtend extends IArticle {
   isEmpty: boolean
-  editor: Vditor | null
   isFeature: boolean
   isReadonly: boolean
 }
