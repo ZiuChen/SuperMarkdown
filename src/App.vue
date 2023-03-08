@@ -1,9 +1,7 @@
 <template>
   <router-view v-slot="{ Component }">
     <transition name="opacity" mode="out-in" appear>
-      <div class="main">
-        <component :is="Component" :isDark="isDark" />
-      </div>
+      <component :is="Component" />
     </transition>
   </router-view>
 </template>
@@ -19,7 +17,7 @@ provide(IS_DARK, isDark)
 <style lang="less" scoped>
 .opacity-enter-active,
 .opacity-leave-active {
-  transition: opacity 0.1s;
+  transition: opacity 0.1s ease-in-out;
 }
 
 .opacity-enter,

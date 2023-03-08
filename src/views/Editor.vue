@@ -1,6 +1,7 @@
 <template>
-  <SideBar></SideBar>
   <div class="editor">
+    <SideBar></SideBar>
+
     <div class="header">
       <a-input
         class="title"
@@ -190,16 +191,6 @@ function _handleTitleChange() {
 </script>
 
 <style lang="less" scoped>
-.side-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 220px;
-  height: 100%;
-  background-color: var(--bg-color);
-  border-right: 1px solid var(--text-color-lighter);
-}
-
 .editor {
   position: absolute;
   top: 0;
@@ -210,6 +201,16 @@ function _handleTitleChange() {
   background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
+
+  .side-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100%;
+    background-color: var(--bg-color);
+    border-right: 1px solid var(--text-color-lighter);
+  }
 
   .header {
     display: flex;
@@ -266,8 +267,15 @@ function _handleTitleChange() {
 
 .vditor-toolbar__item {
   display: block !important; // 默认都显示 否则outline会隐藏掉
-  padding: 0 0.2rem;
-  zoom: 90%;
+  padding-left: 2px;
+
+  // 隐藏特定工具栏按钮
+  & > button[data-type='only-edit'] {
+    display: none;
+  }
+  & > button[data-type='edit-mode'] {
+    display: none;
+  }
 }
 
 .vditor-preview {

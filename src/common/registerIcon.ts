@@ -12,7 +12,8 @@ import {
   IconMore,
   IconShareExternal,
   IconLock,
-  IconInfoCircle
+  IconInfoCircle,
+  IconSettings
 } from '@arco-design/web-vue/es/icon'
 
 const icons = [
@@ -28,7 +29,8 @@ const icons = [
   IconMore,
   IconShareExternal,
   IconLock,
-  IconInfoCircle
+  IconInfoCircle,
+  IconSettings
 ]
 
 export function registerIcon(app: App) {
