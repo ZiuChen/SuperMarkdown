@@ -38,6 +38,15 @@
           <a-doption @click="openLink('https://ziuchen.gitee.io/project/Markdown/')">
             插件主页
           </a-doption>
+          <a-doption
+            @click="
+              router.push({
+                path: '/setting'
+              })
+            "
+          >
+            全局设置
+          </a-doption>
         </template>
       </a-dropdown>
     </div>
@@ -95,6 +104,7 @@ import {
   FILE_ENTER
 } from '@/common/symbol'
 import { Message } from '@arco-design/web-vue'
+import { useRouter } from 'vue-router'
 
 const localTreeData = getItem('category') || sidebar
 
@@ -122,6 +132,7 @@ const selectedKeys = computed(() => {
   return []
 })
 
+const router = useRouter()
 const store = useArticleStore()
 const { addFile, addFolder, handleDelete, handleRename } = useTreeData(selectedNode, originTreeData)
 const { drop } = useTreeDrag(originTreeData)

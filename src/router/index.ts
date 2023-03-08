@@ -8,12 +8,12 @@ export default createRouter({
       redirect: '/editor'
     },
     {
-      path: '/home',
-      component: () => import('@/views/Home.vue')
-    },
-    {
       path: '/editor',
       component: () => import('@/views/Editor.vue')
+    },
+    {
+      path: '/setting',
+      component: () => import('@/views/Setting.vue')
     }
   ]
 })

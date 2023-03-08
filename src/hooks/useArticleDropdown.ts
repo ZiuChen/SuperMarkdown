@@ -1,6 +1,6 @@
-import { setFeature, getFeatures, removeFeature } from '@/utils'
+import { setFeature, getFeatures, removeFeature, formatTime } from '@/utils'
 import { useArticleStore } from '@/store'
-import { Message } from '@arco-design/web-vue'
+import { Message, Modal } from '@arco-design/web-vue'
 
 export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
   // loadArticle是将本地存储以$patch的方式更新到store中
@@ -63,7 +63,25 @@ export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
   }
 
   function handleInfoClick() {
-    Message.info('info')
+    Modal.info({
+      title: '文档信息',
+      alignCenter: true,
+      content: () =>
+        h(
+          'div',
+          {
+            style: {
+              'text-align': 'center'
+            }
+          },
+          [
+            h('p', '文章标题：' + store.title),
+            h('p', '创建时间：' + formatTime(store.createAt)),
+            h('p', '更新时间：' + formatTime(store.lastSavedAt))
+          ]
+        ),
+      okText: '确定'
+    })
   }
 
   return {

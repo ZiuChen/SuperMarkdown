@@ -1,4 +1,5 @@
 <template>
+  <SideBar></SideBar>
   <div class="editor">
     <div class="header">
       <a-input
@@ -68,6 +69,7 @@ declare global {
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { throttle } from 'lodash-es'
+import SideBar from '@/components/SideBar.vue'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { useArticleStore } from '@/store'
@@ -115,14 +117,12 @@ onMounted(() => {
   // 而数据初始化操作是在SideBar中完成的
   vditor.value = new Vditor('vditor', {
     _lutePath: `${window.preload.__dirname}/dist/js/lute/lute.min.js`,
-    cdn: `${window.preload.__dirname}`,
+    cdn: window.preload.__dirname,
     theme: isDark.value ? 'dark' : 'classic',
     // 编辑器内容发生变化时，将数据保存到 store 中
     input: (value) => {
-      store.$patch({
-        code: value,
-        lastSavedAt: new Date().getTime()
-      })
+      store.code = value
+      store.lastSavedAt = new Date().getTime()
 
       // 每次输入文字都把文章id更新到本地
       setItem('lastkey', store.id)
@@ -190,10 +190,24 @@ function _handleTitleChange() {
 </script>
 
 <style lang="less" scoped>
+.side-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 100%;
+  background-color: var(--bg-color);
+  border-right: 1px solid var(--text-color-lighter);
+}
+
 .editor {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 220px;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
 
