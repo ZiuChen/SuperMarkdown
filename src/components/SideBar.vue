@@ -29,7 +29,7 @@
           <icon-double-up v-else />
         </template>
       </a-button>
-      <a-button class="words">文章字数:</a-button>
+      <a-button class="blank"> </a-button>
     </div>
 
     <a-tree
@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import { sidebar, SidebarItem } from '@/data/sidebar'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
-import { useTreeData, findNodeByKey, findParent, collectAllParentKeys } from '@/hooks/useTreeData'
+import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
 import { setItem, getItem, removeItem } from '@/utils'
@@ -86,6 +86,7 @@ const searchKey = ref('')
 const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个选中的节点
 const originTreeData = ref(localTreeData)
 const expandedKeys = ref<string[]>([])
+
 const allExpandedKeys = computed(() => {
   const keys: string[] = []
   const loop = (data: SidebarItem[]) => {
@@ -241,8 +242,9 @@ function handleCreate(key: string) {
 
   .btn-list {
     display: flex;
-    .words {
+    .blank {
       flex: 1;
+      cursor: default;
     }
   }
 }

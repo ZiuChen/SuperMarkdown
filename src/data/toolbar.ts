@@ -17,6 +17,9 @@ export const toolbar = [
   'strike',
   'check',
 
+  'undo',
+  'redo',
+
   'table',
   {
     name: 'only-edit',

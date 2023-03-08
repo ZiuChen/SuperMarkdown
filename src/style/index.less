@@ -1,9 +1,17 @@
+@import '@/style/scrollbar.less';
+
 body,
 html {
   margin: 0;
   padding: 0;
   color: var(--text-color);
   background-color: var(--bg-color);
+
+  // 统一滚动条样式
+  .scrollbar();
+  & * {
+    .scrollbar();
+  }
 }
 
 body {

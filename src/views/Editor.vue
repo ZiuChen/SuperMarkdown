@@ -87,7 +87,7 @@ onMounted(() => {
       $emit(EDITOR_LOADED, store.id)
     },
     outline: {
-      enable: true,
+      enable: false,
       position: 'right'
     },
     counter: {
@@ -100,8 +100,8 @@ onMounted(() => {
     toolbarConfig: {
       pin: true
     },
+    undoDelay: 150,
     placeholder: '输入文章内容...',
-    mode: 'sv',
     preview: {
       delay: 250,
       hljs: {
@@ -192,6 +192,10 @@ function _handleTitleChange() {
 
 <style lang="less">
 // 调整toolbar的样式
+.vditor-toolbar {
+  padding-left: 0 !important;
+}
+
 .vditor-toolbar__item {
   display: block !important; // 默认都显示 否则outline会隐藏掉
   padding: 0 0.2rem;
