@@ -2,9 +2,20 @@ import { defineStore } from 'pinia'
 import { setItem, getItem } from '@/utils'
 import { IArticle } from '@/types'
 import { article as defaultArticle } from '@/data/article'
+import Vditor from 'vditor'
 
-interface IArticleExtend extends IArticle {
+// 运行时接口定义
+interface IArticleRuntimeExtend extends IArticle {
   isEmpty: boolean
+  editor: Vditor | null
+  isFeature: boolean
+  isReadonly: boolean
+}
+
+// 保存在本地的接口定义
+interface IArticleSaveExtend extends IArticle {
+  isFeature?: boolean
+  isReadonly?: boolean
 }
 
 export const useArticleStore = defineStore('ArticleStore', {
@@ -14,12 +25,17 @@ export const useArticleStore = defineStore('ArticleStore', {
       isEmpty: true,
 
       // 保存到本地数据的内容
+      // 特殊属性标识符
+      isFeature: false,
+      isReadonly: false,
+
+      // 文章内容相关
       id: '',
       title: '',
       code: '',
       lastSavedAt: 0,
       createAt: 0
-    } as IArticleExtend
+    } as IArticleRuntimeExtend
   },
   getters: {
     articleKey: (state) => {
@@ -28,7 +44,7 @@ export const useArticleStore = defineStore('ArticleStore', {
   },
   actions: {
     async loadArticle(id: string, title?: string) {
-      // 初始化默认文章
+      // 初始化默认文章 由SideBar中的lastKey传入 id
       if (id === '') {
         this.$patch(defaultArticle)
         setItem('lastkey', defaultArticle.id)
@@ -59,13 +75,23 @@ export const useArticleStore = defineStore('ArticleStore', {
     },
     async saveArticle(): Promise<boolean> {
       return new Promise((resolve) => {
-        setItem(this.articleKey, {
+        const data: IArticleSaveExtend = {
           id: this.id,
           title: this.title,
           code: this.code,
           lastSavedAt: Date.now(),
           createAt: this.createAt
-        })
+        }
+
+        // 仅在为true时才有键 否则键都不应该存在
+        if (this.isFeature) {
+          data.isFeature = true
+        }
+        if (this.isReadonly) {
+          data.isReadonly = true
+        }
+
+        setItem(this.articleKey, data)
         resolve(true)
       })
     }

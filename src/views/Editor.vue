@@ -16,19 +16,19 @@
           <icon-more></icon-more>
         </a-button>
         <template #content>
-          <a-doption>
+          <a-doption @click="handleFeatureClick">
             <template #icon>
               <icon-share-external />
             </template>
-            设置全局关键字
+            {{ store.isFeature ? '移除全局关键字' : '添加文章关键字' }}
           </a-doption>
-          <a-doption>
+          <a-doption @click="handleReadonlyClick">
             <template #icon>
               <icon-lock />
             </template>
-            只读模式
+            {{ store.isReadonly ? '取消只读模式' : '只读模式' }}
           </a-doption>
-          <a-doption>
+          <a-doption @click="handleInfoClick">
             <template #icon>
               <icon-info-circle />
             </template>
@@ -63,6 +63,7 @@ import { toolbar } from '@/data/toolbar'
 import { isElectron, setItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
+import { useArticleDropdown } from '@/hooks/useArticleDropdown'
 import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE, IS_DARK } from '@/common/symbol'
 
 const store = useArticleStore()
@@ -71,6 +72,8 @@ const isReady = ref(false) // 编辑器是否初始化完成
 const vditor = ref<Vditor | null>(null)
 
 const isDark = inject<Ref<boolean>>(IS_DARK)!
+
+const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleDropdown(store)
 
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
@@ -81,6 +84,11 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
 
   vditor.value!.setValue(store.code)
   vditor.value!.focus()
+})
+
+useEventBus(EDITOR_LOADED, () => {
+  // 编辑器实例挂载到store.editor上
+  store.editor = vditor.value
 })
 
 useEventListener(document, 'keydown', (e: KeyboardEvent) => {
