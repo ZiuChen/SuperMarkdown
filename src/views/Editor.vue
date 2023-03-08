@@ -11,6 +11,31 @@
         :max-length="100"
         :show-word-limit="true"
       ></a-input>
+      <a-dropdown>
+        <a-button class="dropdown-btn" :disabled="!isReady || store.isEmpty">
+          <icon-more></icon-more>
+        </a-button>
+        <template #content>
+          <a-doption>
+            <template #icon>
+              <icon-share-external />
+            </template>
+            设置全局关键字
+          </a-doption>
+          <a-doption>
+            <template #icon>
+              <icon-lock />
+            </template>
+            只读模式
+          </a-doption>
+          <a-doption>
+            <template #icon>
+              <icon-info-circle />
+            </template>
+            文档信息
+          </a-doption>
+        </template>
+      </a-dropdown>
     </div>
     <div
       id="vditor"
@@ -147,6 +172,9 @@ function _handleTitleChange() {
   flex-direction: column;
 
   .header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     padding: 8px;
 
@@ -160,12 +188,11 @@ function _handleTitleChange() {
       }
     }
 
-    .btn-list {
-      display: flex;
-      align-items: center;
-
-      .ant-btn {
-        margin-left: 0.5rem;
+    .dropdown-btn {
+      height: 3em;
+      margin-left: 8px;
+      .arco-icon {
+        zoom: 1.2;
       }
     }
   }
