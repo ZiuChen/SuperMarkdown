@@ -6,6 +6,7 @@ import { article as defaultArticle } from '@/data/article'
 // 运行时接口定义
 interface IArticleRuntimeExtend extends IArticle {
   isEmpty: boolean
+  isSource: boolean
   isFeature: boolean
   isReadonly: boolean
 }
@@ -21,6 +22,7 @@ export const useArticleStore = defineStore('ArticleStore', {
     return {
       // 运行时标识
       isEmpty: true,
+      isSource: false, // 是否为源码模式 与isReadonly互斥 不同为true
 
       // 保存到本地数据的内容
       // 特殊属性标识符
