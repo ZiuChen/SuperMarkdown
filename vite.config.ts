@@ -63,13 +63,10 @@ export default defineConfig({
           libraryName: '@arco-design/web-vue',
           esModule: true,
           resolveStyle: (name) => {
-            if (name === 'button-group') {
-              return `@arco-design/web-vue/es/button/style/css.js`
-            }
-            if (name === 'input-search') {
-              return `@arco-design/web-vue/es/input/style/css.js`
-            }
+            if (name === 'button-group') return `@arco-design/web-vue/es/button/style/css.js`
+            if (name === 'input-search') return `@arco-design/web-vue/es/input/style/css.js`
             if (name === 'doption') return ''
+            if (name === 'radio-group') return ''
             return `@arco-design/web-vue/es/${name}/style/css.js`
           }
         }

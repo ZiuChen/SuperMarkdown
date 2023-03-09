@@ -14,6 +14,8 @@ declare module '@vue/runtime-core' {
     ADropdown: typeof import('@arco-design/web-vue')['Dropdown']
     AInput: typeof import('@arco-design/web-vue')['Input']
     AInputSearch: typeof import('@arco-design/web-vue')['InputSearch']
+    ARadio: typeof import('@arco-design/web-vue')['Radio']
+    ARadioGroup: typeof import('@arco-design/web-vue')['RadioGroup']
     ASpin: typeof import('@arco-design/web-vue')['Spin']
     ATree: typeof import('@arco-design/web-vue')['Tree']
     NavBar: typeof import('./src/components/NavBar.vue')['default']

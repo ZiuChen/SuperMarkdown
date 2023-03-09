@@ -87,12 +87,14 @@ import { toolbar } from '@/data/toolbar'
 import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
+import { useArticleDropdown } from '@/hooks/useArticleDropdown'
 import {
-  useArticleDropdown,
-  readonlySideEffect,
-  sourceSideEffect
-} from '@/hooks/useArticleDropdown'
-import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE, IS_DARK } from '@/common/symbol'
+  SWITCH_FILE,
+  EDITOR_LOADED,
+  CHANGE_TITLE,
+  IS_DARK,
+  CATEGORY_MODE_CHANGE
+} from '@/common/symbol'
 
 const lastKey = getItem('lastkey') || ''
 
@@ -118,8 +120,21 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
 
   store.loadArticle(id, title)
 
-  vditor.value!.setValue(store.code)
+  // 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
+  vditor.value!.setValue(store.code, true)
   vditor.value!.focus()
+})
+
+useEventBus(CATEGORY_MODE_CHANGE, (mode: string) => {
+  const d = document.querySelector('.vditor-outline') as HTMLElement
+
+  if (mode === 'outline') {
+    if (!d) return
+    d.style.display = 'block'
+  } else {
+    if (!d) return
+    d.style.display = 'none'
+  }
 })
 
 useEventListener(document, 'keydown', (e: KeyboardEvent) => {
@@ -221,8 +236,6 @@ function _handleTitleChange() {
     left: 0;
     width: 220px;
     height: 100%;
-    background-color: var(--bg-color);
-    border-right: 1px solid var(--text-color-lighter);
   }
 
   .header {
@@ -291,7 +304,21 @@ function _handleTitleChange() {
   }
 }
 
+.vditor-outline {
+  position: fixed;
+  left: 0;
+  top: 33px;
+  width: 220px;
+  height: 100%;
+
+  .vditor-outline__title {
+    display: none;
+  }
+}
+
 .vditor-preview {
+  border: none;
+
   // 预览页顶部工具条
   .vditor-preview__action {
     display: none;

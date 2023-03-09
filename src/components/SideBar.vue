@@ -1,6 +1,15 @@
 <template>
   <div class="side-bar">
-    <a-input-search class="search" v-model="searchKey" placeholder="检索文章标题" />
+    <a-radio-group class="switch" type="button" v-model="currentMode">
+      <a-radio value="category" :default-checked="true">目录</a-radio>
+      <a-radio value="outline">大纲</a-radio>
+    </a-radio-group>
+
+    <a-input class="search" v-model="searchKey" placeholder="检索文章标题" allow-clear>
+      <template #prefix>
+        <icon-search />
+      </template>
+    </a-input>
 
     <div class="btn-list">
       <a-button title="新文章" @click="addFile">
@@ -110,7 +119,8 @@ import {
   CREATE_FOLDER,
   DELETE_FILE,
   DELETE_FOLDER,
-  FILE_ENTER
+  FILE_ENTER,
+  CATEGORY_MODE_CHANGE
 } from '@/common/symbol'
 import { Message } from '@arco-design/web-vue'
 import { useRouter } from 'vue-router'
@@ -121,6 +131,7 @@ const searchKey = ref('')
 const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个选中的节点
 const originTreeData = ref(localTreeData)
 const expandedKeys = ref<string[]>([])
+const currentMode = ref('category')
 
 const allExpandedKeys = computed(() => {
   const keys: string[] = []
@@ -235,6 +246,10 @@ watch(selectedNode, (val) => {
   }
 })
 
+watch(currentMode, (val) => {
+  $emit(CATEGORY_MODE_CHANGE, val)
+})
+
 function handleSelect(_: any, data: any) {
   // 如果是文件夹 则不选中 直接展开
   if (data.node.children) {
@@ -286,16 +301,39 @@ function handleCreate(key: string) {
 
 <style lang="less" scoped>
 .side-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
   background-color: var(--bg-color);
+
+  .switch {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 98%;
+
+    & > * {
+      flex: 1;
+    }
+  }
+
   .search {
     width: 100%;
   }
 
   .btn-list {
+    position: absolute;
+    bottom: 0;
     display: flex;
     .drop-down {
       flex: 1;
     }
+  }
+
+  .arco-tree {
+    width: 100%;
+    align-self: flex-start;
   }
 }
 </style>
