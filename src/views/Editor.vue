@@ -22,7 +22,7 @@
           <icon-more v-else></icon-more>
         </a-button>
         <template #content>
-          <a-doption @click="handleFeatureClick">
+          <a-doption @click="handleFeatureClick" v-show="isElectron">
             <template #icon>
               <icon-share-external />
             </template>
@@ -143,11 +143,13 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 })
 
 onMounted(() => {
+  const __dirname = isElectron ? window.preload.__dirname : 'https://unpkg.com/vditor'
+
   // Editor组件挂载后 从ArticleStore中读取文章数据
   // 而数据初始化操作是在SideBar中完成的
   vditor.value = new Vditor('vditor', {
-    _lutePath: `${window.preload.__dirname}/dist/js/lute/lute.min.js`,
-    cdn: window.preload.__dirname,
+    _lutePath: `${__dirname}/dist/js/lute/lute.min.js`,
+    cdn: __dirname,
     theme: isDark.value ? 'dark' : 'classic',
     // 编辑器内容发生变化时，将数据保存到 store 中
     input: (value) => {
@@ -164,6 +166,7 @@ onMounted(() => {
       isReady.value = true
 
       vditor.value!.setValue(store.code)
+      nextTick(() => vditor.value!.focus())
       $emit(EDITOR_LOADED, store.id)
     },
     outline: {
@@ -180,17 +183,17 @@ onMounted(() => {
     toolbarConfig: {
       pin: true
     },
-    undoDelay: 150,
+    undoDelay: 100,
     placeholder: '输入文章内容...',
     preview: {
-      delay: 250,
+      delay: 200,
       hljs: {
         lineNumber: true,
         style: 'solarized-dark'
       },
       theme: {
         current: isDark.value ? 'dark' : 'light',
-        path: `${window.preload.__dirname}/dist/css/content-theme`
+        path: `${__dirname}/dist/css/content-theme`
       },
       markdown: {
         toc: true

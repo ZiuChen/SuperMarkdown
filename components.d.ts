@@ -13,7 +13,6 @@ declare module '@vue/runtime-core' {
     ADoption: typeof import('@arco-design/web-vue')['Doption']
     ADropdown: typeof import('@arco-design/web-vue')['Dropdown']
     AInput: typeof import('@arco-design/web-vue')['Input']
-    AInputSearch: typeof import('@arco-design/web-vue')['InputSearch']
     ARadio: typeof import('@arco-design/web-vue')['Radio']
     ARadioGroup: typeof import('@arco-design/web-vue')['RadioGroup']
     ASpin: typeof import('@arco-design/web-vue')['Spin']
