@@ -1,5 +1,6 @@
 import { MessageConfig, Message } from '@arco-design/web-vue'
 import { isElectron } from '@/utils'
+import { statSync } from '@/preload'
 
 // 修改MessageConfig.content为string
 export interface ICustomMessageConfig extends MessageConfig {
@@ -61,4 +62,15 @@ export function formatTime(timeStamp: number) {
   return `${year}年${formatNumber(month)}月${formatNumber(day)}日 ${formatNumber(
     hour
   )}:${formatNumber(minute)}:${formatNumber(second)}`
+}
+
+export function calcFileSize(path: string) {
+  let size = statSync(path).size
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  let unitIndex = 0
+  while (size > 1024) {
+    size /= 1024
+    unitIndex++
+  }
+  return [size, size.toFixed(2) + units[unitIndex]]
 }
