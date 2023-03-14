@@ -1,12 +1,9 @@
 import { defineStore } from 'pinia'
+import Vditor from 'vditor'
 
 export const useMainStore = defineStore('MainStore', {
   state: () => ({
-    count: 0
-  }),
-  actions: {
-    increment() {
-      this.count++
-    }
-  }
+    editor: null as Vditor | null,
+    attachments: [] as string[]
+  })
 })

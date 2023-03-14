@@ -18,7 +18,7 @@ export default defineConfig({
   // external
   build: {
     rollupOptions: {
-      external: ['electron', 'utools', 'process', 'vm']
+      external: ['electron', 'utools', 'process', 'vm', 'fs']
     }
   },
   esbuild: {
@@ -39,7 +39,7 @@ export default defineConfig({
     utools({
       external: 'uTools',
       preload: {
-        path: './src/preload/index.ts',
+        path: './public/preload.js',
         watch: true,
         name: 'window.preload',
         minify: true

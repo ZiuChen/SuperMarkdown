@@ -30,11 +30,17 @@ export function removeItem(key: string) {
 }
 
 export function postAttachment(...args: TPostAttachment) {
-  if (!isElectron) return Message.error('当前环境暂不支持此功能')
+  if (!isElectron) {
+    Message.error('当前环境暂不支持此功能')
+    return
+  }
   return utools.db.postAttachment(...args)
 }
 
 export function getAttachment(...args: TGetAttachment) {
-  if (!isElectron) return Message.error('当前环境暂不支持此功能')
+  if (!isElectron) {
+    Message.error('当前环境暂不支持此功能')
+    return
+  }
   return utools.db.getAttachment(...args)
 }

@@ -6,7 +6,7 @@
   "main": "index.html",
   "preload": "preload.js",
   "development": {
-    "main": "http://localhost:8082/"
+    "main": "http://localhost:8083/"
   },
   "logo": "logo.png",
   "platform": ["win32", "darwin", "linux"],

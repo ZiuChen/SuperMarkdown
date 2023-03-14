@@ -1,6 +1,6 @@
 import { MessageConfig, Message } from '@arco-design/web-vue'
-import { isElectron } from '@/utils'
-import { statSync } from '@/preload'
+import { isElectron, getAttachment } from '@/utils'
+import { statSync, Buffer } from '@/preload'
 
 // 修改MessageConfig.content为string
 export interface ICustomMessageConfig extends MessageConfig {
@@ -64,13 +64,30 @@ export function formatTime(timeStamp: number) {
   )}:${formatNumber(minute)}:${formatNumber(second)}`
 }
 
+/**
+ * [Electron Only] 计算文件大小
+ * @param path 文件路径
+ * @returns [size, sizeWithUnit] 代表文件原始大小(Byte)和带单位的文件大小
+ */
 export function calcFileSize(path: string) {
-  let size = statSync(path).size
+  if (!isElectron) return [0, '0B']
+
+  const originSize = statSync(path).size
   const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  let size = originSize
   let unitIndex = 0
   while (size > 1024) {
     size /= 1024
     unitIndex++
   }
-  return [size, size.toFixed(2) + units[unitIndex]]
+  return [originSize, size.toFixed(2) + units[unitIndex]]
+}
+
+export function loadImage(docId: string) {
+  if (!isElectron) return ''
+
+  const res = getAttachment(docId)
+  const base64 = `data:image/png;base64,${res ? Buffer.from(res).toString('base64') : ''}`
+
+  return base64
 }

@@ -66,25 +66,15 @@
   </div>
 </template>
 
-<script lang="ts">
-declare global {
-  interface Window {
-    preload: {
-      __dirname: string
-    }
-  }
-}
-</script>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { throttle } from 'lodash-es'
 import SideBar from '@/components/SideBar.vue'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import { useArticleStore } from '@/store'
+import { useArticleStore, useMainStore } from '@/store'
 import { toolbar } from '@/data/toolbar'
-import { isElectron, setItem, getItem } from '@/utils'
+import { isElectron, setItem, getItem, loadImage } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useArticleDropdown } from '@/hooks/useArticleDropdown'
@@ -95,13 +85,14 @@ import {
   IS_DARK,
   CATEGORY_MODE_CHANGE
 } from '@/common/symbol'
+import { __dirname } from '@/preload'
 
 const lastKey = getItem('lastkey') || ''
 
 const store = useArticleStore()
+const mainStore = useMainStore()
 const isCtrl = ref(false)
 const isReady = ref(false) // 编辑器是否初始化完成
-const vditor = ref<Vditor | null>(null)
 
 const titleInputDisabled = computed(() => !isReady.value || store.isEmpty || store.isReadonly)
 const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
@@ -121,8 +112,8 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   store.loadArticle(id, title)
 
   // 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
-  vditor.value!.setValue(store.code, true)
-  vditor.value!.focus()
+  mainStore.editor!.setValue(store.code, true)
+  mainStore.editor!.focus()
 })
 
 useEventBus(CATEGORY_MODE_CHANGE, (mode: string) => {
@@ -143,11 +134,9 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 })
 
 onMounted(() => {
-  const __dirname = isElectron ? window.preload.__dirname : 'https://unpkg.com/vditor'
-
   // Editor组件挂载后 从ArticleStore中读取文章数据
   // 而数据初始化操作是在SideBar中完成的
-  vditor.value = new Vditor('vditor', {
+  mainStore.editor = new Vditor('vditor', {
     _lutePath: `${__dirname}/dist/js/lute/lute.min.js`,
     cdn: __dirname,
     theme: isDark.value ? 'dark' : 'classic',
@@ -162,12 +151,76 @@ onMounted(() => {
       store.saveArticle()
     },
     // 编辑器初始化完成后，将数据渲染到编辑器中
-    after: () => {
+    after() {
       isReady.value = true
 
-      vditor.value!.setValue(store.code)
-      nextTick(() => vditor.value!.focus())
+      mainStore.editor!.setValue(store.code)
+      nextTick(() => mainStore.editor!.focus())
       $emit(EDITOR_LOADED, store.id)
+
+      const lute = mainStore.editor!.vditor.lute
+
+      lute.SetJSRenderers({
+        renderers: {
+          Md2VditorIRDOM: {
+            // 将![](attachment:{hash}) 转换为 <img src="{base64}" />
+            renderImage: (node, entering) => {
+              if (entering) {
+                return [``, Lute.WalkContinue]
+              } else {
+                // @ts-ignore
+                const linkUrl: string | undefined = this.linkUrl
+                // @ts-ignore
+                const linkText: string | undefined = this.linkText
+
+                if (linkUrl && linkUrl.startsWith('attachment:')) {
+                  const docId = linkUrl.replace(':', '/')
+                  const base64 = loadImage(docId)
+                  return [`<img src="${base64}" alt="${linkText}" />`, Lute.WalkContinue]
+                } else {
+                  return [`<img src="${linkUrl}" alt="${linkText}" />`, Lute.WalkContinue]
+                }
+              }
+            },
+            renderLink: (node, entering) => {
+              // @ts-ignore
+              const linkUrl = this.linkUrl
+              // @ts-ignore
+              const linkText = this.linkText
+
+              console.log(linkUrl, linkText)
+
+              if (entering) {
+                return [`<a href="${linkUrl}" alt="${linkText}">${linkText}`, Lute.WalkContinue]
+              } else {
+                return [`</a>`, Lute.WalkContinue]
+              }
+            },
+            renderLinkText: (node, entering) => {
+              const linkText = node.TokensStr()
+              // @ts-ignore
+              this.linkText = linkText
+              console.log('renderLinkText', linkText)
+              if (entering) {
+                return [``, Lute.WalkContinue]
+              } else {
+                return [``, Lute.WalkContinue]
+              }
+            },
+            renderLinkDest: (node, entering) => {
+              const linkUrl = node.TokensStr()
+              // @ts-ignore
+              this.linkUrl = linkUrl
+              console.log('renderLinkDest', linkUrl)
+              if (entering) {
+                return [``, Lute.WalkContinue]
+              } else {
+                return [``, Lute.WalkContinue]
+              }
+            }
+          }
+        }
+      })
     },
     outline: {
       enable: false,
