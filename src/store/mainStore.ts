@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
-import Vditor from 'vditor'
 
 export const useMainStore = defineStore('MainStore', {
   state: () => ({
-    editor: null as Vditor | null,
+    editor: null,
     attachments: [] as string[]
   })
 })

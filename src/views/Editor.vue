@@ -50,6 +50,8 @@
       </a-dropdown>
     </div>
 
+    <div id="editor"></div>
+
     <div
       id="vditor"
       :class="{
@@ -70,8 +72,6 @@
 import { ref, onMounted } from 'vue'
 import { throttle } from 'lodash-es'
 import SideBar from '@/components/SideBar.vue'
-import Vditor from 'vditor'
-import 'vditor/dist/index.css'
 import { useArticleStore, useMainStore } from '@/store'
 import { toolbar } from '@/data/toolbar'
 import { isElectron, setItem, getItem } from '@/utils'
@@ -86,6 +86,17 @@ import {
   CATEGORY_MODE_CHANGE
 } from '@/common/symbol'
 import { __dirname } from '@/preload'
+
+import 'bytemd/dist/index.css'
+import 'highlight.js/styles/default.css'
+import gfm from '@bytemd/plugin-gfm'
+import breaks from '@bytemd/plugin-breaks'
+import frontmatter from '@bytemd/plugin-frontmatter'
+import highlight from '@bytemd/plugin-highlight'
+import math from '@bytemd/plugin-math'
+import mermaid from '@bytemd/plugin-mermaid'
+import mediumZoom from '@bytemd/plugin-medium-zoom'
+import { Editor } from 'bytemd'
 
 const lastKey = getItem('lastkey') || ''
 
@@ -112,8 +123,8 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   store.loadArticle(id, title)
 
   // 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
-  mainStore.editor!.setValue(store.code, true)
-  mainStore.editor!.focus()
+  // mainStore.editor!.setValue(store.code, true)
+  // mainStore.editor!.focus()
 })
 
 useEventBus(CATEGORY_MODE_CHANGE, (mode: string) => {
@@ -136,67 +147,95 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 onMounted(() => {
   // Editor组件挂载后 从ArticleStore中读取文章数据
   // 而数据初始化操作是在SideBar中完成的
-  mainStore.editor = new Vditor('vditor', {
-    _lutePath: `${__dirname}/dist/js/lute/lute.min.js`,
-    cdn: __dirname,
-    theme: isDark.value ? 'dark' : 'classic',
-    // 编辑器内容发生变化时，将数据保存到 store 中
-    input: (value) => {
-      store.code = value
-      store.lastSavedAt = new Date().getTime()
 
-      // 每次输入文字都把文章id更新到本地
-      setItem('lastkey', store.id)
-
-      store.saveArticle()
-    },
-    // 编辑器初始化完成后，将数据渲染到编辑器中
-    after() {
-      isReady.value = true
-
-      mainStore.editor!.setValue(store.code)
-      nextTick(() => mainStore.editor!.focus())
-      $emit(EDITOR_LOADED, store.id)
-    },
-    outline: {
-      enable: false,
-      position: 'right'
-    },
-    counter: {
-      enable: true
-    },
-    hint: {
-      parse: false
-    },
-    toolbar,
-    toolbarConfig: {
-      pin: true
-    },
-    undoDelay: 50,
-    placeholder: '输入文章内容...',
-    preview: {
-      delay: 100,
-      hljs: {
-        lineNumber: true,
-        style: 'solarized-dark'
-      },
-      theme: {
-        current: isDark.value ? 'dark' : 'light',
-        path: `${__dirname}/dist/css/content-theme`
-      },
-      markdown: {
-        toc: true
-      }
-    },
-    link: {
-      isOpen: false,
-      click: (bom) => {
-        if (!isCtrl.value) return
-        const link = bom.innerHTML
-        isElectron ? utools.shellOpenExternal(link) : window.open(link)
-      }
+  // @ts-ignore
+  const editor = new Editor({
+    target: document.querySelector('#editor'),
+    props: {
+      value: store.code,
+      plugins: [gfm(), breaks(), frontmatter(), highlight(), math(), mermaid(), mediumZoom()]
     }
   })
+
+  mainStore.editor = editor
+
+  // 初始化完毕
+  isReady.value = true
+  $emit(EDITOR_LOADED, store.id)
+
+  // @ts-ignore
+  editor.$on('change', (e) => {
+    const value = e.detail.value
+    // @ts-ignore
+    editor.$set({ value })
+
+    // 更新store中的数据
+    store.code = e.detail.value
+    store.lastSavedAt = new Date().getTime()
+
+    // 每次输入文字都把文章id更新到本地
+    setItem('lastkey', store.id)
+    store.saveArticle()
+  })
+
+  // mainStore.editor = new Vditor('vditor', {
+  //   _lutePath: `${__dirname}/dist/js/lute/lute.min.js`,
+  //   cdn: __dirname,
+  //   theme: isDark.value ? 'dark' : 'classic',
+  //   // 编辑器内容发生变化时，将数据保存到 store 中
+  //   input: (value) => {
+  //     store.code = value
+  //     store.lastSavedAt = new Date().getTime()
+  //     // 每次输入文字都把文章id更新到本地
+  //     setItem('lastkey', store.id)
+  //     store.saveArticle()
+  //   },
+  //   // 编辑器初始化完成后，将数据渲染到编辑器中
+  //   after() {
+  //     isReady.value = true
+  //     mainStore.editor!.setValue(store.code)
+  //     nextTick(() => mainStore.editor!.focus())
+  //     $emit(EDITOR_LOADED, store.id)
+  //   },
+  //   outline: {
+  //     enable: false,
+  //     position: 'right'
+  //   },
+  //   counter: {
+  //     enable: true
+  //   },
+  //   hint: {
+  //     parse: false
+  //   },
+  //   toolbar,
+  //   toolbarConfig: {
+  //     pin: true
+  //   },
+  //   undoDelay: 50,
+  //   placeholder: '输入文章内容...',
+  //   preview: {
+  //     delay: 100,
+  //     hljs: {
+  //       lineNumber: true,
+  //       style: 'solarized-dark'
+  //     },
+  //     theme: {
+  //       current: isDark.value ? 'dark' : 'light',
+  //       path: `${__dirname}/dist/css/content-theme`
+  //     },
+  //     markdown: {
+  //       toc: true
+  //     }
+  //   },
+  //   link: {
+  //     isOpen: false,
+  //     click: (bom) => {
+  //       if (!isCtrl.value) return
+  //       const link = bom.innerHTML
+  //       isElectron ? utools.shellOpenExternal(link) : window.open(link)
+  //     }
+  //   }
+  // })
 })
 
 // 处理标题输入事件
