@@ -74,7 +74,7 @@ import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { useArticleStore, useMainStore } from '@/store'
 import { toolbar } from '@/data/toolbar'
-import { isElectron, setItem, getItem, loadImage } from '@/utils'
+import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useArticleDropdown } from '@/hooks/useArticleDropdown'
@@ -157,70 +157,6 @@ onMounted(() => {
       mainStore.editor!.setValue(store.code)
       nextTick(() => mainStore.editor!.focus())
       $emit(EDITOR_LOADED, store.id)
-
-      const lute = mainStore.editor!.vditor.lute
-
-      lute.SetJSRenderers({
-        renderers: {
-          Md2VditorIRDOM: {
-            // 将![](attachment:{hash}) 转换为 <img src="{base64}" />
-            renderImage: (node, entering) => {
-              if (entering) {
-                return [``, Lute.WalkContinue]
-              } else {
-                // @ts-ignore
-                const linkUrl: string | undefined = this.linkUrl
-                // @ts-ignore
-                const linkText: string | undefined = this.linkText
-
-                if (linkUrl && linkUrl.startsWith('attachment:')) {
-                  const docId = linkUrl.replace(':', '/')
-                  const base64 = loadImage(docId)
-                  return [`<img src="${base64}" alt="${linkText}" />`, Lute.WalkContinue]
-                } else {
-                  return [`<img src="${linkUrl}" alt="${linkText}" />`, Lute.WalkContinue]
-                }
-              }
-            },
-            renderLink: (node, entering) => {
-              // @ts-ignore
-              const linkUrl = this.linkUrl
-              // @ts-ignore
-              const linkText = this.linkText
-
-              console.log(linkUrl, linkText)
-
-              if (entering) {
-                return [`<a href="${linkUrl}" alt="${linkText}">${linkText}`, Lute.WalkContinue]
-              } else {
-                return [`</a>`, Lute.WalkContinue]
-              }
-            },
-            renderLinkText: (node, entering) => {
-              const linkText = node.TokensStr()
-              // @ts-ignore
-              this.linkText = linkText
-              console.log('renderLinkText', linkText)
-              if (entering) {
-                return [``, Lute.WalkContinue]
-              } else {
-                return [``, Lute.WalkContinue]
-              }
-            },
-            renderLinkDest: (node, entering) => {
-              const linkUrl = node.TokensStr()
-              // @ts-ignore
-              this.linkUrl = linkUrl
-              console.log('renderLinkDest', linkUrl)
-              if (entering) {
-                return [``, Lute.WalkContinue]
-              } else {
-                return [``, Lute.WalkContinue]
-              }
-            }
-          }
-        }
-      })
     },
     outline: {
       enable: false,
@@ -236,10 +172,10 @@ onMounted(() => {
     toolbarConfig: {
       pin: true
     },
-    undoDelay: 100,
+    undoDelay: 50,
     placeholder: '输入文章内容...',
     preview: {
-      delay: 200,
+      delay: 100,
       hljs: {
         lineNumber: true,
         style: 'solarized-dark'
