@@ -9,6 +9,8 @@
 <script lang="ts" setup>
 import { useDarkMode } from '@/hooks/useDarkMode'
 import { IS_DARK } from './common/symbol'
+import '@/style/theme/juejin.scss'
+// import '@/style/theme/github.css'
 
 const isDark = useDarkMode()
 provide(IS_DARK, isDark)

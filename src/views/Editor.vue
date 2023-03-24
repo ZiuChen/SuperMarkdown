@@ -10,6 +10,10 @@
       >
         <div v-show="sideBarCollapsed" class="collapse-tip">侧栏已折叠</div>
         <SideBar v-show="!sideBarCollapsed"></SideBar>
+        <template #trigger>
+          <icon-right-circle v-if="sideBarCollapsed"></icon-right-circle>
+          <icon-left-circle v-else></icon-left-circle>
+        </template>
       </a-layout-sider>
 
       <a-layout>
@@ -67,15 +71,20 @@
           <a-layout-content>
             <Editor
               id="editor"
-              v-show="isReady && !store.isEmpty"
+              v-if="isReady && !store.isEmpty && !store.isReadonly"
               :value="store.code"
               :plugins="plugins"
               @change="handleEditorChange"
-              :locale="ZhHans"
+              :locale="zhHans"
               placeholder="输入文章内容..."
             ></Editor>
 
+            <div class="viewer-container" v-if="store.isReadonly && !store.isEmpty">
+              <Viewer id="viewer" :value="store.code" :plugins="plugins"></Viewer>
+            </div>
+
             <div class="tips" v-show="isReady && store.isEmpty">请在左侧选择文章</div>
+
             <div class="tips" v-show="!isReady">
               <a-spin></a-spin>
               <span>编辑器加载中...</span>
@@ -91,6 +100,9 @@
 import { ref, onMounted } from 'vue'
 import { throttle } from 'lodash-es'
 import SideBar from '@/components/SideBar.vue'
+import Editor from '@/components/Editor.vue'
+import Viewer from '@/components/Viewer.vue'
+
 import { useArticleStore, useMainStore } from '@/store'
 import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
@@ -101,6 +113,8 @@ import { __dirname } from '@/preload'
 
 import 'bytemd/dist/index.css'
 import 'highlight.js/styles/default.css'
+import 'katex/dist/katex.css'
+import '@/style/theme/normalize.css' // 编辑器样式重置(copy from juejin)
 import gfm from '@bytemd/plugin-gfm'
 import breaks from '@bytemd/plugin-breaks'
 import frontmatter from '@bytemd/plugin-frontmatter'
@@ -108,11 +122,27 @@ import highlight from '@bytemd/plugin-highlight'
 import math from '@bytemd/plugin-math'
 import mermaid from '@bytemd/plugin-mermaid'
 import mediumZoom from '@bytemd/plugin-medium-zoom'
-import { Editor } from '@bytemd/vue-next'
-import ZhHans from 'bytemd/locales/zh_Hans.json'
+import zhHans from 'bytemd/locales/zh_Hans.json'
+import zhHansGfm from '@bytemd/plugin-gfm/locales/zh_Hans.json'
+import zhHansMath from '@bytemd/plugin-math/locales/zh_Hans.json'
+import zhHansMerimaid from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
 
 const lastKey = getItem('lastkey') || ''
-const plugins = [gfm(), breaks(), frontmatter(), highlight(), math(), mermaid(), mediumZoom()]
+const plugins = [
+  gfm({
+    locale: zhHansGfm
+  }),
+  breaks(),
+  frontmatter(),
+  highlight(),
+  math({
+    locale: zhHansMath
+  }),
+  mermaid({
+    locale: zhHansMerimaid
+  }),
+  mediumZoom()
+]
 const store = useArticleStore()
 const mainStore = useMainStore()
 const isCtrl = ref(false)
@@ -136,8 +166,9 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
 
   store.loadArticle(id, title)
 
-  console.log('switch file', id, title, store.code)
-  // 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
+  console.log('switch file', id, title)
+  // TODO: 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
+  // cant find doc.clearHistory() api
   // mainStore.editor!.$set({ value: store.code })
 })
 
@@ -188,6 +219,8 @@ function handleSideBarCollapse(collapsed: boolean) {
 </script>
 
 <style lang="less" scoped>
+@import '@/style/scrollbar.less';
+
 .editor {
   overflow: hidden;
 }
@@ -226,7 +259,7 @@ function handleSideBarCollapse(collapsed: boolean) {
 
 .tips {
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 58px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -240,10 +273,18 @@ function handleSideBarCollapse(collapsed: boolean) {
 
 #editor {
   :deep(.bytemd) {
-    // 减去标题栏的高度
-    height: calc(100vh - 58px);
+    height: calc(100vh - 58px); // 减去标题栏的高度
   }
 }
+
+.viewer-container {
+  height: calc(100vh - 78px); // 多出来 20px 的上下padding
+  padding: 10px;
+  overflow: auto;
+  .scrollbar();
+}
+
+// #viewer {}
 </style>
 
 <style lang="less">

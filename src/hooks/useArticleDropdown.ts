@@ -23,16 +23,6 @@ export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
         const r = features.filter((f) => f.code === store.articleKey)
         store.isFeature = r.length > 0
       }
-
-      if (store.isReadonly) {
-        sourceSideEffect(false)
-        readonlySideEffect(store.isReadonly)
-      } else if (store.isSource && !store.isReadonly) {
-        readonlySideEffect(false)
-        sourceSideEffect(store.isSource)
-      } else {
-        readonlySideEffect(false)
-      }
     }
   })
 
@@ -57,34 +47,19 @@ export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
   }
 
   function handleReadonlyClick() {
-    // if (store.isSource) return
+    if (store.isSource) return
 
-    if (store.isReadonly) {
-      store.isReadonly = false
-      Message.success('只读模式已关闭')
-    } else {
-      store.isReadonly = true
-      Message.success('只读模式已开启')
-    }
+    store.isReadonly = !store.isReadonly
+    Message.success('只读模式已' + (store.isReadonly ? '开启' : '关闭'))
 
-    readonlySideEffect(store.isReadonly)
     store.saveArticle()
   }
 
   function handleSourceClick() {
-    // if (store.isReadonly) return
+    if (store.isReadonly) return
 
-    if (store.isSource) {
-      store.isSource = false
-      sourceSideEffect(false)
-      Message.success('源码模式已关闭')
-    } else {
-      store.isSource = true
-      sourceSideEffect(true)
-      Message.success('源码模式已开启')
-    }
-
-    sourceSideEffect(store.isSource)
+    store.isSource = !store.isSource
+    Message.success('源码模式已' + (store.isSource ? '开启' : '关闭'))
   }
 
   function handleInfoClick() {
@@ -115,56 +90,4 @@ export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
     handleSourceClick,
     handleInfoClick
   }
-}
-
-// isReadonly的副作用函数
-export function readonlySideEffect(val: boolean) {
-  // 统一处理DOM可能为null的报错
-  try {
-    if (val) {
-      // 模式切换为分屏预览
-      const btn = document.querySelector('.vditor-hint > button[data-mode=sv]') as HTMLElement
-      btn.click()
-
-      // 隐藏工具栏
-      const t = document.querySelector('.vditor-toolbar') as HTMLElement
-      t.style.display = 'none'
-
-      // 隐藏编辑区
-      const e = document.querySelector('.vditor-sv') as HTMLElement
-      e.style.display = 'none'
-    } else {
-      // 模式切换为即时渲染
-      const btn = document.querySelector('.vditor-hint > button[data-mode=ir]') as HTMLElement
-      btn.click()
-
-      // 显示工具栏
-      const t = document.querySelector('.vditor-toolbar') as HTMLElement
-      t.style.display = 'block'
-    }
-  } catch (error) {}
-}
-
-// isSource的副作用函数
-export function sourceSideEffect(val: boolean) {
-  // 统一处理DOM可能为null的报错
-  try {
-    if (val) {
-      // 切换分屏预览模式
-      const btn = document.querySelector('.vditor-hint > button[data-mode=sv]') as HTMLElement
-      btn.click()
-
-      // 显示工具栏
-      const t = document.querySelector('.vditor-toolbar') as HTMLElement
-      t.style.display = 'block'
-
-      // 隐藏预览区
-      const p = document.querySelector('.vditor-preview') as HTMLElement
-      p.style.display = 'none'
-    } else {
-      // 模式切换为即时渲染
-      const btn = document.querySelector('.vditor-hint > button[data-mode=ir]') as HTMLElement
-      btn.click()
-    }
-  } catch (error) {}
 }

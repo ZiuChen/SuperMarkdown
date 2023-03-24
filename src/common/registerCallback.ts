@@ -1,6 +1,6 @@
 import { $emit } from '@/hooks/useEventBus'
 import { FILE_ENTER } from '@/common/symbol'
-import { isElectron } from '@/utils'
+import { isElectron, setItem } from '@/utils'
 
 export function registerCallback() {
   if (!isElectron) return
@@ -8,6 +8,7 @@ export function registerCallback() {
     // 两种情况 如果插件还没启动 编辑器未完成初始化 则通过设置lastkey的方式实现快速打开
     if (code.startsWith('note/')) {
       $emit(FILE_ENTER, code.split('/')[1])
+      setItem('lastkey', code.split('/')[1])
     }
   })
 }

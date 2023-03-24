@@ -1,0 +1,212 @@
+.cm-s-default.CodeMirror {
+  background: #f8f9fa;
+}
+
+.cm-s-default .cm-header {
+  color: #1ba2f0;
+  font-weight: 400;
+}
+
+.cm-s-default .cm-variable-2 {
+  color: #000;
+}
+
+.cm-s-default .cm-comment {
+  color: #009e9d;
+}
+
+.cm-s-default .cm-link,
+.cm-s-default .cm-quote,
+.cm-s-default .cm-strong {
+  color: #fd7741;
+}
+
+.cm-s-default .cm-url {
+  color: #bb51b8;
+}
+
+.CodeMirror {
+  font-family: Monaco, Menlo, Ubuntu Mono, Consolas, source-code-pro, monospace;
+  font-size: 1.167rem;
+  line-height: 1.7;
+}
+
+.content-preview .content-html {
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.content-preview .content-html p {
+  line-height: inherit;
+  margin-top: 22px;
+  margin-bottom: 22px;
+}
+
+.content-preview .content-html img {
+  max-height: none;
+}
+
+.content-preview .content-html a {
+  color: #0269c8;
+  text-decoration: none;
+  border-bottom: 1px solid #d1e9ff;
+}
+
+.content-preview .content-html code {
+  background-color: #fff5f5;
+  color: #ff502c;
+  font-size: 0.87em;
+  padding: 0.065em 0.4em;
+}
+
+.content-preview .content-html figure {
+  margin: 22px auto;
+}
+
+.content-preview .content-html figure figcaption {
+  margin-top: 2px;
+  line-height: 1.6;
+}
+
+.content-preview .content-html pre {
+  position: relative;
+  line-height: 1.75;
+}
+
+.content-preview .content-html pre > code {
+  padding: 20px 15px 12px;
+  font-size: 11px;
+}
+
+.content-preview .content-html blockquote {
+  color: #f6f6f6;
+  padding: 1px 23px;
+  margin: 22px 0;
+  border-left: 4px solid #cbcbcb;
+  background-color: #f8f8f8;
+}
+
+.content-preview .content-html blockquote:after {
+  display: block;
+  content: '';
+  margin-top: 10px;
+}
+
+.content-preview .content-html blockquote > p {
+  margin: 10px 0;
+}
+
+.content-preview .content-html blockquote.warning {
+  position: relative;
+  border-left-color: #f75151;
+}
+
+.content-preview .content-html blockquote.warning:before {
+  position: absolute;
+  top: 14px;
+  left: -12px;
+  background: #f75151;
+  border-radius: 50%;
+  content: '!';
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+.content-preview .content-html ol,
+.content-preview .content-html ul {
+  margin-top: 22px;
+  padding-left: 28px;
+}
+
+.content-preview .content-html ol li,
+.content-preview .content-html ul li {
+  margin-bottom: 0;
+  list-style: inherit;
+}
+
+.content-preview .content-html ol li ol,
+.content-preview .content-html ol li ul,
+.content-preview .content-html ul li ol,
+.content-preview .content-html ul li ul {
+  margin-top: 0;
+}
+
+.content-preview .content-html ol li {
+  padding-left: 6px;
+}
+
+.content-preview .content-html pre > code.hljs:before {
+  content: attr(lang);
+  position: absolute;
+  right: 15px;
+  top: 2px;
+  color: hsla(0, 0%, 54.9%, 0.8);
+  font-size: 11px;
+}
+
+.content-preview .content-html h1,
+.content-preview .content-html h2,
+.content-preview .content-html h3,
+.content-preview .content-html h4,
+.content-preview .content-html h5,
+.content-preview .content-html h6 {
+  color: #333;
+  line-height: 1.5;
+  margin-top: 35px;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+}
+
+.content-preview .content-html h1 {
+  font-size: 32px;
+  margin-bottom: 5px;
+}
+
+.content-preview .content-html h2 {
+  padding-bottom: 12px;
+  font-size: 24px;
+  border-bottom: 1px solid #ececec;
+}
+
+.content-preview .content-html h3 {
+  font-size: 18px;
+  padding-bottom: 0;
+}
+
+.content-preview .content-html h4 {
+  font-size: 16px;
+}
+
+.content-preview .content-html h5 {
+  font-size: 15px;
+}
+
+.content-preview .content-html h6 {
+  margin-top: 5px;
+}
+
+.content-preview .content-html h1.heading + h2.heading {
+  margin-top: 20px;
+}
+
+.content-preview .content-html h1.heading + h3.heading {
+  margin-top: 15px;
+}
+
+.content-preview .content-html .heading + .heading {
+  margin-top: 0;
+}
+
+.content-preview .content-html h1 + :not(.heading) {
+  margin-top: 25px;
+}
