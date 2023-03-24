@@ -14,7 +14,7 @@
     "@bytemd/plugin-math": "^1.20.2",
     "@bytemd/plugin-medium-zoom": "^1.20.2",
     "@bytemd/plugin-mermaid": "^1.20.2",
-    "@bytemd/vue": "^1.20.2",
+    "@bytemd/vue-next": "^1.20.2",
     "bytemd": "^1.20.2",
     "highlight.js": "^11.7.0",
     "less": "^4.1.3",

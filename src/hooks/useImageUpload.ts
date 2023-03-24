@@ -48,8 +48,8 @@ export function useImageUpload() {
     })
     .then((hash) => {
       // 插入图片 预览渲染由自定义渲染器完成
-      store.editor!.focus()
-      store.editor!.insertValue(`![](attachment/${hash})`, false)
+      // store.editor!.focus()
+      // store.editor!.insertValue(`![](attachment/${hash})`, false)
 
       // Uint8Array => base64
       const data = getAttachment(`attachment/${hash}`)

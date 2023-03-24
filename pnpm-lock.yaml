@@ -10,7 +10,7 @@ specifiers:
   '@bytemd/plugin-math': ^1.20.2
   '@bytemd/plugin-medium-zoom': ^1.20.2
   '@bytemd/plugin-mermaid': ^1.20.2
-  '@bytemd/vue': ^1.20.2
+  '@bytemd/vue-next': ^1.20.2
   '@types/lodash-es': ^4.17.6
   '@types/node': ^18.14.0
   '@vitejs/plugin-vue': ^4.0.0
@@ -42,7 +42,7 @@ dependencies:
   '@bytemd/plugin-math': 1.20.2_bytemd@1.20.2
   '@bytemd/plugin-medium-zoom': 1.20.2_bytemd@1.20.2
   '@bytemd/plugin-mermaid': 1.20.2_bytemd@1.20.2
-  '@bytemd/vue': 1.20.2_vue@3.2.47
+  '@bytemd/vue-next': 1.20.2_vue@3.2.47
   bytemd: 1.20.2
   highlight.js: 11.7.0
   less: 4.1.3
@@ -387,10 +387,10 @@ packages:
       mermaid: 9.4.3
     dev: false
 
-  /@bytemd/vue/1.20.2_vue@3.2.47:
-    resolution: {integrity: sha512-rNEqVLCbs82hT8ab57z6YjvbdPDIs24y6dBlNunzC8g8/hW9c6JcZMh5b1jmiK7iPXgKYCg20vnWS+sja3dvrA==}
+  /@bytemd/vue-next/1.20.2_vue@3.2.47:
+    resolution: {integrity: sha512-DMjaB+15N0fNxsDczTIU9NLO7MIw60h2onoFmEFPw5iZJOHb6jIqOVO8kj33WrXk+M/3YqbGrUe36id40ZtQ0A==}
     peerDependencies:
-      vue: ^2.0.0
+      vue: ^3.0.0
     dependencies:
       bytemd: 1.20.2
       vue: 3.2.47

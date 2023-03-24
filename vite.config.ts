@@ -6,6 +6,8 @@ import Components from 'unplugin-vue-components/vite'
 import { ArcoResolver } from 'unplugin-vue-components/resolvers'
 import { createStyleImportPlugin } from 'vite-plugin-style-import'
 import process from 'process'
+import fs from 'fs'
+import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -32,7 +34,7 @@ export default defineConfig({
     }
   },
   server: {
-    port: 8082
+    port: 8083
   },
   plugins: [
     vue(),
@@ -63,11 +65,10 @@ export default defineConfig({
           libraryName: '@arco-design/web-vue',
           esModule: true,
           resolveStyle: (name) => {
-            if (name === 'button-group') return `@arco-design/web-vue/es/button/style/css.js`
-            if (name === 'input-search') return `@arco-design/web-vue/es/input/style/css.js`
-            if (name === 'doption') return ''
-            if (name === 'radio-group') return ''
-            return `@arco-design/web-vue/es/${name}/style/css.js`
+            const p = `@arco-design/web-vue/es/${name}/style/css.js`
+            const actualPath = path.resolve(__dirname, 'node_modules', p)
+            if (fs.existsSync(actualPath)) return p
+            else return ''
           }
         }
       ]
