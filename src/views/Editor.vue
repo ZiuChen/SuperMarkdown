@@ -33,7 +33,6 @@
             <a-dropdown>
               <a-button class="dropdown-btn" :disabled="dropdownDisabled">
                 <icon-lock v-if="store.isReadonly"></icon-lock>
-                <icon-code v-else-if="store.isSource"></icon-code>
                 <icon-share-external v-else-if="store.isFeature"></icon-share-external>
                 <icon-more v-else></icon-more>
               </a-button>
@@ -44,17 +43,11 @@
                   </template>
                   {{ store.isFeature ? '移除全局关键字' : '添加文章关键字' }}
                 </a-doption>
-                <a-doption @click="handleReadonlyClick" v-if="!store.isSource">
+                <a-doption @click="handleReadonlyClick">
                   <template #icon>
                     <icon-lock />
                   </template>
                   {{ store.isReadonly ? '取消只读模式' : '只读模式' }}
-                </a-doption>
-                <a-doption @click="handleSourceClick" v-if="!store.isReadonly">
-                  <template #icon>
-                    <icon-code />
-                  </template>
-                  {{ store.isSource ? '退出源码模式' : '源码模式' }}
                 </a-doption>
                 <a-doption @click="handleInfoClick">
                   <template #icon>
@@ -158,8 +151,7 @@ const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
 
 const isDark = inject<Ref<boolean>>(IS_DARK)!
 
-const { handleFeatureClick, handleReadonlyClick, handleSourceClick, handleInfoClick } =
-  useArticleDropdown(store)
+const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleDropdown(store)
 
 store.loadArticle(lastKey)
 
