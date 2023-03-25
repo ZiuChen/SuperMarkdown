@@ -19,7 +19,7 @@ const props = defineProps({
   uploadImages: Function
 })
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['init', 'change'])
 
 const el: Ref<HTMLElement | null> = ref(null)
 const editorRef: Ref<Editor | null> = ref(null)
@@ -43,6 +43,7 @@ onMounted(() => {
     target: el.value!,
     props
   })
+  emit('init', editor)
   editor.$on('change', (e) => {
     emit('change', e.detail.value)
   })

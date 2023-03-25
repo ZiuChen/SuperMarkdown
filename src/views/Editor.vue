@@ -5,7 +5,9 @@
         @collapse="handleSideBarCollapse"
         :width="220"
         :collapsed-width="25"
-        style="height: '100vh'"
+        :style="{
+          height: '100vh'
+        }"
         collapsible
       >
         <div v-show="sideBarCollapsed" class="collapse-tip">侧栏已折叠</div>
@@ -64,11 +66,12 @@
           <a-layout-content>
             <Editor
               id="editor"
-              v-if="isReady && !store.isEmpty && !store.isReadonly"
+              v-if="!store.isEmpty && !store.isReadonly"
               :value="store.code"
               :plugins="plugins"
-              @change="handleEditorChange"
               :locale="zhHans"
+              @init="handleEditorInit"
+              @change="handleEditorChange"
               placeholder="输入文章内容..."
             ></Editor>
 
@@ -120,7 +123,13 @@ import zhHansGfm from '@bytemd/plugin-gfm/locales/zh_Hans.json'
 import zhHansMath from '@bytemd/plugin-math/locales/zh_Hans.json'
 import zhHansMerimaid from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
 
-import { alignPlugin, imageZoomPlugin, themePlugin, highlightThemePlugin } from '@/common/plugins'
+import {
+  alignPlugin,
+  imageZoomPlugin,
+  themePlugin,
+  highlightThemePlugin,
+  enhancePlugin
+} from '@/common/plugins'
 
 const lastKey = getItem('lastkey') || ''
 const plugins = [
@@ -140,7 +149,8 @@ const plugins = [
     locale: zhHansMerimaid
   }),
   themePlugin(),
-  highlightThemePlugin()
+  highlightThemePlugin(),
+  enhancePlugin()
 ]
 const store = useArticleStore()
 const mainStore = useMainStore()
@@ -161,13 +171,7 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id
   store.id = id
   store.title = title
-
   store.loadArticle(id, title)
-
-  console.log('switch file', id, title)
-  // TODO: 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
-  // cant find doc.clearHistory() api
-  // mainStore.editor!.$set({ value: store.code })
 })
 
 useEventListener(document, 'keydown', (e: KeyboardEvent) => {
@@ -175,14 +179,15 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
   isCtrl.value = metaKey || ctrlKey
 })
 
-onMounted(() => {
-  // Editor组件挂载后 从ArticleStore中读取文章数据
-  // 而数据初始化操作是在SideBar中完成的
-
+/**
+ * 插件初始化完毕时触发
+ * 父组件先于子组件挂载
+ */
+function handleEditorInit() {
   // 初始化完毕
   isReady.value = true
   $emit(EDITOR_LOADED, store.id)
-})
+}
 
 /**
  * 文章标题变化时触发
