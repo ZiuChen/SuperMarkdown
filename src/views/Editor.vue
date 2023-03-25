@@ -120,7 +120,7 @@ import zhHansGfm from '@bytemd/plugin-gfm/locales/zh_Hans.json'
 import zhHansMath from '@bytemd/plugin-math/locales/zh_Hans.json'
 import zhHansMerimaid from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
 
-import { alignPlugin, imageZoomPlugin, themePlugin } from '@/common/plugins'
+import { alignPlugin, imageZoomPlugin, themePlugin, highlightThemePlugin } from '@/common/plugins'
 
 const lastKey = getItem('lastkey') || ''
 const plugins = [
@@ -139,7 +139,8 @@ const plugins = [
   mermaid({
     locale: zhHansMerimaid
   }),
-  themePlugin()
+  themePlugin(),
+  highlightThemePlugin()
 ]
 const store = useArticleStore()
 const mainStore = useMainStore()
