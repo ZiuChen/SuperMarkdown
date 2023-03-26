@@ -1,0 +1,42 @@
+import type { BytemdPlugin } from 'bytemd'
+import { loadImage } from '@/utils'
+import { visit } from 'unist-util-visit'
+
+/**
+ * 自定义解析图片链接插件
+ */
+export function customImagePlugin(): BytemdPlugin {
+  const markdownImages: any[] = []
+  return {
+    remark: (processor) => {
+      // @ts-ignore
+      return processor.use(() => (tree, file) => {
+        // 递归遍历所有节点 筛选出图片节点
+        visit(tree, (node) => {
+          if (node.type === 'image') {
+            markdownImages.push(node)
+          }
+        })
+      })
+    },
+    rehype(processor) {
+      // @ts-ignore
+      return processor.use(() => (tree, file) => {
+        // 将 MD AST 中的图片与 HTML AST 中的图片节点一一对应
+        // 通过 attachmentId 获取图片数据 并替换 img 节点的 src
+        let count = 0
+        visit(tree, (node) => {
+          if (node.type === 'element' && node.tagName === 'img') {
+            const image = markdownImages[count]
+            if (image.url.startsWith('attachment:')) {
+              const attachmentId = image.url.split(':')[1]
+              const imageData = loadImage(attachmentId)
+              node.properties.src = imageData
+            }
+            count++
+          }
+        })
+      })
+    }
+  }
+}

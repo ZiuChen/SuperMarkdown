@@ -86,8 +86,7 @@ export function calcFileSize(path: string) {
 export function loadImage(docId: string) {
   if (!isElectron) return ''
 
-  const res = getAttachment(docId)
-  const base64 = `data:image/png;base64,${res ? Buffer.from(res).toString('base64') : ''}`
-
-  return base64
+  const res = getAttachment('attachment/' + docId)
+  if (res) return 'data:image/png;base64,' + Buffer.from(res).toString('base64')
+  return ''
 }

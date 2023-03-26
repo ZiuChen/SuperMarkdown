@@ -22,6 +22,7 @@ specifiers:
   sass: ^1.60.0
   tiny-emitter: ^2.1.0
   typescript: ^4.9.3
+  unist-util-visit: ^4.1.2
   unplugin-auto-import: ^0.14.4
   unplugin-vue-components: ^0.24.0
   utools-api-types: ^3.0.0
@@ -49,6 +50,7 @@ dependencies:
   lodash-es: 4.17.21
   pinia: 2.0.32_hmuptsblhheur2tugfgucj7gc4
   tiny-emitter: 2.1.0
+  unist-util-visit: 4.1.2
   vue: 3.2.47
   vue-router: 4.1.6_vue@3.2.47
   webdav: 5.0.0-r3

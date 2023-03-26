@@ -128,7 +128,9 @@ import {
   imageZoomPlugin,
   themePlugin,
   highlightThemePlugin,
-  enhancePlugin
+  enhancePlugin,
+  customImagePlugin,
+  imageUploadPlugin
 } from '@/common/plugins'
 
 const lastKey = getItem('lastkey') || ''
@@ -150,7 +152,9 @@ const plugins = [
   }),
   themePlugin(),
   highlightThemePlugin(),
-  enhancePlugin()
+  enhancePlugin(),
+  customImagePlugin(),
+  imageUploadPlugin()
 ]
 const store = useArticleStore()
 const mainStore = useMainStore()
