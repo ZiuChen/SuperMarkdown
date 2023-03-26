@@ -30,6 +30,7 @@ function handleFeatureClose(feature: TFeature) {
 }
 
 function handleClearClick() {
+  if (!features.value?.length) return Message.warning('当前全局关键字为空')
   Modal.warning({
     title: '是否清空所有全局关键字',
     content: '删除后无法恢复',

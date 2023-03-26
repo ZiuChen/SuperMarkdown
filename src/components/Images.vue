@@ -2,19 +2,11 @@
   <div class="images">
     <div class="header">
       <h3>已存储的图片</h3>
-      <div class="right-part">
-        <a-button @click="handleExportClick">
-          <template #icon>
-            <icon-folder></icon-folder>
-          </template>
-        </a-button>
-
-        <a-button @click="handleClearClick">
-          <template #icon>
-            <icon-delete></icon-delete>
-          </template>
-        </a-button>
-      </div>
+      <a-button @click="handleClearClick">
+        <template #icon>
+          <icon-delete></icon-delete>
+        </template>
+      </a-button>
     </div>
 
     <div v-if="!images?.length">
@@ -69,9 +61,22 @@ function handleImageDelete(docId: string) {
   })
 }
 
-function handleExportClick() {}
-
-function handleClearClick() {}
+function handleClearClick() {
+  if (!images.value?.length) return Message.warning('当前未存储任何图片')
+  Modal.warning({
+    title: '是否清空所有图片',
+    content: '删除后无法恢复',
+    hideCancel: false,
+    cancelText: '取消',
+    onOk() {
+      images.value?.forEach((img) => {
+        removeDoc(img._id)
+      })
+      Message.success('所有图片都已删除')
+      images.value = allDocs('attachment/')
+    }
+  })
+}
 </script>
 
 <style lang="less" scoped>
@@ -79,11 +84,6 @@ function handleClearClick() {}
   display: flex;
   justify-content: space-between;
   align-items: center;
-  .right-part {
-    .arco-btn {
-      margin-left: 5px;
-    }
-  }
 }
 
 .image-item {
