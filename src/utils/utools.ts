@@ -1,7 +1,7 @@
 import { isElectron } from './env'
 import { Message } from '@arco-design/web-vue'
 
-type TFeature = Parameters<typeof utools.setFeature>[0]
+export type TFeature = Parameters<typeof utools.setFeature>[0]
 type TDialogOptions = Parameters<typeof utools.showOpenDialog>[0]
 
 export function setFeature(feature: TFeature) {
@@ -9,8 +9,9 @@ export function setFeature(feature: TFeature) {
   return utools.setFeature(feature)
 }
 
-export function getFeatures(codes?: string[]) {
+export function getFeatures(codes?: string[]): TFeature[] | undefined {
   if (!isElectron) return
+  // @ts-ignore
   return utools.getFeatures(codes)
 }
 

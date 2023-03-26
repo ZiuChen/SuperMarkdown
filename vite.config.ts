@@ -69,7 +69,7 @@ export default defineConfig({
             const p = `@arco-design/web-vue/es/${name}/style/css.js`
             const actualPath = path.resolve(__dirname, 'node_modules', p)
             if (fs.existsSync(actualPath)) return p
-            else return ''
+            return ''
           }
         }
       ]

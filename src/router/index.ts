@@ -5,7 +5,7 @@ export default createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/editor'
+      redirect: '/setting'
     },
     {
       path: '/editor',

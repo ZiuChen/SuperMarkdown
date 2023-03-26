@@ -1,20 +1,35 @@
 <template>
   <div class="setting">
     <BackButton></BackButton>
-    <h1>Setting</h1>
+    <Settings class="setting-box"></Settings>
+    <Features v-if="isElectron" class="setting-box"></Features>
+    <Images v-if="isElectron" class="setting-box"></Images>
   </div>
 </template>
 
 <script setup lang="ts">
 import { usePageBack } from '@/hooks/usePageBack'
+import Features from '@/components/Features.vue'
+import Images from '@/components/Images.vue'
+import Settings from '@/components/Settings.vue'
+import { isElectron } from '@/utils'
 
 const { BackButton } = usePageBack()
 </script>
 
 <style lang="less" scoped>
-.back {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+@import '@/style/border.less';
+
+.setting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.setting-box {
+  padding: 10px 20px 20px 20px;
+  margin: 10px 0;
+  width: 80%;
+  .border();
 }
 </style>
