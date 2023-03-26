@@ -1,16 +1,24 @@
+const t = new Date().getTime()
+
 export const article = {
   code: `---
-# frontmatter: https://jekyllrb.com/docs/front-matter/
-layout: post
-title: Blogging Like a Hacker
+theme: juejin
+highlight: atom-one-dark
 ---
 
-<div align="center">
+<p align="center">
+  <a href="https://ziuchen.gitee.io/project/Markdown/">
     <img src="./logo.png" width="150px" />
-    <h1>你好，超级Markdown！</h1>
-</div>
+  </a>
+</p>
 
 > 强大的Markdown编辑器
+
+- 由ByteMD强力驱动，功能丰富、性能强劲
+- 支持GFM扩展语法、脚注、Gemoji、KaTeX数学公式、Mermaid图表
+- 支持通过Frontmatter设置多种主题、代码高亮样式
+- 支持实时同步预览、自动保存、导出HTML、导出PDF、导出Word、导出Markdown
+- 支持图片上传、图片粘贴、图片拖拽
 
 ## Markdown基础语法
 
@@ -86,8 +94,8 @@ graph TD;
 [插件主页](https://ziuchen.gitee.io/project/Markdown/)
 
 [Github](https://github.com/ZiuChen)`,
-  createAt: 1677900764969,
-  id: '1677900764969',
-  lastSavedAt: 1677900764969,
+  createAt: t,
+  id: String(t),
+  lastSavedAt: t,
   title: '你好，超级Markdown！'
 }

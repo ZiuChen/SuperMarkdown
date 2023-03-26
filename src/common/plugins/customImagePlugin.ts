@@ -31,7 +31,7 @@ export function customImagePlugin(): BytemdPlugin {
         visit(tree, (node) => {
           if (node.type === 'element' && node.tagName === 'img') {
             const image = markdownImages[count]
-            if (image.url.startsWith('attachment:')) {
+            if (image && image.url.startsWith('attachment:')) {
               const attachmentId = image.url.split(':')[1]
               const imageData = imageCache[attachmentId] || loadImage(attachmentId)
               imageCache[attachmentId] = imageData

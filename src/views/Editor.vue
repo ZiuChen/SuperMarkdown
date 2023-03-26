@@ -79,9 +79,9 @@
               <Viewer id="viewer" :value="store.code" :plugins="plugins"></Viewer>
             </div>
 
-            <div class="tips" v-show="isReady && store.isEmpty">请在左侧选择文章</div>
+            <div class="tips" v-show="store.isEmpty">请在左侧选择文章</div>
 
-            <div class="tips" v-show="!isReady">
+            <div class="tips" v-show="!isReady && !store.isEmpty">
               <a-spin></a-spin>
               <span>编辑器加载中...</span>
             </div>
@@ -94,7 +94,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { throttle } from 'lodash-es'
+import { isEmpty, throttle } from 'lodash-es'
 import SideBar from '@/components/SideBar.vue'
 import Editor from '@/components/Editor.vue'
 import Viewer from '@/components/Viewer.vue'
@@ -118,6 +118,7 @@ import highlight from '@bytemd/plugin-highlight'
 import math from '@bytemd/plugin-math'
 import mermaid from '@bytemd/plugin-mermaid'
 import mediumZoom from '@bytemd/plugin-medium-zoom'
+import gemoji from '@bytemd/plugin-gemoji'
 import zhHans from 'bytemd/locales/zh_Hans.json'
 import zhHansGfm from '@bytemd/plugin-gfm/locales/zh_Hans.json'
 import zhHansMath from '@bytemd/plugin-math/locales/zh_Hans.json'
@@ -136,9 +137,12 @@ import {
 
 const lastKey = getItem('lastkey') || ''
 const plugins = [
+  imageUploadPlugin(),
+  screenShotPlugin(),
   gfm({
     locale: zhHansGfm
   }),
+  gemoji(),
   breaks(),
   frontmatter(),
   highlight(),
@@ -154,9 +158,7 @@ const plugins = [
   themePlugin(),
   highlightThemePlugin(),
   enhancePlugin(),
-  customImagePlugin(),
-  imageUploadPlugin(),
-  screenShotPlugin()
+  customImagePlugin()
 ]
 const store = useArticleStore()
 const mainStore = useMainStore()
@@ -290,6 +292,7 @@ function handleSideBarCollapse(collapsed: boolean) {
   height: calc(100vh - 78px); // 多出来 20px 的上下padding
   padding: 10px;
   overflow: auto;
+  background-color: #fff;
   .scrollbar();
 }
 

@@ -158,6 +158,9 @@ const treeData = computed(() => {
   return searchData(searchKey.value, originTreeData.value)
 })
 
+// 侧栏初始化后 将当前目录保存
+setItem('category', originTreeData.value)
+
 // 增删改查操作 都应当触发目录保存
 useEventBus(CATEGORY_CHANGE, () => {
   setItem('category', originTreeData.value)
