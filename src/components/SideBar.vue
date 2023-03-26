@@ -37,18 +37,6 @@
       <a-dropdown :popup-max-height="false">
         <a-button class="drop-down">更多</a-button>
         <template #content>
-          <a-doption @click="openLink('http://localhost:5173/project/Markdown/shortcut/')">
-            <template #icon>
-              <icon-info-circle />
-            </template>
-            快捷键一览
-          </a-doption>
-          <a-doption @click="openLink('https://ziuchen.gitee.io/project/Markdown/')">
-            <template #icon>
-              <icon-info-circle />
-            </template>
-            插件主页
-          </a-doption>
           <a-doption
             @click="
               router.push({
@@ -60,6 +48,18 @@
               <icon-settings />
             </template>
             全局设置
+          </a-doption>
+          <a-doption
+            @click="
+              router.push({
+                path: '/about'
+              })
+            "
+          >
+            <template #icon>
+              <icon-info-circle />
+            </template>
+            关于
           </a-doption>
         </template>
       </a-dropdown>
