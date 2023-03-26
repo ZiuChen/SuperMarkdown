@@ -1,8 +1,7 @@
 import type { BytemdPlugin } from 'bytemd'
-import { showOpenDialog } from '@/utils'
-import { calcFileSize } from '@/utils'
-import { resolve, readFileSync } from '@/preload'
+import { useFileSelect } from '@/hooks/useFileSelect'
 import { useImageUpload } from '@/hooks/useImageUpload'
+import { readFileSync } from '@/preload'
 
 /**
  * 图片上传插件
@@ -17,25 +16,7 @@ export function imageUploadPlugin(): BytemdPlugin {
           type: 'action',
           click: (ctx) => {
             // 触发文件选择框
-            showOpenDialog({
-              filters: [
-                { name: '', extensions: ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'svg', 'ico'] }
-              ]
-            })
-              .then((files) => {
-                // 文件选择完毕 预检查
-                if (!files) throw new Error('未选择图片')
-                if (files.length > 1) throw new Error('每次只能选择一张图片')
-
-                const filePath = resolve(files[0] as string)
-                const [size] = calcFileSize(filePath)
-
-                // 读取文件 计算文件哈希 将hash作为docId
-                const MAX_SIZE = 10 * 1024 * 1024 // 10M
-                if (size > MAX_SIZE) throw new Error(`图片大小不能超过10M`)
-
-                return filePath
-              })
+            useFileSelect()
               .then((filePath) => {
                 // 从本地读取文件为 Buffer 执行上传
                 const imgBuffer = readFileSync(filePath)
