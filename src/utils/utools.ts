@@ -68,3 +68,15 @@ export function showOpenDialog(options: TDialogOptions): Promise<string[] | File
     })
   }
 }
+
+export async function screenCapture(): Promise<string> {
+  if (!isElectron) {
+    Message.error('当前环境不支持此操作')
+    return ''
+  }
+  return new Promise((resolve) => {
+    utools.screenCapture((base64Str) => {
+      resolve(base64Str)
+    })
+  })
+}

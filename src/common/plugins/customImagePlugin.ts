@@ -7,11 +7,14 @@ import { visit } from 'unist-util-visit'
  */
 export function customImagePlugin(): BytemdPlugin {
   const markdownImages: any[] = []
+  const imageCache: Record<string, string> = {}
   return {
     remark: (processor) => {
       // @ts-ignore
       return processor.use(() => (tree, file) => {
         // 递归遍历所有节点 筛选出图片节点
+        // 先清空 再重新添加
+        markdownImages.length = 0
         visit(tree, (node) => {
           if (node.type === 'image') {
             markdownImages.push(node)
@@ -30,7 +33,8 @@ export function customImagePlugin(): BytemdPlugin {
             const image = markdownImages[count]
             if (image.url.startsWith('attachment:')) {
               const attachmentId = image.url.split(':')[1]
-              const imageData = loadImage(attachmentId)
+              const imageData = imageCache[attachmentId] || loadImage(attachmentId)
+              imageCache[attachmentId] = imageData
               node.properties.src = imageData
             }
             count++

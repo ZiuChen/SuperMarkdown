@@ -1,39 +1,28 @@
-import { useMainStore } from '@/store'
-import { showOpenDialog } from '@/utils'
 import { Message } from '@arco-design/web-vue'
-import { isElectron, calcFileSize, postAttachment, getAttachment } from '@/utils'
-import { resolve, readFileSync, createHash, Buffer } from '@/preload'
+import { isElectron, postAttachment } from '@/utils'
+import { resolve, createHash, Buffer } from '@/preload'
 
-export function useImageUpload() {
-  if (!isElectron) return Message.warning('当前环境暂不支持上传图片 可以引用外站图片')
+export async function useImageUpload(imageData: string | Uint8Array) {
+  if (!isElectron) {
+    Message.warning('当前环境暂不支持上传图片 可以引用外站图片')
+    return Promise.resolve('')
+  }
 
-  const store = useMainStore()
-
-  return showOpenDialog({
-    filters: [{ name: '', extensions: ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'svg', 'ico'] }]
+  return new Promise<Uint8Array>((resolve) => {
+    if (typeof imageData === 'string') {
+      // 将base64转为buffer
+      const base64 = imageData.split(',')[1]
+      resolve(Buffer.from(base64, 'base64'))
+    }
+    resolve(Buffer.from(imageData))
   })
-    .then((files) => {
-      // 文件选择完毕 预检查
-      if (!files) throw new Error('未选择图片')
-      if (files.length > 1) throw new Error('每次只能选择一张图片')
+    .then((buffer) => {
+      // 计算文件哈希
+      const hash = createHash('md5').update(buffer).digest('hex')
 
-      const filePath = resolve(files[0] as string)
-      const [size] = calcFileSize(filePath)
+      const res = postAttachment(`attachment/${hash}`, buffer, 'image/png')
 
-      // 读取文件 计算文件哈希 将hash作为docId
-      const MAX_SIZE = 10 * 1024 * 1024 // 10M
-      if (size > MAX_SIZE) throw new Error(`图片大小不能超过10M`)
-
-      return filePath
-    })
-    .then((filePath) => {
-      // 读取、上传图片
-      const imgBuffer = readFileSync(filePath)
-      const hash = createHash('md5').update(imgBuffer).digest('hex')
-
-      const res = postAttachment(`attachment/${hash}`, imgBuffer, 'image/png')
-
-      if (!res) throw new Error('图片上传出错')
+      if (!res) throw new Error('上传图片出错')
 
       // 重复图片 直接读取并返回
       if (res.error && res.name === 'conflict') {
@@ -42,24 +31,12 @@ export function useImageUpload() {
 
       // 上传成功 读取图片
       if (res.ok) return hash
-
-      // 上传失败
-      if (!res.ok) throw new Error('图片上传出错: ' + res.name || '')
-    })
-    .then((hash) => {
-      // 插入图片 预览渲染由自定义渲染器完成
-      // store.editor!.focus()
-      // store.editor!.insertValue(`![](attachment/${hash})`, false)
-
-      // Uint8Array => base64
-      const data = getAttachment(`attachment/${hash}`)
-      if (!data) throw new Error('图片读取失败')
-
-      const imgData = `data:image/png;base64,${Buffer.from(data).toString('base64')}`
-
-      return imgData
+      else {
+        resolve('')
+        throw new Error(res.name || '')
+      }
     })
     .catch((err) => {
-      Message.error(err)
+      Message.error('上传图片出错' + err)
     })
 }
