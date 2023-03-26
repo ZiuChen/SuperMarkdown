@@ -132,10 +132,11 @@ import {
   enhancePlugin,
   customImagePlugin,
   imageUploadPlugin,
-  screenShotPlugin
+  screenShotPlugin,
+  exportPlugin,
+  importPlugin
 } from '@/common/plugins'
 
-const lastKey = getItem('lastkey') || ''
 const plugins = [
   imageUploadPlugin(),
   screenShotPlugin(),
@@ -158,8 +159,11 @@ const plugins = [
   themePlugin(),
   highlightThemePlugin(),
   enhancePlugin(),
-  customImagePlugin()
+  customImagePlugin(),
+  importPlugin(),
+  exportPlugin()
 ]
+const lastKey = getItem('lastkey') || ''
 const store = useArticleStore()
 const mainStore = useMainStore()
 const isCtrl = ref(false)
@@ -311,6 +315,9 @@ html {
     display: none;
   }
   .bytemd-tippy[bytemd-tippy-path='5'] {
+    display: none;
+  }
+  .bytemd-tippy[bytemd-tippy-path='6'] {
     display: none;
   }
 }
