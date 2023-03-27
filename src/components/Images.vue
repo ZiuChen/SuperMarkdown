@@ -29,6 +29,8 @@
         </a-image>
       </template>
     </a-image-preview-group>
+    <!-- 触发样式自动导入 -->
+    <a-tooltip></a-tooltip>
   </div>
 </template>
 
