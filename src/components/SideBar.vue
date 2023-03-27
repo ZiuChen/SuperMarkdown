@@ -105,7 +105,7 @@ import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
-import { setItem, getItem, removeItem, openLink, removeFeature } from '@/utils'
+import { setItem, getItem, removeItem, getFeatures, removeFeature } from '@/utils'
 import {
   SWITCH_FILE,
   CATEGORY_CHANGE,
@@ -211,16 +211,33 @@ useEventBus(CREATE_FOLDER, handleCreate)
 
 // 处理文件删除事件 删除完成后直接失焦 提醒用户自己切换文章
 useEventBus(DELETE_FILE, (key: string) => {
-  // 首先从本地存储中删除此文章
+  // 从本地存储中删除此文章
   removeItem(`note/${key}`)
+
+  // 删除全局关键字
+  if (store.isFeature) {
+    removeFeature(`note/${key}`)
+  }
 
   // 切换当前编辑器状态
   store.isEmpty = true
 })
 useEventBus(DELETE_FOLDER, (keys: string[]) => {
   // 删除文件夹下的所有文件
+  const features = getFeatures()
   for (const key of keys) {
+    // 删除文章
     removeItem(`note/${key}`)
+
+    // 删除全局关键字
+
+    if (!features) continue
+
+    features.map((feature) => {
+      if (feature.code === `note/${key}`) {
+        removeFeature(`note/${key}`)
+      }
+    })
   }
   // 当前选中的是文件夹 已经失焦了 所以不必像DELETE_FILE那样切换状态
 })
