@@ -134,7 +134,8 @@ import {
   imageUploadPlugin,
   screenShotPlugin,
   exportPlugin,
-  importPlugin
+  importPlugin,
+  pasteImagePlugin
 } from '@/common/plugins'
 
 const plugins = [
@@ -161,7 +162,8 @@ const plugins = [
   enhancePlugin(),
   customImagePlugin(),
   importPlugin(),
-  exportPlugin()
+  exportPlugin(),
+  pasteImagePlugin()
 ]
 const lastKey = getItem('lastkey') || ''
 const store = useArticleStore()
