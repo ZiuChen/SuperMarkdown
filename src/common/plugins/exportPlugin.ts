@@ -1,6 +1,8 @@
 import type { BytemdPlugin } from 'bytemd'
+import { useArticleStore } from '@/store'
 
 export function exportPlugin(): BytemdPlugin {
+  const store = useArticleStore()
   return {
     actions: [
       {
@@ -10,33 +12,50 @@ export function exportPlugin(): BytemdPlugin {
         handler: {
           type: 'dropdown',
           actions: [
+            // {
+            //   title: '导出为 HTML',
+            //   icon: '',
+            //   handler: {
+            //     type: 'action',
+            //     click: (ctx) => {
+            //       console.log('export html')
+            //     }
+            //   }
+            // },
+            // {
+            //   title: '导出为 PDF',
+            //   icon: '',
+            //   handler: {
+            //     type: 'action',
+            //     click: (ctx) => {
+            //       console.log('export pdf')
+            //     }
+            //   }
+            // },
+            // {
+            //   title: '导出为图片',
+            //   icon: '',
+            //   handler: {
+            //     type: 'action',
+            //     click: (ctx) => {
+            //       console.log('export image')
+            //     }
+            //   }
+            // },
             {
               title: '导出为 Markdown',
               icon: '',
               handler: {
                 type: 'action',
-                click: (ctx) => {
-                  console.log('export markdown')
-                }
-              }
-            },
-            {
-              title: '导出为 HTML',
-              icon: '',
-              handler: {
-                type: 'action',
-                click: (ctx) => {
-                  console.log('export html')
-                }
-              }
-            },
-            {
-              title: '导出为 PDF',
-              icon: '',
-              handler: {
-                type: 'action',
-                click: (ctx) => {
-                  console.log('export pdf')
+                click: ({ editor }) => {
+                  const title = store.title
+                  const data = editor.getValue()
+                  const blob = new Blob([data], { type: 'text/plain;charset=utf-8' })
+                  const url = URL.createObjectURL(blob)
+                  const link = document.createElement('a')
+                  link.href = url
+                  link.download = `${title}.md`
+                  link.click()
                 }
               }
             }

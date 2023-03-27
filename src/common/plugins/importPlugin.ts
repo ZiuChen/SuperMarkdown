@@ -9,8 +9,23 @@ export function importPlugin(): BytemdPlugin {
         position: 'right',
         handler: {
           type: 'action',
-          click: (ctx) => {
-            console.log('import markdown')
+          click: ({ editor }) => {
+            const input = document.createElement('input')
+            input.type = 'file'
+            input.accept = '.md'
+            input.onchange = (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0]
+              if (!file) return
+              const title = file.name.split('.md')[0]
+              const reader = new FileReader()
+              reader.onload = (e) => {
+                console.log(e.target?.result)
+                window.useTreeData.addFile(title)
+                editor.setValue(e.target?.result as string)
+              }
+              reader.readAsText(file)
+            }
+            input.click()
           }
         }
       }

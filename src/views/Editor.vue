@@ -104,7 +104,6 @@ import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useArticleDropdown } from '@/hooks/useArticleDropdown'
 import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE, IS_DARK } from '@/common/symbol'
-import { __dirname } from '@/preload'
 
 import 'bytemd/dist/index.css'
 import 'highlight.js/styles/default.css'
@@ -132,6 +131,8 @@ import {
   customImagePlugin,
   imageUploadPlugin,
   screenShotPlugin,
+  exportPlugin,
+  importPlugin,
   pasteImagePlugin
 } from '@/common/plugins'
 
@@ -158,6 +159,8 @@ const plugins = [
   highlightThemePlugin(),
   enhancePlugin(),
   customImagePlugin(),
+  importPlugin(),
+  exportPlugin(),
   pasteImagePlugin()
 ]
 const lastKey = getItem('lastkey') || ''

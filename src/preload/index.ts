@@ -5,6 +5,10 @@ import type { Buffer as _Buffer } from 'buffer'
 
 declare global {
   interface Window {
+    useTreeData: {
+      addFile: (title?: string) => void
+    }
+
     preload: {
       resolve: typeof _resolve
       readFileSync: typeof _readFileSync

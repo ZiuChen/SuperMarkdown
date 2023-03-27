@@ -28,7 +28,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
   /**
    * 添加文件到当前目录
    */
-  function addFile() {
+  function addFile(title: string = DEFAULT_FILE_NAME) {
     const res = preCheck()
     if (!res) return
 
@@ -37,7 +37,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     // 如果当前节点是文件夹 则添加到当前节点下
     if (activeNode.value?.children) {
       activeNode.value.children.push({
-        title: DEFAULT_FILE_NAME,
+        title,
         key
       })
       $emit(CREATE_FILE, key)
@@ -48,7 +48,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       const parent = findParent(activeNode.value!.key, treeData.value)
       if (parent.length) {
         parent[0].children?.push({
-          title: DEFAULT_FILE_NAME,
+          title,
           key
         })
         $emit(CREATE_FILE, key)
@@ -211,6 +211,10 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         Message.success('重命名成功')
       }
     })
+  }
+
+  window.useTreeData = {
+    addFile
   }
 
   return {
