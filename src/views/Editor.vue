@@ -177,7 +177,7 @@ const isDark = inject<Ref<boolean>>(IS_DARK)!
 
 const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleDropdown(store)
 
-store.loadArticle(lastKey)
+lastKey ? store.loadArticle(lastKey) : store.initArticle()
 
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   // 更新store中选中文章id

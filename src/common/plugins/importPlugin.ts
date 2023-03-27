@@ -19,7 +19,6 @@ export function importPlugin(): BytemdPlugin {
               const title = file.name.split('.md')[0]
               const reader = new FileReader()
               reader.onload = (e) => {
-                console.log(e.target?.result)
                 window.useTreeData.addFile(title)
                 editor.setValue(e.target?.result as string)
               }

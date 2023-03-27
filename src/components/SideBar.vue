@@ -7,7 +7,7 @@
     </a-input>
 
     <div class="btn-list">
-      <a-button title="新文章" @click="() => addFile">
+      <a-button title="新文章" @click="addFile()">
         <template #icon>
           <icon-file />
         </template>

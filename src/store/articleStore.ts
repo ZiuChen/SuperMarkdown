@@ -43,25 +43,29 @@ export const useArticleStore = defineStore('ArticleStore', {
     }
   },
   actions: {
-    loadArticle(id: string, title?: string) {
-      // 初始化默认文章
-      // id为''是SideBar取laskKey时为null 通过逻辑或算出来的
-      if (id === '') {
-        this.$patch(defaultArticle)
-        setItem('lastkey', defaultArticle.id)
-        this.saveArticle()
-      } else {
-        // 从本地存储加载文章
-        this.id = id // 先更新id 触发articleKey的更新
-        const article = getItem(this.articleKey) // 根据articleKey取到文章
+    // 初始化默认文章
+    initArticle() {
+      this.$patch(defaultArticle)
+      setItem('lastkey', defaultArticle.id)
+      this.saveArticle()
 
-        // 取到文章 直接加载
-        if (article) {
-          this.$patch(article)
-        } else {
-          // 根据id未取到文章
-          // 要么是新建的文章 侧栏已经建好了
-          // 要么是边界情况: 文章被删除后没有重置lastKey
+      // 更新运行时标识
+      this.isEmpty = false
+    },
+    loadArticle(id: string, title?: string) {
+      // 从本地存储加载文章
+      this.id = id // 先更新id 触发articleKey的更新
+      const article = getItem(this.articleKey) // 根据articleKey取到文章
+
+      // 取到文章 直接加载
+      if (article) {
+        this.$patch(article)
+        // 更新运行时标识
+        this.isEmpty = false
+      } else {
+        // 根据id未取到文章
+        // 新建的文章 侧栏已经建好了
+        if (title) {
           this.$patch({
             id,
             code: '',
@@ -71,11 +75,14 @@ export const useArticleStore = defineStore('ArticleStore', {
           })
 
           this.saveArticle()
+
+          // 更新运行时标识
+          this.isEmpty = false
+        } else {
+          // 文章被删除后没有选择新的文章 lastKey没有更新
+          console.log('文章不存在')
         }
       }
-
-      // 更新运行时标识
-      this.isEmpty = false
     },
     async saveArticle(): Promise<boolean> {
       return new Promise((resolve) => {
