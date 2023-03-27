@@ -44,6 +44,7 @@ export function pasteImagePlugin(): BytemdPlugin {
       ctx.editor.on('drop', async (_, e) => {
         handleImages(ctx, e, e.dataTransfer?.items)
       })
+      // @ts-ignore
       ctx.editor.on('paste', async (_, e) => {
         handleImages(ctx, e, e.clipboardData?.items)
       })

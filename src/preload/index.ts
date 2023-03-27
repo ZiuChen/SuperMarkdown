@@ -6,7 +6,6 @@ import type { Buffer as _Buffer } from 'buffer'
 declare global {
   interface Window {
     preload: {
-      __dirname: string
       resolve: typeof _resolve
       readFileSync: typeof _readFileSync
       statSync: typeof _statSync
@@ -22,8 +21,6 @@ function emptyFuncFactory() {
 
 // 导出以供类型静态分析 实际取值是在运行时进行的
 // 需要自己对isElectron进行判断
-
-export const __dirname = window.preload?.__dirname || 'https://unpkg.com/vditor'
 
 export const resolve = window.preload?.resolve || (emptyFuncFactory() as typeof _resolve)
 

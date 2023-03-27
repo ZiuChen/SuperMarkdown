@@ -93,8 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { isEmpty, throttle } from 'lodash-es'
+import { throttle } from 'lodash-es'
 import SideBar from '@/components/SideBar.vue'
 import Editor from '@/components/Editor.vue'
 import Viewer from '@/components/Viewer.vue'
@@ -133,8 +132,6 @@ import {
   customImagePlugin,
   imageUploadPlugin,
   screenShotPlugin,
-  exportPlugin,
-  importPlugin,
   pasteImagePlugin
 } from '@/common/plugins'
 
@@ -161,8 +158,6 @@ const plugins = [
   highlightThemePlugin(),
   enhancePlugin(),
   customImagePlugin(),
-  importPlugin(),
-  exportPlugin(),
   pasteImagePlugin()
 ]
 const lastKey = getItem('lastkey') || ''
@@ -319,6 +314,8 @@ html {
   .bytemd-tippy[bytemd-tippy-path='5'] {
     display: none;
   }
+}
+.bytemd-toolbar-left {
   .bytemd-tippy[bytemd-tippy-path='6'] {
     display: none;
   }
