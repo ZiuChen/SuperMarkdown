@@ -15,9 +15,10 @@ highlight: atom-one-dark
 - 由ByteMD强力驱动，功能丰富、性能强劲
 - 支持GFM扩展语法、脚注、Gemoji、KaTeX数学公式、Mermaid图表
 - 支持通过Frontmatter设置多种主题、代码高亮样式
+- 支持多级目录，目录支持无限嵌套
 - 支持通过粘贴/拖拽的方式批量上传图片、支持截取屏幕截图
-- 支持实时同步预览、自动保存、导出HTML、导出PDF、导出Word
 - 支持Markdown文件的批量导入、批量导出
+- 支持实时同步预览、自动保存
 
 [插件主页](https://ziuchen.gitee.io/project/Markdown/)
 
