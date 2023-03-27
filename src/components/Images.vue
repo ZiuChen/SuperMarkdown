@@ -13,14 +13,18 @@
       <a-tag>当前未存储任何图片</a-tag>
     </div>
 
-    <a-image-preview-group v-else infinite>
+    <a-image-preview-group
+      v-else
+      infinite
+      :preview-props="{
+        actionsLayout: ['rotateRight', 'zoomIn', 'zoomOut']
+      }"
+    >
       <template v-for="img of imagesComputed">
         <a-image class="image-item" :src="img.imgData" height="100">
           <template #extra>
-            <span @click="handleImageDelete(img._id)">
-              删除
-              <icon-delete></icon-delete>
-            </span>
+            <icon-delete title="删除" @click="handleImageDelete(img._id)" />
+            <icon-copy title="复制" @click="handleImageCopy(img.imgLink)" />
           </template>
         </a-image>
       </template>
@@ -29,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { DbDoc, allDocs, loadImage, removeDoc } from '@/utils'
+import { DbDoc, allDocs, loadImage, removeDoc, copyText } from '@/utils'
 import { Message, Modal } from '@arco-design/web-vue'
 
 const images = ref<DbDoc[] | undefined>(allDocs('attachment/'))
@@ -38,12 +42,20 @@ const imagesComputed = computed(() => {
   return images.value.map((img: DbDoc) => {
     const imgId = img._id.split('attachment/')[1]
     const imgData = loadImage(imgId)
+    const imgLink = `![](attachment:${imgId})`
     return {
       ...img,
-      imgData
+      imgId,
+      imgData,
+      imgLink
     }
   })
 })
+
+function handleImageCopy(imgLink: string) {
+  const res = copyText(imgLink)
+  res ? Message.success('图片链接已复制到剪贴板') : Message.error('图片链接复制失败')
+}
 
 function handleImageDelete(docId: string) {
   Modal.warning({
@@ -80,6 +92,8 @@ function handleClearClick() {
 </script>
 
 <style lang="less" scoped>
+@import '@/style/border.less';
+
 .header {
   display: flex;
   justify-content: space-between;
@@ -88,6 +102,8 @@ function handleClearClick() {
 
 .image-item {
   margin: 5px 5px 5px 0;
+  .border();
+
   &:hover {
     :deep(.arco-image-footer) {
       opacity: 1;
@@ -97,14 +113,22 @@ function handleClearClick() {
 }
 
 :deep(.arco-image-footer) {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  svg {
+    zoom: 1.2;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  // animation
   opacity: 0;
-  transform: translateY(-5px);
+  transform: translateY(2px);
   transition: all 0.2s;
 }
 
 :deep(.arco-image-footer-extra) {
   font-size: 14px;
   padding-left: 0;
-  cursor: pointer;
 }
 </style>
