@@ -1,9 +1,9 @@
 <template>
   <div class="setting">
     <BackButton></BackButton>
+    <Settings class="setting-box"></Settings>
     <Features v-if="isElectron" class="setting-box"></Features>
     <Images v-if="isElectron" class="setting-box"></Images>
-    <Settings class="setting-box"></Settings>
   </div>
 </template>
 
