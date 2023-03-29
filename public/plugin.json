@@ -13,8 +13,8 @@
   "features": [
     {
       "code": "超级Markdown",
-      "explain": "进入Markdown编辑器",
-      "cmds": ["超级Markdown", "MarkDown", "MD"]
+      "explain": "进入 Markdown 编辑器",
+      "cmds": ["MD", "Markdown", "Markdown Notes", "超级Markdown"]
     }
   ]
 }
