@@ -233,17 +233,15 @@ function handleSideBarCollapse(collapsed: boolean) {
 }
 </script>
 
-<style lang="less" scoped>
-@import '@/style/scrollbar.less';
-
+<style lang="less">
 body,
 html {
   overflow: hidden;
 }
+</style>
 
-.editor {
-  overflow: hidden;
-}
+<style lang="less" scoped>
+@import '@/style/scrollbar.less';
 
 .collapse-tip {
   text-align: center;
