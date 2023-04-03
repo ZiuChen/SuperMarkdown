@@ -72,14 +72,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       activeNode.value.children.push({
         title: DEFAULT_FOLDER_NAME,
         key: t.toString(),
-        children: [
-          {
-            title: DEFAULT_FILE_NAME,
-            key: (t + 1).toString()
-          }
-        ]
+        children: []
       })
-      $emit(CREATE_FOLDER, (t + 1).toString())
+      $emit(CREATE_FOLDER, t.toString())
       $emit(CATEGORY_CHANGE)
       Message.success('创建成功')
     } else {
@@ -90,14 +85,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         parent[0].children?.push({
           title: DEFAULT_FOLDER_NAME,
           key: t.toString(),
-          children: [
-            {
-              title: DEFAULT_FILE_NAME,
-              key: (t + 1).toString()
-            }
-          ]
+          children: []
         })
-        $emit(CREATE_FOLDER, (t + 1).toString())
+        $emit(CREATE_FOLDER, t.toString())
         $emit(CATEGORY_CHANGE)
         Message.success('创建成功')
       }
@@ -225,7 +215,9 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
   }
 }
 
-// 遍历树，找到匹配的节点的最近父节点
+/**
+ * 找到key节点的最近父节点
+ */
 export function findParent(key: string, treeData: SidebarItem[]): SidebarItem[] {
   const parent: SidebarItem[] = []
   treeData.forEach((item) => {
@@ -240,13 +232,18 @@ export function findParent(key: string, treeData: SidebarItem[]): SidebarItem[] 
   return parent
 }
 
+/**
+ * 找到key节点
+ */
 export function findNodeByKey(key: string, treeData: SidebarItem[]) {
   const loop: (...args: any[]) => SidebarItem | undefined = (data: SidebarItem[]) => {
     for (let i = 0; i < data.length; i++) {
       const item = data[i]
+      // 找到匹配的节点
       if (item.key === key) {
         return item
-      } else if (item.children) {
+      } else if (item.children?.length) {
+        // 继续遍历子节点
         const filterData = loop(item.children)
         if (filterData) {
           return filterData
@@ -258,6 +255,9 @@ export function findNodeByKey(key: string, treeData: SidebarItem[]) {
   return loop(treeData)
 }
 
+/**
+ * 收集key节点的所有父节点的key
+ */
 export function collectAllParentKeys(key: string, treeData: SidebarItem[]): string[] {
   const keys = []
   let parent = findParent(key, treeData)

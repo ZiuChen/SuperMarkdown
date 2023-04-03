@@ -302,6 +302,7 @@ function searchData(keyword: string, treeData: SidebarItem[]) {
 // 处理创建文件 | 文件夹事件 新建完成后自动切换到新建的文件
 // 传递的key都为新建文件的key
 function handleCreate(key: string) {
+  // 选中新建的文件/文件夹
   selectedNode.value = findNodeByKey(key, originTreeData.value)!
   // 展开所有相关节点
   const keys = collectAllParentKeys(key, originTreeData.value)
