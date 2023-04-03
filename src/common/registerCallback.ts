@@ -1,3 +1,4 @@
+import { Message } from '@arco-design/web-vue'
 import { $emit } from '@/hooks/useEventBus'
 import { FILE_ENTER } from '@/common/symbol'
 import { isElectron, setItem } from '@/utils'
@@ -11,4 +12,10 @@ export function registerCallback() {
       setItem('lastkey', code.split('/')[1])
     }
   })
+
+  if (utools.db.replicateStateFromCloud()) {
+    Message.warning({
+      content: '数据可能不完整，还在从云端复制中'
+    })
+  }
 }

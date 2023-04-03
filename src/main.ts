@@ -8,7 +8,7 @@ import { registerCallback } from '@/common/registerCallback'
 import { isElectron, SERVER_DEV } from './utils'
 ;(function () {
   try {
-    if (!isElectron) throw new Error('unsupported platform') // 禁用非 electron 环境的运行
+    if (!SERVER_DEV && !isElectron) throw new Error('unsupported platform') // 禁用非 electron 环境的运行
     if (!SERVER_DEV && utools.isDev()) return // 禁用非热更新服务器的开发模式的运行 防止逆向
 
     registerCallback()
