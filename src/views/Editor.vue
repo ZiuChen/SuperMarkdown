@@ -76,7 +76,12 @@
             ></Editor>
 
             <div class="viewer-container" v-if="store.isReadonly && !store.isEmpty">
-              <Viewer id="viewer" :value="store.code" :plugins="plugins"></Viewer>
+              <Viewer
+                id="viewer"
+                :value="store.code"
+                :plugins="plugins"
+                @init="handleEditorInit"
+              ></Viewer>
             </div>
 
             <div class="tips" v-show="store.isEmpty">请在左侧选择文章</div>
@@ -233,10 +238,10 @@ function handleSideBarCollapse(collapsed: boolean) {
 </script>
 
 <style lang="less">
-body,
-html {
-  overflow: hidden;
-}
+// body,
+// html {
+//   overflow: hidden;
+// }
 </style>
 
 <style lang="less" scoped>
@@ -306,13 +311,17 @@ html {
   overflow: auto;
   background-color: #fff;
   .scrollbar();
-  .border();
+  .border-part(top);
 }
 
 // #viewer {}
 </style>
 
 <style lang="less">
+html,
+body {
+  overflow: hidden;
+}
 // 隐藏编辑器工具栏中的部分按钮
 .bytemd-toolbar-left {
   .bytemd-tippy[bytemd-tippy-path='6'] {

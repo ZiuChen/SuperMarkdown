@@ -14,6 +14,8 @@ const props = defineProps({
   remarkRehype: Object
 })
 
+const emit = defineEmits(['init'])
+
 const markdownBody: Ref<HTMLElement | null> = ref(null)
 const cbs = ref([])
 const file = computed(() => {
@@ -37,6 +39,7 @@ watch(
 
 onMounted(() => {
   on()
+  emit('init')
 })
 
 onUnmounted(() => {
