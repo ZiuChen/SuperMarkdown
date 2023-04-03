@@ -312,16 +312,29 @@ html {
 
 <style lang="less">
 // 隐藏编辑器工具栏中的部分按钮
+.bytemd-toolbar-left {
+  .bytemd-tippy[bytemd-tippy-path='6'] {
+    display: none;
+  }
+  .bytemd-tippy[bytemd-tippy-path='14'] {
+    display: none;
+  }
+  .bytemd-tippy[bytemd-tippy-path='18'] {
+    display: none;
+  }
+}
+
 .bytemd-toolbar-right {
   .bytemd-tippy[bytemd-tippy-path='1'] {
     display: none;
   }
-  .bytemd-tippy[bytemd-tippy-path='5'] {
+  .bytemd-tippy[bytemd-tippy-path='2'] {
     display: none;
   }
-}
-.bytemd-toolbar-left {
-  .bytemd-tippy[bytemd-tippy-path='6'] {
+  .bytemd-tippy[bytemd-tippy-path='3'] {
+    display: none;
+  }
+  .bytemd-tippy[bytemd-tippy-path='5'] {
     display: none;
   }
 }
