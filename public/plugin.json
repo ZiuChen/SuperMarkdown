@@ -10,6 +10,7 @@
   },
   "logo": "logo.png",
   "platform": ["win32", "darwin", "linux"],
+  "pluginSetting": { "single": false },
   "features": [
     {
       "code": "超级Markdown",
