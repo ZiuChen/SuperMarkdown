@@ -166,7 +166,6 @@ const plugins = [
 const lastKey = getItem('lastkey') || ''
 const store = useArticleStore()
 const mainStore = useMainStore()
-const isCtrl = ref(false)
 const isReady = ref(false) // 编辑器是否初始化完成
 const sideBarCollapsed = ref(false)
 
@@ -179,16 +178,16 @@ const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleD
 
 lastKey ? store.loadArticle(lastKey) : store.initArticle()
 
+// 更新store中选中文章id
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
-  // 更新store中选中文章id
   store.id = id
   store.title = title
   store.loadArticle(id, title)
 })
 
-useEventListener(document, 'keydown', (e: KeyboardEvent) => {
-  const { metaKey, ctrlKey } = e
-  isCtrl.value = metaKey || ctrlKey
+// 每次聚焦时 都从本地存储获取最新的文章内容并加载
+useEventListener(window, 'focus', () => {
+  store.loadArticle(store.id)
 })
 
 /**
@@ -242,6 +241,7 @@ html {
 
 <style lang="less" scoped>
 @import '@/style/scrollbar.less';
+@import '@/style/border.less';
 
 .collapse-tip {
   text-align: center;
@@ -301,11 +301,12 @@ html {
 }
 
 .viewer-container {
-  height: calc(100vh - 78px); // 多出来 20px 的上下padding
-  padding: 10px;
+  height: calc(100vh - 58px); // 减去标题栏的高度
+  padding: 0 10px;
   overflow: auto;
   background-color: #fff;
   .scrollbar();
+  .border();
 }
 
 // #viewer {}

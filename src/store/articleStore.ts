@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { Message } from '@arco-design/web-vue'
 import { setItem, getItem } from '@/utils'
 import { IArticle } from '@/types'
 import { article as defaultArticle } from '@/data/article'
@@ -43,7 +44,9 @@ export const useArticleStore = defineStore('ArticleStore', {
     }
   },
   actions: {
-    // 初始化默认文章
+    /**
+     * 初始化默认文章
+     */
     initArticle() {
       this.$patch(defaultArticle)
       setItem('lastkey', defaultArticle.id)
@@ -52,6 +55,9 @@ export const useArticleStore = defineStore('ArticleStore', {
       // 更新运行时标识
       this.isEmpty = false
     },
+    /**
+     * 加载文章或新建文章
+     */
     loadArticle(id: string, title?: string) {
       // 从本地存储加载文章
       this.id = id // 先更新id 触发articleKey的更新
@@ -64,7 +70,7 @@ export const useArticleStore = defineStore('ArticleStore', {
         this.isEmpty = false
       } else {
         // 根据id未取到文章
-        // 新建的文章 侧栏已经建好了
+        // 如果传入了title 则为新建的文章 侧栏已经建好了
         if (title) {
           this.$patch({
             id,
@@ -79,8 +85,11 @@ export const useArticleStore = defineStore('ArticleStore', {
           // 更新运行时标识
           this.isEmpty = false
         } else {
-          // 文章被删除后没有选择新的文章 lastKey没有更新
-          console.log('文章不存在')
+          // 文章被删除后没有选择新的文章，lastKey没有更新
+          // 找不到目标文章
+          Message.error({
+            content: `文章${this.articleKey}不存在`
+          })
         }
       }
     },
