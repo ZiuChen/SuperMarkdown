@@ -292,6 +292,7 @@ html {
 #editor {
   :deep(.bytemd) {
     height: calc(100vh - 58px); // 减去标题栏的高度
+    border: none;
 
     .CodeMirror-vscrollbar {
       z-index: 0; // 图片mediumzoom时，编辑器滚动条会遮挡图片

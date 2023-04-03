@@ -326,6 +326,7 @@ function handleCreate(key: string) {
 
 .btn-list {
   display: flex;
+
   .drop-down {
     flex: 1;
   }
@@ -334,5 +335,9 @@ function handleCreate(key: string) {
 .arco-tree {
   width: 100%;
   align-self: flex-start;
+
+  :deep(.arco-tree-node-title) {
+    font-size: 13px;
+  }
 }
 </style>
