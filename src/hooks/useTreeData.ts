@@ -7,9 +7,7 @@ import {
   CREATE_FOLDER,
   DELETE_FILE,
   DELETE_FOLDER,
-  RENAME_FILE,
-  RENAME_FOLDER,
-  SWITCH_FILE,
+  RENAME_NODE,
   CATEGORY_CHANGE
 } from '@/common/symbol'
 
@@ -40,6 +38,10 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         title,
         key
       })
+
+      // 选中新创建的文件
+      activeNode.value = activeNode.value.children[activeNode.value.children.length - 1]
+
       $emit(CREATE_FILE, key)
       $emit(CATEGORY_CHANGE)
       Message.success('创建成功')
@@ -51,6 +53,10 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           title,
           key
         })
+
+        // 选中新创建的文件
+        activeNode.value = parent[0].children![parent[0].children!.length - 1]
+
         $emit(CREATE_FILE, key)
         $emit(CATEGORY_CHANGE)
         Message.success('创建成功')
@@ -74,6 +80,10 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         key: t.toString(),
         children: []
       })
+
+      // 选中新创建的文件夹
+      activeNode.value = activeNode.value.children[activeNode.value.children.length - 1]
+
       $emit(CREATE_FOLDER, t.toString())
       $emit(CATEGORY_CHANGE)
       Message.success('创建成功')
@@ -87,6 +97,10 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           key: t.toString(),
           children: []
         })
+
+        // 选中新创建的文件夹
+        activeNode.value = parent[0].children![parent[0].children!.length - 1]
+
         $emit(CREATE_FOLDER, t.toString())
         $emit(CATEGORY_CHANGE)
         Message.success('创建成功')
@@ -163,6 +177,13 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
             const index = parent[0].children?.findIndex((item) => item.key === node.key)
             if (index !== undefined) {
               parent[0].children?.splice(index, 1)
+
+              // 检查前一个节点是否存在
+              if (index - 1 >= 0) {
+                // 存在则选中前一个节点
+                activeNode.value = parent[0].children![index - 1]
+              }
+
               $emit(DELETE_FILE, node.key)
               $emit(CATEGORY_CHANGE)
               Message.success('删除成功')
@@ -196,7 +217,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       onOk() {
         node.title = title
         // 文件和文件名都用这一个Symbol? 反正都一样
-        $emit(RENAME_FILE, node.key)
+        $emit(RENAME_NODE, node.key)
         $emit(CATEGORY_CHANGE)
         Message.success('重命名成功')
       }

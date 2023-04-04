@@ -267,13 +267,6 @@ function handleSideBarCollapse(collapsed: boolean) {
 }
 </script>
 
-<style lang="less">
-// body,
-// html {
-//   overflow: hidden;
-// }
-</style>
-
 <style lang="less" scoped>
 @import '@/style/scrollbar.less';
 @import '@/style/border.less';

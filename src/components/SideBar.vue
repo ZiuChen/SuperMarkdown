@@ -111,8 +111,6 @@ import {
   CATEGORY_CHANGE,
   EDITOR_LOADED,
   CHANGE_TITLE,
-  CREATE_FILE,
-  CREATE_FOLDER,
   DELETE_FILE,
   DELETE_FOLDER,
   FILE_ENTER
@@ -127,6 +125,7 @@ const selectedNode = ref<SidebarItem | null>(null) // 保证有且只有一个�
 const originTreeData = ref(localTreeData)
 const expandedKeys = ref<string[]>([])
 
+// 收集所有节点的key
 const allExpandedKeys = computed(() => {
   const keys: string[] = []
   const loop = (data: SidebarItem[]) => {
@@ -141,6 +140,7 @@ const allExpandedKeys = computed(() => {
   return keys
 })
 
+// 当前已选中节点的key 单选 所以只有一个selectedNode.value.key
 const selectedKeys = computed(() => {
   if (selectedNode.value) return [selectedNode.value.key]
   return []
@@ -206,10 +206,8 @@ useEventBus(FILE_ENTER, (key: string) => {
   expandedKeys.value = keys
 })
 
-useEventBus(CREATE_FILE, handleCreate)
-useEventBus(CREATE_FOLDER, handleCreate)
-
-// 处理文件删除事件 删除完成后直接失焦 提醒用户自己切换文章
+// 处理文件删除事件
+// 删除完成后直接失焦 提醒用户自己切换文章
 useEventBus(DELETE_FILE, (key: string) => {
   // 从本地存储中删除此文章
   removeItem(`note/${key}`)
@@ -243,6 +241,8 @@ useEventBus(DELETE_FOLDER, (keys: string[]) => {
 })
 
 watch(selectedNode, (val) => {
+  if (!val) return
+
   // 选中的节点是文件
   if (val && !val.children) {
     // 触发事件总线
@@ -255,19 +255,22 @@ watch(selectedNode, (val) => {
     setItem('lastkey', val.key)
   } else {
     // 选中的节点是文件夹
+    // 展开当前文件夹
+    if (!expandedKeys.value.includes(val.key)) {
+      expandedKeys.value = [...expandedKeys.value, val.key]
+    }
+
     // 切换当前编辑器状态
     store.isEmpty = true
   }
 })
 
+/**
+ * 选中树中的节点时触发
+ * handleSelect => selectedNode => watch(selectedNode)
+ */
 function handleSelect(_: any, data: any) {
-  // 如果是文件夹 则不选中 直接展开
-  if (data.node.children) {
-    // 将当前节点的key添加到expandedKeys中
-    expandedKeys.value = expandedKeys.value.includes(data.node.key)
-      ? expandedKeys.value.filter((item: string) => item !== data.node.key)
-      : [...expandedKeys.value, data.node.key]
-  }
+  // 更新当前激活的节点
   selectedNode.value = data.node
 }
 
@@ -297,16 +300,6 @@ function searchData(keyword: string, treeData: SidebarItem[]) {
   }
 
   return loop(treeData)
-}
-
-// 处理创建文件 | 文件夹事件 新建完成后自动切换到新建的文件
-// 传递的key都为新建文件的key
-function handleCreate(key: string) {
-  // 选中新建的文件/文件夹
-  selectedNode.value = findNodeByKey(key, originTreeData.value)!
-  // 展开所有相关节点
-  const keys = collectAllParentKeys(key, originTreeData.value)
-  expandedKeys.value = keys
 }
 </script>
 
