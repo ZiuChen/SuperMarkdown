@@ -86,10 +86,8 @@ export const useArticleStore = defineStore('ArticleStore', {
           this.isEmpty = false
         } else {
           // 文章被删除后没有选择新的文章，lastKey没有更新
-          // 找不到目标文章
-          Message.error({
-            content: `文章${this.articleKey}不存在`
-          })
+          // 文章不存在 不做任何操作
+          // console.log(id)
         }
       }
     },

@@ -119,28 +119,84 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
 
     // 如果当前节点是文件夹 检查文件夹中是否有文件
     // 有文件则提示用户是否删除 无文件则直接删除
-    if (node.children) {
-      // 当前文件夹中有文件
+    if (node?.children) {
+      // 检查当前文件夹是否为根节点 且只有一个文件夹
+      if (!findParent(node.key, treeData.value).length && treeData.value.length === 1) {
+        Message.error('根目录下至少要有一个文件夹')
+        return
+      }
+
+      // 根节点 且有多个文件夹 允许删除
+      if (!findParent(node.key, treeData.value).length && treeData.value.length > 1) {
+        // 根节点下有内容 询问用户是否删除
+        if (node.children.length) {
+          Modal.warning({
+            title: '当前文件夹中有文件，是否删除？',
+            content: '删除后无法恢复',
+            hideCancel: false,
+            cancelText: '取消',
+            onOk() {
+              // 删除当前文件夹下的所有文件
+              const index = treeData.value.findIndex((item) => item.key === node.key)
+              if (index !== undefined) {
+                treeData.value.splice(index, 1)
+                $emit(
+                  DELETE_FOLDER,
+                  node.children!.map((item) => item.key)
+                )
+                $emit(CATEGORY_CHANGE)
+                Message.success('删除成功')
+              }
+            }
+          })
+          return
+        } else {
+          // 当前文件夹中没有内容 直接删除
+          const index = treeData.value.findIndex((item) => item.key === node.key)
+          if (index !== undefined) {
+            treeData.value.splice(index, 1)
+            $emit(DELETE_FOLDER, [])
+            $emit(CATEGORY_CHANGE)
+            Message.success('删除成功')
+          }
+          return
+        }
+      }
+
       if (node.children.length) {
+        // 当前文件夹中有内容(文件或文件夹)
+
         Modal.warning({
-          title: '当前文件夹中有文件，是否删除？',
+          title: '当前文件夹中有内容，是否删除？',
           content: '删除后无法恢复',
           hideCancel: false,
           cancelText: '取消',
           onOk() {
             // 删除当前文件夹下的所有文件
+            // 递归收集所有被文件的key
+            const keys: string[] = []
+
+            function collectKeys(node: SidebarItem) {
+              if (node.children) {
+                node.children.forEach((item) => {
+                  collectKeys(item)
+                })
+              } else {
+                keys.push(node.key)
+              }
+            }
+
+            collectKeys(node)
+
+            // 删除当前文件夹
             const parent = findParent(node.key, treeData.value)
+            console.log('parent', parent)
             if (parent.length) {
-              // 取到当前文件夹在其父节点的索引
               const index = parent[0].children?.findIndex((item) => item.key === node.key)
               if (index !== undefined) {
-                // 从侧栏中删除此文件夹
                 parent[0].children?.splice(index, 1)
-                // 将此文件夹下所有文件的key作为payload emit出去
-                $emit(
-                  DELETE_FOLDER,
-                  node.children!.map((item) => item.key)
-                )
+
+                $emit(DELETE_FOLDER, keys)
                 $emit(CATEGORY_CHANGE)
                 Message.success('删除成功')
               }
@@ -150,6 +206,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       } else {
         // 空文件夹 直接删除
         const parent = findParent(node.key, treeData.value)
+        // 有父节点 则找到当前节点并删除
         if (parent.length) {
           const index = parent[0].children?.findIndex((item) => item.key === node.key)
           if (index !== undefined) {

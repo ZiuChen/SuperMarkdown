@@ -1,4 +1,6 @@
 import { SidebarItem } from '@/data/sidebar'
+import { $emit } from '@/hooks/useEventBus'
+import { CATEGORY_CHANGE } from '@/common/symbol'
 
 export function useTreeDrag(treeData: Ref<SidebarItem[]>) {
   function dragStart(ev: DragEvent, node: SidebarItem) {}
@@ -45,6 +47,9 @@ export function useTreeDrag(treeData: Ref<SidebarItem[]>) {
         arr.splice(dropPosition < 0 ? index : index + 1, 0, dragNode)
       })
     }
+
+    // 触发侧栏目录树保存到本地
+    $emit(CATEGORY_CHANGE)
   }
 
   return {
