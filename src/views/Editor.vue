@@ -22,11 +22,13 @@
         <a-layout-header>
           <div class="header">
             <a-input
+              ref="titleInputRef"
               class="title"
               type="text"
               placeholder="输入文章标题..."
               v-model="store.title"
               @input="handleTitleChange"
+              @keydown.tab="handleTitleTab"
               :disabled="titleInputDisabled"
               :max-length="100"
               :show-word-limit="true"
@@ -98,6 +100,7 @@
 </template>
 
 <script setup lang="ts">
+import type { Input } from '@arco-design/web-vue'
 import { throttle } from 'lodash-es'
 import SideBar from '@/components/SideBar.vue'
 import Editor from '@/components/Editor.vue'
@@ -108,7 +111,14 @@ import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useArticleDropdown } from '@/hooks/useArticleDropdown'
-import { SWITCH_FILE, EDITOR_LOADED, CHANGE_TITLE, IS_DARK } from '@/common/symbol'
+import {
+  SWITCH_FILE,
+  EDITOR_LOADED,
+  CHANGE_TITLE,
+  IS_DARK,
+  CREATE_FILE,
+  FOCUS_EDITOR
+} from '@/common/symbol'
 
 import 'bytemd/dist/index.css'
 import 'highlight.js/styles/default.css'
@@ -173,6 +183,7 @@ const store = useArticleStore()
 const mainStore = useMainStore()
 const isReady = ref(false) // 编辑器是否初始化完成
 const sideBarCollapsed = ref(false)
+const titleInputRef = ref<InstanceType<typeof Input> | null>(null)
 
 const titleInputDisabled = computed(() => !isReady.value || store.isEmpty || store.isReadonly)
 const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
@@ -188,6 +199,12 @@ useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
   store.id = id
   store.title = title
   store.loadArticle(id, title)
+})
+
+// 新建文章 聚焦标题并全选内容
+useEventBus(CREATE_FILE, () => {
+  titleInputRef.value?.focus()
+  nextTick(() => titleInputRef.value?.inputRef?.select())
 })
 
 // 每次聚焦时 都从本地存储获取最新的文章内容并加载
@@ -219,6 +236,16 @@ function _handleTitleChange() {
 }
 
 /**
+ * 标题聚焦时按下tab时触发
+ */
+function handleTitleTab(ev: KeyboardEvent) {
+  ev.preventDefault() // 取消默认操作: 聚焦下一个Tabindex元素
+
+  // 聚焦编辑器
+  $emit(FOCUS_EDITOR)
+}
+
+/**
  * 编辑器文本变化时触发
  * @param value 当前编辑器的值
  */
@@ -232,6 +259,9 @@ function handleEditorChange(value: string) {
   store.saveArticle()
 }
 
+/**
+ * 侧边栏折叠状态变化时触发
+ */
 function handleSideBarCollapse(collapsed: boolean) {
   sideBarCollapsed.value = collapsed
 }

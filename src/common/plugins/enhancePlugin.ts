@@ -1,6 +1,6 @@
 import type { BytemdPlugin } from 'bytemd'
 import { useEventBus } from '@/hooks/useEventBus'
-import { SWITCH_FILE } from '@/common/symbol'
+import { SWITCH_FILE, FOCUS_EDITOR } from '@/common/symbol'
 import { visit } from 'unist-util-visit'
 import { isElectron } from '@/utils'
 
@@ -28,6 +28,9 @@ export function enhancePlugin(): BytemdPlugin {
         // 因为是共用一个编辑器，所以每次切换文章时，需要清空编辑器的历史记录
         // SWITCH_FILE触发时 editor 内容为先前文章的内容 延迟到下一个tick做清空操作
         nextTick(() => editor.clearHistory())
+      })
+      useEventBus(FOCUS_EDITOR, () => {
+        nextTick(() => editor.focus())
       })
     }
   }
