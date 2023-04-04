@@ -101,6 +101,7 @@
 
 <script setup lang="ts">
 import { sidebar, SidebarItem } from '@/data/sidebar'
+import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
@@ -262,6 +263,14 @@ watch(selectedNode, (val) => {
 
     // 切换当前编辑器状态
     store.isEmpty = true
+  }
+})
+
+// 每次聚焦时 都从本地存储获取最新的侧栏数据
+useEventListener(window, 'focus', () => {
+  const data = getItem('category')
+  if (data) {
+    originTreeData.value = data
   }
 })
 
