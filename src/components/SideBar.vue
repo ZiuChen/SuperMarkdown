@@ -114,7 +114,8 @@ import {
   CHANGE_TITLE,
   DELETE_FILE,
   DELETE_FOLDER,
-  FILE_ENTER
+  FILE_ENTER,
+  RENAME_NODE
 } from '@/common/symbol'
 import { Message } from '@arco-design/web-vue'
 import { useRouter } from 'vue-router'
@@ -239,6 +240,16 @@ useEventBus(DELETE_FOLDER, (keys: string[]) => {
     })
   }
   // 当前选中的是文件夹 已经失焦了 所以不必像DELETE_FILE那样切换状态
+})
+
+useEventBus(RENAME_NODE, (key: string) => {
+  const node = findNodeByKey(key, originTreeData.value)
+  if (!node) return
+
+  // 重命名的节点是文章 需要将修改同步到文章标题
+  if (!node?.children) {
+    store.title = node.title
+  }
 })
 
 watch(selectedNode, (val) => {

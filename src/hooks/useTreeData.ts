@@ -215,8 +215,21 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
           }
         }),
       onOk() {
+        if (!title) {
+          Message.error('标题不能为空')
+          return
+        }
+
+        if (title.length > 100) {
+          Message.error('标题过长')
+          return
+        }
+
+        // 标题未改变
+        if (title === node.title) return
+
         node.title = title
-        // 文件和文件名都用这一个Symbol? 反正都一样
+
         $emit(RENAME_NODE, node.key)
         $emit(CATEGORY_CHANGE)
         Message.success('重命名成功')
