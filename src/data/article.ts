@@ -18,6 +18,7 @@ highlight: atom-one-dark
 - 支持多级目录，目录支持无限嵌套
 - 支持通过粘贴/拖拽的方式批量上传图片、支持截取屏幕截图
 - 支持Markdown文件的批量导入、批量导出
+- 支持插件多开，同时编辑/参考多个文章
 - 支持实时同步预览、自动保存
 
 [插件主页](https://ziuchen.gitee.io/project/Markdown/)
