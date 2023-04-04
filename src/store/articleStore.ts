@@ -87,7 +87,6 @@ export const useArticleStore = defineStore('ArticleStore', {
         } else {
           // 文章被删除后没有选择新的文章，lastKey没有更新
           // 文章不存在 不做任何操作
-          // console.log(id)
         }
       }
     },

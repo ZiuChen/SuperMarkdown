@@ -15,7 +15,6 @@ import { isElectron, SERVER_DEV } from './utils'
     const pinia = createPinia()
     createApp(App).use(router).use(pinia).use(registerIcon).mount('#app')
   } catch (error) {
-    console.log(error)
     if (isElectron) utools.showNotification('初始化失败: ' + error)
   }
 })()

@@ -190,7 +190,6 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
 
             // 删除当前文件夹
             const parent = findParent(node.key, treeData.value)
-            console.log('parent', parent)
             if (parent.length) {
               const index = parent[0].children?.findIndex((item) => item.key === node.key)
               if (index !== undefined) {

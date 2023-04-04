@@ -17,9 +17,7 @@ export function exportPlugin(): BytemdPlugin {
             //   icon: '',
             //   handler: {
             //     type: 'action',
-            //     click: (ctx) => {
-            //       console.log('export html')
-            //     }
+            //     click: (ctx) => {}
             //   }
             // },
             // {
@@ -27,9 +25,7 @@ export function exportPlugin(): BytemdPlugin {
             //   icon: '',
             //   handler: {
             //     type: 'action',
-            //     click: (ctx) => {
-            //       console.log('export pdf')
-            //     }
+            //     click: (ctx) => {}
             //   }
             // },
             // {
@@ -37,9 +33,7 @@ export function exportPlugin(): BytemdPlugin {
             //   icon: '',
             //   handler: {
             //     type: 'action',
-            //     click: (ctx) => {
-            //       console.log('export image')
-            //     }
+            //     click: (ctx) => {}
             //   }
             // },
             {
