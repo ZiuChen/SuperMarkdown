@@ -111,6 +111,7 @@ import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useArticleDropdown } from '@/hooks/useArticleDropdown'
+import { useScrollLock } from '@/hooks/useScrollLock'
 import {
   SWITCH_FILE,
   EDITOR_LOADED,
@@ -191,8 +192,11 @@ const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
 const isDark = inject<Ref<boolean>>(IS_DARK)!
 
 const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleDropdown(store)
+const { lock } = useScrollLock()
 
 lastKey ? store.loadArticle(lastKey) : store.initArticle()
+
+lock() // 锁定滚动
 
 // 更新store中选中文章id
 useEventBus(SWITCH_FILE, ({ id, title }: { id: string; title: string }) => {
@@ -341,10 +345,6 @@ function handleSideBarCollapse(collapsed: boolean) {
 </style>
 
 <style lang="less">
-html,
-body {
-  overflow: hidden;
-}
 // 隐藏编辑器工具栏中的部分按钮
 .bytemd-toolbar-left {
   .bytemd-tippy[bytemd-tippy-path='6'] {

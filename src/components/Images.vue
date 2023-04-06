@@ -21,7 +21,7 @@
       }"
     >
       <template v-for="img of imagesComputed">
-        <a-image class="image-item" :src="img.imgData" height="100">
+        <a-image class="image-item" :src="img.imgData">
           <template #extra>
             <icon-delete title="删除" @click="handleImageDelete(img._id)" />
             <icon-copy title="复制" @click="handleImageCopy(img.imgLink)" />
@@ -105,6 +105,12 @@ function handleClearClick() {
 .image-item {
   margin: 5px 5px 5px 0;
   .border();
+
+  :deep(.arco-image-img) {
+    height: 100px;
+    max-width: 200px;
+    object-fit: contain; // 防止图片过大时，图片被拉伸
+  }
 
   &:hover {
     :deep(.arco-image-footer) {
