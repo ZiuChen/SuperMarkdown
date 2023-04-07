@@ -1,22 +1,7 @@
 import { defineStore } from 'pinia'
-import { Message } from '@arco-design/web-vue'
 import { setItem, getItem } from '@/utils'
-import { IArticle } from '@/types'
+import { IArticleRuntimeExtend, IArticleSaveExtend } from '@/types'
 import { article as defaultArticle } from '@/data/article'
-
-// 运行时接口定义
-interface IArticleRuntimeExtend extends IArticle {
-  isEmpty: boolean
-  isSource: boolean
-  isFeature: boolean
-  isReadonly: boolean
-}
-
-// 保存在本地的接口定义
-interface IArticleSaveExtend extends IArticle {
-  isFeature?: boolean
-  isReadonly?: boolean
-}
 
 export const useArticleStore = defineStore('ArticleStore', {
   state: () => {

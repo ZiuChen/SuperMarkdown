@@ -1,42 +1,5 @@
-import { MessageConfig, Message } from '@arco-design/web-vue'
-import { isElectron, getAttachment } from '@/utils'
-import { statSync, Buffer } from '@/preload'
-
-// 修改MessageConfig.content为string
-export interface ICustomMessageConfig extends MessageConfig {
-  content: string
-}
-
-export function notification(options: string | ICustomMessageConfig) {
-  let _options
-
-  if (typeof options === 'string') {
-    _options = {
-      id: new Date().getTime() + '',
-      content: options
-    }
-  } else {
-    _options = {
-      id: new Date().getTime() + '',
-      ...options
-    }
-  }
-
-  if (isElectron) {
-    Message.error(_options)
-    utools.showNotification(_options.content)
-  } else {
-    Message.error(_options)
-  }
-}
-
-export function openLink(url: string) {
-  if (isElectron) {
-    utools.shellOpenExternal(url)
-  } else {
-    window.open(url)
-  }
-}
+import { isElectron } from '@/utils'
+import { statSync } from '@/preload'
 
 export function classof(o: any) {
   if (o === null) return 'Null'
@@ -83,14 +46,6 @@ export function calcFileSize(path: string) {
   return [originSize, size.toFixed(2) + units[unitIndex]]
 }
 
-export function loadImage(docId: string) {
-  if (!isElectron) return ''
-
-  const res = getAttachment('attachment/' + docId)
-  if (res) return 'data:image/png;base64,' + Buffer.from(res).toString('base64')
-  return ''
-}
-
 export function copyText(text: string) {
   try {
     if (navigator.clipboard) {
@@ -111,7 +66,6 @@ export function copyText(text: string) {
     }
     return true
   } catch (err) {
-    Message.error('复制失败' + err)
     return false
   }
 }
