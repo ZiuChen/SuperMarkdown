@@ -1,16 +1,14 @@
-import type { resolve as _resolve } from 'path'
+import type { resolve as _resolve, basename as _basename, extname as _extname } from 'path'
 import type { readFileSync as _readFileSync, statSync as _statSync } from 'fs'
 import type { createHash as _createHash } from 'crypto'
 import type { Buffer as _Buffer } from 'buffer'
 
 declare global {
   interface Window {
-    useTreeData: {
-      addFile: (title?: string) => void
-    }
-
     preload: {
       resolve: typeof _resolve
+      basename: typeof _basename
+      extname: typeof _extname
       readFileSync: typeof _readFileSync
       statSync: typeof _statSync
       createHash: typeof _createHash
@@ -27,6 +25,10 @@ function emptyFuncFactory() {
 // 需要自己对isElectron进行判断
 
 export const resolve = window.preload?.resolve || (emptyFuncFactory() as typeof _resolve)
+
+export const basename = window.preload?.basename || (emptyFuncFactory() as typeof _basename)
+
+export const extname = window.preload?.extname || (emptyFuncFactory() as typeof _extname)
 
 export const readFileSync =
   window.preload?.readFileSync || (emptyFuncFactory() as typeof _readFileSync)

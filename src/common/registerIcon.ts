@@ -18,7 +18,8 @@ import {
   IconSearch,
   IconRightCircle,
   IconLeftCircle,
-  IconCopy
+  IconCopy,
+  IconImport
 } from '@arco-design/web-vue/es/icon'
 
 const icons = [
@@ -40,7 +41,8 @@ const icons = [
   IconSearch,
   IconRightCircle,
   IconLeftCircle,
-  IconCopy
+  IconCopy,
+  IconImport
 ]
 
 export function registerIcon(app: App) {

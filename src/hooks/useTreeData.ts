@@ -26,7 +26,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
   /**
    * 添加文件到当前目录
    */
-  function addFile(title: string = DEFAULT_FILE_NAME) {
+  function addFile() {
     const res = preCheck()
     if (!res) return
 
@@ -35,7 +35,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     // 如果当前节点是文件夹 则添加到当前节点下
     if (activeNode.value?.children) {
       activeNode.value.children.push({
-        title,
+        title: DEFAULT_FILE_NAME,
         key
       })
 
@@ -50,7 +50,7 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       const parent = findParent(activeNode.value!.key, treeData.value)
       if (parent.length) {
         parent[0].children?.push({
-          title,
+          title: DEFAULT_FILE_NAME,
           key
         })
 
@@ -293,15 +293,51 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     })
   }
 
-  window.useTreeData = {
-    addFile
+  function patchFileExternal(fileList: { title: string; data: string }[]) {
+    const res = preCheck()
+    if (!res) return []
+
+    let key = Date.now()
+
+    // 将titleList转为nodeList
+    const nodeList = fileList.map(({ title, data }) => ({
+      title,
+      data,
+      key: (key++).toString()
+    }))
+
+    // 当前节点是文件夹
+    if (activeNode.value!.children) {
+      activeNode.value!.children.push(...nodeList)
+
+      // TODO: 暂时不做导入后的默认选中了
+      // // 选中最后一个节点
+      // activeNode.value = activeNode.value!.children[activeNode.value!.children.length - 1]
+    } else {
+      // 当前节点是文件 添加到同级父文件夹
+      const parent = findParent(activeNode.value!.key, treeData.value)
+      if (parent.length) {
+        const index = parent[0].children?.findIndex((item) => item.key === activeNode.value!.key)
+        if (index !== undefined) {
+          parent[0].children!.push(...nodeList)
+        }
+
+        // // 选中最后一个节点
+        // activeNode.value = parent[0].children![parent[0].children!.length - 1]
+      }
+    }
+
+    $emit(CATEGORY_CHANGE)
+
+    return nodeList
   }
 
   return {
     addFile,
     addFolder,
     handleDelete,
-    handleRename
+    handleRename,
+    patchFileExternal
   }
 }
 

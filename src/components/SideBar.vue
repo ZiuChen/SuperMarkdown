@@ -7,7 +7,7 @@
     </a-input>
 
     <div class="btn-list">
-      <a-button title="新文章" @click="addFile()">
+      <a-button title="新文章" @click="addFile">
         <template #icon>
           <icon-file />
         </template>
@@ -48,6 +48,12 @@
               <icon-settings />
             </template>
             全局设置
+          </a-doption>
+          <a-doption @click="handleImportClick">
+            <template #icon>
+              <icon-import />
+            </template>
+            导入文档
           </a-doption>
           <a-doption
             @click="
@@ -101,12 +107,13 @@
 
 <script setup lang="ts">
 import { sidebar, SidebarItem } from '@/data/sidebar'
+import { useArticleImport } from '@/hooks/useArticleImport'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
-import { setItem, getItem, removeItem, getFeatures, removeFeature } from '@/utils'
+import { setItem, getItem, removeItem, getFeatures, removeFeature, saveArticle } from '@/utils'
 import {
   SWITCH_FILE,
   CATEGORY_CHANGE,
@@ -150,7 +157,10 @@ const selectedKeys = computed(() => {
 
 const router = useRouter()
 const store = useArticleStore()
-const { addFile, addFolder, handleDelete, handleRename } = useTreeData(selectedNode, originTreeData)
+const { addFile, addFolder, handleDelete, handleRename, patchFileExternal } = useTreeData(
+  selectedNode,
+  originTreeData
+)
 const { drop } = useTreeDrag(originTreeData)
 
 // 真实展示在view中的数据
@@ -320,6 +330,33 @@ function searchData(keyword: string, treeData: SidebarItem[]) {
   }
 
   return loop(treeData)
+}
+
+function handleImportClick() {
+  // 弹窗进行文件选择
+  const promise = useArticleImport()
+
+  promise
+    .then((fileList) => {
+      // 将fileList添加到侧栏 并获取到带key的nodeList
+      const nodeList = patchFileExternal(fileList)
+
+      if (!fileList || !fileList.length) return false
+
+      for (const node of nodeList) {
+        saveArticle({
+          id: node.key,
+          title: node.title,
+          code: node.data,
+          lastSavedAt: parseInt(node.key),
+          createAt: parseInt(node.key)
+        })
+      }
+
+      return true
+    })
+    .then((res) => (res ? Message.success('导入成功') : Message.error('导入出错')))
+    .catch((err) => Message.error(err.message))
 }
 </script>
 

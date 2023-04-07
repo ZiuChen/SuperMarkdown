@@ -148,7 +148,6 @@ import {
   imageUploadPlugin,
   screenShotPlugin,
   exportPlugin,
-  importPlugin,
   pasteImagePlugin
 } from '@/common/plugins'
 
@@ -175,7 +174,6 @@ const plugins = [
   highlightThemePlugin(),
   enhancePlugin(),
   customImagePlugin(),
-  importPlugin(),
   exportPlugin(),
   pasteImagePlugin()
 ]
