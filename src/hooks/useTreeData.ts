@@ -393,3 +393,28 @@ export function collectAllParentKeys(key: string, treeData: SidebarItem[]): stri
   }
   return keys
 }
+
+/**
+ * 根据关键字过滤节点
+ */
+export function filterNode(keyword: string, treeData: SidebarItem[]) {
+  const loop: (...args: any[]) => SidebarItem[] = (data: SidebarItem[]) => {
+    const result: SidebarItem[] = []
+    data.forEach((item) => {
+      if (item.children) {
+        const children = loop(item.children)
+        if (children.length) {
+          result.push({
+            ...item,
+            children
+          })
+        }
+      } else if (item.title.includes(keyword)) {
+        result.push(item)
+      }
+    })
+    return result
+  }
+
+  return loop(treeData)
+}

@@ -1,6 +1,12 @@
 <template>
   <div class="side-bar">
-    <a-input class="search" v-model="searchKey" placeholder="检索文章标题" allow-clear>
+    <a-input
+      class="search"
+      v-model="searchKey"
+      @keydown.esc="clearKeyword"
+      placeholder="检索文章标题"
+      allow-clear
+    >
       <template #prefix>
         <icon-search />
       </template>
@@ -110,7 +116,7 @@ import { sidebar, SidebarItem } from '@/data/sidebar'
 import { useArticleImport } from '@/hooks/useArticleImport'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
-import { useTreeData, findNodeByKey, collectAllParentKeys } from '@/hooks/useTreeData'
+import { useTreeData, findNodeByKey, collectAllParentKeys, filterNode } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
 import { setItem, getItem, removeItem, getFeatures, removeFeature, saveArticle } from '@/utils'
@@ -167,7 +173,7 @@ const { drop } = useTreeDrag(originTreeData)
 const treeData = computed(() => {
   const o = originTreeData.value
   if (!searchKey.value) return o
-  return searchData(searchKey.value, originTreeData.value)
+  return filterNode(searchKey.value, originTreeData.value)
 })
 
 // 侧栏初始化后 将当前目录保存
@@ -296,6 +302,15 @@ useEventListener(window, 'focus', () => {
 })
 
 /**
+ * 处理在搜索框中按下ESC的行为
+ * 清空搜索框
+ */
+function clearKeyword(ev: KeyboardEvent) {
+  searchKey.value = ''
+  ev.stopPropagation()
+}
+
+/**
  * 选中树中的节点时触发
  * handleSelect => selectedNode => watch(selectedNode)
  */
@@ -308,40 +323,18 @@ function toggleExpanded() {
   expandedKeys.value = expandedKeys?.value.length ? [] : allExpandedKeys.value
 }
 
-// 遍历树，检索匹配的节点
-// 根据Node.title的内容匹配关键字
-function searchData(keyword: string, treeData: SidebarItem[]) {
-  const loop = (data: any[]) => {
-    const result: any[] = []
-    data.forEach((item) => {
-      if (item.title.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
-        result.push({ ...item })
-      } else if (item.children) {
-        const filterData = loop(item.children)
-        if (filterData.length) {
-          result.push({
-            ...item,
-            children: filterData
-          })
-        }
-      }
-    })
-    return result
-  }
-
-  return loop(treeData)
-}
-
 function handleImportClick() {
   // 弹窗进行文件选择
   const promise = useArticleImport()
 
   promise
     .then((fileList) => {
+      if (!fileList || !fileList.length) return
+
       // 将fileList添加到侧栏 并获取到带key的nodeList
       const nodeList = patchFileExternal(fileList)
 
-      if (!fileList || !fileList.length) return false
+      if (!nodeList || !nodeList.length) return Message.error('导入出错')
 
       for (const node of nodeList) {
         saveArticle({
@@ -353,9 +346,8 @@ function handleImportClick() {
         })
       }
 
-      return true
+      return Message.success('导入成功')
     })
-    .then((res) => (res ? Message.success('导入成功') : Message.error('导入出错')))
     .catch((err) => Message.error(err.message))
 }
 </script>
