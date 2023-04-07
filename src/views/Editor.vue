@@ -233,7 +233,7 @@ function handleSideBarCollapse(collapsed: boolean) {
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 8px;
+  padding: 0 8px 8px 8px;
 
   .title {
     width: 100%;
@@ -270,7 +270,7 @@ function handleSideBarCollapse(collapsed: boolean) {
 
 #editor {
   :deep(.bytemd) {
-    height: calc(100vh - 58px); // 减去标题栏的高度
+    height: calc(100vh - 50px); // 减去标题栏的高度
     border: none;
 
     .CodeMirror-vscrollbar {
@@ -280,7 +280,7 @@ function handleSideBarCollapse(collapsed: boolean) {
 }
 
 .viewer-container {
-  height: calc(100vh - 58px); // 减去标题栏的高度
+  height: calc(100vh - 50px); // 减去标题栏的高度
   padding: 0 10px;
   overflow: auto;
   background-color: #fff;
