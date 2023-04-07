@@ -102,11 +102,17 @@
 <script setup lang="ts">
 import type { Input } from '@arco-design/web-vue'
 import { throttle } from 'lodash-es'
+import 'bytemd/dist/index.css'
+import 'highlight.js/styles/default.css'
+import 'katex/dist/katex.css'
+import '@/style/theme/normalize.css' // 编辑器样式重置(copy from juejin)
+import zhHans from 'bytemd/locales/zh_Hans.json'
+
 import SideBar from '@/components/SideBar.vue'
 import Editor from '@/components/Editor.vue'
 import Viewer from '@/components/Viewer.vue'
-
-import { useArticleStore, useMainStore } from '@/store'
+import { plugins } from '@/common/plugins/instance'
+import { useArticleStore } from '@/store'
 import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
@@ -121,65 +127,8 @@ import {
   FOCUS_EDITOR
 } from '@/common/symbol'
 
-import 'bytemd/dist/index.css'
-import 'highlight.js/styles/default.css'
-import 'katex/dist/katex.css'
-import '@/style/theme/normalize.css' // 编辑器样式重置(copy from juejin)
-import gfm from '@bytemd/plugin-gfm'
-import breaks from '@bytemd/plugin-breaks'
-import frontmatter from '@bytemd/plugin-frontmatter'
-import highlight from '@bytemd/plugin-highlight'
-import math from '@bytemd/plugin-math'
-import mermaid from '@bytemd/plugin-mermaid'
-import mediumZoom from '@bytemd/plugin-medium-zoom'
-import gemoji from '@bytemd/plugin-gemoji'
-import zhHans from 'bytemd/locales/zh_Hans.json'
-import zhHansGfm from '@bytemd/plugin-gfm/locales/zh_Hans.json'
-import zhHansMath from '@bytemd/plugin-math/locales/zh_Hans.json'
-import zhHansMerimaid from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
-
-import {
-  alignPlugin,
-  imageZoomPlugin,
-  themePlugin,
-  highlightThemePlugin,
-  enhancePlugin,
-  customImagePlugin,
-  imageUploadPlugin,
-  screenShotPlugin,
-  exportPlugin,
-  pasteImagePlugin
-} from '@/common/plugins'
-
-const plugins = [
-  imageUploadPlugin(),
-  screenShotPlugin(),
-  gfm({
-    locale: zhHansGfm
-  }),
-  gemoji(),
-  breaks(),
-  frontmatter(),
-  highlight(),
-  mediumZoom(),
-  alignPlugin(),
-  imageZoomPlugin(),
-  math({
-    locale: zhHansMath
-  }),
-  mermaid({
-    locale: zhHansMerimaid
-  }),
-  themePlugin(),
-  highlightThemePlugin(),
-  enhancePlugin(),
-  customImagePlugin(),
-  exportPlugin(),
-  pasteImagePlugin()
-]
 const lastKey = getItem('lastkey') || ''
 const store = useArticleStore()
-const mainStore = useMainStore()
 const isReady = ref(false) // 编辑器是否初始化完成
 const sideBarCollapsed = ref(false)
 const titleInputRef = ref<InstanceType<typeof Input> | null>(null)
