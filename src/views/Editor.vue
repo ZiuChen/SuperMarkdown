@@ -306,13 +306,17 @@ function handleSideBarCollapse(collapsed: boolean) {
 }
 
 .bytemd-toolbar-right {
+  // 宽度小于800px时 隐藏部分item
+  @media only screen and (max-width: 800px) {
+    .bytemd-tippy[bytemd-tippy-path='2'] {
+      display: none;
+    }
+    .bytemd-tippy[bytemd-tippy-path='3'] {
+      display: none;
+    }
+  }
+
   .bytemd-tippy[bytemd-tippy-path='1'] {
-    display: none;
-  }
-  .bytemd-tippy[bytemd-tippy-path='2'] {
-    display: none;
-  }
-  .bytemd-tippy[bytemd-tippy-path='3'] {
     display: none;
   }
   .bytemd-tippy[bytemd-tippy-path='5'] {
