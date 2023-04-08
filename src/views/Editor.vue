@@ -112,7 +112,7 @@ import SideBar from '@/components/SideBar.vue'
 import Editor from '@/components/Editor.vue'
 import Viewer from '@/components/Viewer.vue'
 import { plugins } from '@/common/plugins/instance'
-import { useArticleStore } from '@/store'
+import { useArticleStore, useMainStore } from '@/store'
 import { isElectron, setItem, getItem } from '@/utils'
 import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
@@ -129,7 +129,8 @@ import {
 
 const lastKey = getItem('lastkey') || ''
 const store = useArticleStore()
-const isReady = ref(false) // 编辑器是否初始化完成
+const mainStore = useMainStore()
+const isReady = computed(() => mainStore.isReady) // 编辑器是否初始化完成
 const sideBarCollapsed = ref(false)
 const titleInputRef = ref<InstanceType<typeof Input> | null>(null)
 
@@ -169,7 +170,7 @@ useEventListener(window, 'focus', () => {
  */
 function handleEditorInit() {
   // 初始化完毕
-  isReady.value = true
+  mainStore.isReady = true
   $emit(EDITOR_LOADED, store.id)
 }
 

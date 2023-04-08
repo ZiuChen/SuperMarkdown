@@ -20,4 +20,5 @@ export const FOCUS_EDITOR = Symbol('FOCUS_EDITOR') // 主动聚焦编辑器
  */
 export const CHANGE_TITLE = Symbol('CHANGE_TITLE') // 标题变化
 export const IS_DARK = Symbol('IS_DARK') // 当前主题色
-export const FILE_ENTER = Symbol('FILE_ENTER') // 由关键字进入插件 打开文章
+export const ENTER_FILE = Symbol('ENTER_FILE') // 由关键字进入插件
+export const ENTER_CREATE = Symbol('ENTER_CREATE') // 新建笔记

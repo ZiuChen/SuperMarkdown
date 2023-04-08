@@ -127,7 +127,8 @@ import {
   CHANGE_TITLE,
   DELETE_FILE,
   DELETE_FOLDER,
-  FILE_ENTER,
+  ENTER_FILE,
+  ENTER_CREATE,
   RENAME_NODE
 } from '@/common/symbol'
 import { Message } from '@arco-design/web-vue'
@@ -207,7 +208,7 @@ useEventBus(CHANGE_TITLE, ({ id, title }: { id: string; title: string }) => {
 })
 
 // 通过全局关键字进入插件
-useEventBus(FILE_ENTER, (key: string) => {
+useEventBus(ENTER_FILE, (key: string) => {
   const node = findNodeByKey(key, originTreeData.value)
   if (!node) {
     // 处理边界情况
@@ -222,6 +223,11 @@ useEventBus(FILE_ENTER, (key: string) => {
   // 展开所有相关父节点
   const keys = collectAllParentKeys(key, originTreeData.value)
   expandedKeys.value = keys
+})
+
+// 通过全局关键字创建文章
+useEventBus(ENTER_CREATE, () => {
+  addFile()
 })
 
 // 处理文件删除事件

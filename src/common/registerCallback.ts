@@ -1,15 +1,39 @@
 import { Message } from '@arco-design/web-vue'
 import { $emit } from '@/hooks/useEventBus'
-import { FILE_ENTER } from '@/common/symbol'
-import { isElectron, setItem } from '@/utils'
+import { ENTER_FILE, ENTER_CREATE } from '@/common/symbol'
+import { isElectron } from '@/utils'
+import { useMainStore } from '@/store'
 
 export function registerCallback() {
   if (!isElectron) return
+
+  const store = useMainStore()
+
   utools.onPluginEnter(({ code, type, payload }) => {
-    // 两种情况 如果插件还没启动 编辑器未完成初始化 则通过设置lastkey的方式实现快速打开
+    // 通过全局关键字打开文章
     if (code.startsWith('note/')) {
-      $emit(FILE_ENTER, code.split('/')[1])
-      setItem('lastkey', code.split('/')[1])
+      const docId = code.split('/')[1]
+
+      if (!store.isReady) {
+        watch(
+          () => store.isReady,
+          (val) => (val ? $emit(ENTER_FILE, docId) : null)
+        )
+      } else {
+        $emit(ENTER_FILE, docId)
+      }
+    }
+
+    // 通过关键字创建文章
+    if (code === '新建Markdown笔记') {
+      if (!store.isReady) {
+        watch(
+          () => store.isReady,
+          (val) => (val ? $emit(ENTER_CREATE) : null)
+        )
+      } else {
+        $emit(ENTER_CREATE)
+      }
     }
   })
 
