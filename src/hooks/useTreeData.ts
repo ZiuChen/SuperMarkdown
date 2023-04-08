@@ -239,6 +239,11 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
                 // 存在则选中前一个节点
                 activeNode.value = parent[0].children![index - 1]
               }
+              // 检查后一个节点是否存在
+              else if (index + 1 <= parent[0].children!.length) {
+                // 存在则选中后一个节点
+                activeNode.value = parent[0].children![index]
+              }
 
               $emit(DELETE_FILE, node.key)
               $emit(CATEGORY_CHANGE)
@@ -311,8 +316,6 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
       activeNode.value!.children.push(...nodeList)
 
       // TODO: 暂时不做导入后的默认选中了
-      // // 选中最后一个节点
-      // activeNode.value = activeNode.value!.children[activeNode.value!.children.length - 1]
     } else {
       // 当前节点是文件 添加到同级父文件夹
       const parent = findParent(activeNode.value!.key, treeData.value)
@@ -321,9 +324,6 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         if (index !== undefined) {
           parent[0].children!.push(...nodeList)
         }
-
-        // // 选中最后一个节点
-        // activeNode.value = parent[0].children![parent[0].children!.length - 1]
       }
     }
 
