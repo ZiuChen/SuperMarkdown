@@ -13,7 +13,15 @@
       <a-tag>当前全局关键字为空</a-tag>
     </div>
     <template v-else v-for="f of features" :key="f.code">
-      <a-tag class="feature" @close="handleFeatureClose(f)" closable>{{ f.cmds[0] }}</a-tag>
+      <a-tag
+        class="feature"
+        @click="handleFeatureClick(f)"
+        @close="handleFeatureClose(f)"
+        :checked="true"
+        checkable
+        closable
+        >{{ f.cmds[0] }}</a-tag
+      >
     </template>
   </div>
 </template>
@@ -24,11 +32,25 @@ import { Modal, Message } from '@arco-design/web-vue'
 
 const features = ref<TFeature[] | undefined>(getFeatures())
 
+/**
+ * 点击移除全局关键字
+ */
 function handleFeatureClose(feature: TFeature) {
   const res = removeFeature(feature.code)
   if (res) Message.success('成功移除全局关键字')
 }
 
+/**
+ * 点击跳转全局关键字
+ */
+function handleFeatureClick(feature: TFeature) {
+  // @ts-ignore
+  utools.redirect(feature.cmds[0])
+}
+
+/**
+ * 清空全局关键字
+ */
 function handleClearClick() {
   if (!features.value?.length) return Message.warning('当前全局关键字为空')
   Modal.warning({

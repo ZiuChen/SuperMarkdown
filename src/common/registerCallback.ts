@@ -3,6 +3,7 @@ import { $emit } from '@/hooks/useEventBus'
 import { ENTER_FILE, ENTER_CREATE, ENTER_IMPORT, ENTER_CONTENT } from '@/common/symbol'
 import { isElectron } from '@/utils'
 import { useMainStore } from '@/store'
+import { useRouter } from 'vue-router'
 import type { IPayloadFile } from '@/types'
 
 export function registerCallback() {
@@ -42,10 +43,21 @@ export function registerCallback() {
 
 function emitWithWatch(event: symbol, payload?: any) {
   const store = useMainStore()
-  if (store.isReady) $emit(event, payload)
-  else
-    watch(
+
+  if (store.isReady) {
+    $emit(event, payload)
+  } else {
+    // 如果当前在其他页面 则跳转回editor
+    if (window.location.pathname !== 'editor') window.history.back()
+
+    // 等待编辑器初始化完毕后emit
+    // 执行完毕后立刻cancel掉监听
+    const cancel = watch(
       () => store.isReady,
-      (val) => (val ? $emit(event, payload) : null)
+      (val) => {
+        val ? $emit(event, payload) : null
+        cancel()
+      }
     )
+  }
 }

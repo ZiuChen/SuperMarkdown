@@ -164,6 +164,11 @@ useEventListener(window, 'focus', () => {
   store.loadArticle(store.id)
 })
 
+// 卸载时更新状态库
+onUnmounted(() => {
+  mainStore.isReady = false
+})
+
 /**
  * 插件初始化完毕时触发
  * 父组件先于子组件挂载
