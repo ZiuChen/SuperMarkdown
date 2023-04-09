@@ -28,3 +28,4 @@ export const ENTER_CONTENT = Symbol('ENTER_CONTENT') // 新建有内容的笔记
  */
 export const CHANGE_TITLE = Symbol('CHANGE_TITLE') // 标题变化
 export const IS_DARK = Symbol('IS_DARK') // 当前主题色
+export const IMPORT_CONTENT_FLAG = Symbol('__IMPORT_CONTENT_FLAG__') // 导入内容标识

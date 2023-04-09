@@ -120,6 +120,7 @@ import { useEventListener } from '@/hooks/useEventListener'
 import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys, filterNode } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
+import { useImageUpload } from '@/hooks/useImageUpload'
 import { useArticleStore } from '@/store'
 import {
   setItem,
@@ -141,6 +142,7 @@ import {
   ENTER_CREATE,
   ENTER_IMPORT,
   ENTER_CONTENT,
+  IMPORT_CONTENT_FLAG,
   RENAME_NODE
 } from '@/common/symbol'
 import { IPayloadFile } from '@/types'
@@ -252,15 +254,104 @@ useEventBus(ENTER_IMPORT, async (payload: IPayloadFile[]) => {
     })
     .then((files) => readFilesData(files))
     .then((fileList) => {
-      if (!fileList || !fileList.length) return
+      if (!fileList || !fileList.length) return []
 
       return handleArticleImport(fileList)
+    })
+    .then((nodeList) => {
+      const len = nodeList.length
+      if (!len) return
+
+      // 选中导入的最后一个文章
+      const node = nodeList[len - 1]
+      if (node) selectedNode.value = node
     })
 })
 
 // 从文本/图片创建带内容的文档
-useEventBus(ENTER_CONTENT, (payload: string) => {
-  // TODO: console.log(payload)
+useEventBus(ENTER_CONTENT, async ({ type, payload }: { type: string; payload: string }) => {
+  // 文本内容
+  if (type === 'over') {
+    // 检查是否为结构化数据
+    if (payload.startsWith(IMPORT_CONTENT_FLAG.description!)) {
+      const data = payload.replace(IMPORT_CONTENT_FLAG.description!, '')
+      try {
+        type TContentList = {
+          type: 'text' | 'image'
+          data: string
+        }[]
+
+        const res = []
+        const contentList: TContentList = JSON.parse(data)
+
+        for (const item of contentList) {
+          if (item.type === 'image') {
+            const hash = await useImageUpload(item.data)
+            if (!hash) Message.error('图片上传失败')
+            else res.push(`![导入的图片](attachment:${hash})`)
+          } else {
+            res.push(item.data)
+          }
+        }
+
+        const nodeList = handleArticleImport([
+          {
+            title: '导入的文章',
+            data: res.join('\n')
+          }
+        ])
+
+        const len = nodeList.length
+        if (!len) return
+
+        // 选中导入的最后一个文章
+        const node = nodeList[len - 1]
+        if (node) selectedNode.value = node
+      } catch (error) {
+        Message.error('导入的数据格式有误: ' + error)
+      }
+      return
+    }
+
+    // 纯文本 正常导入
+    const nodeList = handleArticleImport([
+      {
+        title: '导入的文章',
+        data: payload
+      }
+    ])
+
+    const len = nodeList.length
+    if (!len) return
+
+    // 选中导入的最后一个文章
+    const node = nodeList[len - 1]
+    if (node) selectedNode.value = node
+
+    return
+  }
+
+  // 图片内容 上传图片
+  if (type === 'img') {
+    useImageUpload(payload).then((hash) => {
+      if (!hash) return Message.error('图片上传失败')
+
+      const nodeList = handleArticleImport([
+        {
+          title: '导入的文章',
+          data: `![导入的图片](attachment:${hash})`
+        }
+      ])
+
+      const len = nodeList.length
+      if (!len) return
+
+      // 选中导入的最后一个文章
+      const node = nodeList[len - 1]
+      if (node) selectedNode.value = node
+    })
+    return
+  }
 })
 
 // 处理文件删除事件
@@ -345,8 +436,10 @@ useEventListener(window, 'focus', () => {
  * 清空搜索框
  */
 function clearKeyword(ev: KeyboardEvent) {
-  searchKey.value = ''
-  ev.stopPropagation()
+  if (searchKey.value) {
+    searchKey.value = ''
+    ev.stopPropagation()
+  }
 }
 
 /**
@@ -374,6 +467,14 @@ function handleImportClick() {
 
   promise
     .then((fileList) => handleArticleImport(fileList))
+    .then((nodeList) => {
+      const len = nodeList.length
+      if (!len) return
+
+      // 选中导入的最后一个文章
+      const node = nodeList[len - 1]
+      if (node) selectedNode.value = node
+    })
     .catch((err) => Message.error(err.message))
 }
 
@@ -381,12 +482,15 @@ function handleImportClick() {
  * 将文件patch到侧栏 并保存到本地存储
  */
 function handleArticleImport(fileList: { title: string; data: string }[]) {
-  if (!fileList || !fileList.length) return
+  if (!fileList || !fileList.length) return []
 
   // 将fileList添加到侧栏 并获取到带key的nodeList
   const nodeList = patchFileExternal(fileList)
 
-  if (!nodeList || !nodeList.length) return Message.error('导入出错')
+  if (!nodeList || !nodeList.length) {
+    Message.error('导入出错')
+    return []
+  }
 
   for (const node of nodeList) {
     saveArticle({
@@ -398,7 +502,9 @@ function handleArticleImport(fileList: { title: string; data: string }[]) {
     })
   }
 
-  return Message.success('导入成功')
+  Message.success('导入成功')
+
+  return nodeList
 }
 </script>
 

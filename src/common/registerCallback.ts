@@ -29,7 +29,7 @@ export function registerCallback() {
 
     // 从文本/图片匹配创建文档
     if (code === '创建Markdown笔记') {
-      emitWithWatch(ENTER_CONTENT, payload)
+      emitWithWatch(ENTER_CONTENT, { type, payload })
     }
   })
 
