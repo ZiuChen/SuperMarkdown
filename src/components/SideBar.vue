@@ -112,6 +112,8 @@
 </template>
 
 <script setup lang="ts">
+import { Message } from '@arco-design/web-vue'
+import { useRouter } from 'vue-router'
 import { sidebar, SidebarItem } from '@/data/sidebar'
 import { useArticleImport } from '@/hooks/useArticleImport'
 import { useEventListener } from '@/hooks/useEventListener'
@@ -119,7 +121,15 @@ import { $emit, useEventBus } from '@/hooks/useEventBus'
 import { useTreeData, findNodeByKey, collectAllParentKeys, filterNode } from '@/hooks/useTreeData'
 import { useTreeDrag } from '@/hooks/useTreeDrag'
 import { useArticleStore } from '@/store'
-import { setItem, getItem, removeItem, getFeatures, removeFeature, saveArticle } from '@/utils'
+import {
+  setItem,
+  getItem,
+  removeItem,
+  getFeatures,
+  removeFeature,
+  readFilesData,
+  saveArticle
+} from '@/utils'
 import {
   SWITCH_FILE,
   CATEGORY_CHANGE,
@@ -129,10 +139,11 @@ import {
   DELETE_FOLDER,
   ENTER_FILE,
   ENTER_CREATE,
+  ENTER_IMPORT,
+  ENTER_CONTENT,
   RENAME_NODE
 } from '@/common/symbol'
-import { Message } from '@arco-design/web-vue'
-import { useRouter } from 'vue-router'
+import { IPayloadFile } from '@/types'
 
 const localTreeData = getItem('category') || sidebar
 
@@ -230,6 +241,28 @@ useEventBus(ENTER_CREATE, () => {
   addFile()
 })
 
+// 通过全局关键字导入.md文件
+// 此操作只会在Electron环境触发
+useEventBus(ENTER_IMPORT, async (payload: IPayloadFile[]) => {
+  return Promise.resolve(payload)
+    .then((payload) => {
+      const files = payload.map((item) => item.path)
+      if (!files || !files.length) return []
+      return files
+    })
+    .then((files) => readFilesData(files))
+    .then((fileList) => {
+      if (!fileList || !fileList.length) return
+
+      return handleArticleImport(fileList)
+    })
+})
+
+// 从文本/图片创建带内容的文档
+useEventBus(ENTER_CONTENT, (payload: string) => {
+  // TODO: console.log(payload)
+})
+
 // 处理文件删除事件
 // 删除完成后直接失焦 提醒用户自己切换文章
 useEventBus(DELETE_FILE, (key: string) => {
@@ -325,36 +358,47 @@ function handleSelect(_: any, data: any) {
   selectedNode.value = data.node
 }
 
+/**
+ * 切换侧栏展开状态
+ */
 function toggleExpanded() {
   expandedKeys.value = expandedKeys?.value.length ? [] : allExpandedKeys.value
 }
 
+/**
+ * 批量导入按钮点击
+ */
 function handleImportClick() {
   // 弹窗进行文件选择
   const promise = useArticleImport()
 
   promise
-    .then((fileList) => {
-      if (!fileList || !fileList.length) return
-
-      // 将fileList添加到侧栏 并获取到带key的nodeList
-      const nodeList = patchFileExternal(fileList)
-
-      if (!nodeList || !nodeList.length) return Message.error('导入出错')
-
-      for (const node of nodeList) {
-        saveArticle({
-          id: node.key,
-          title: node.title,
-          code: node.data,
-          lastSavedAt: parseInt(node.key),
-          createAt: parseInt(node.key)
-        })
-      }
-
-      return Message.success('导入成功')
-    })
+    .then((fileList) => handleArticleImport(fileList))
     .catch((err) => Message.error(err.message))
+}
+
+/**
+ * 将文件patch到侧栏 并保存到本地存储
+ */
+function handleArticleImport(fileList: { title: string; data: string }[]) {
+  if (!fileList || !fileList.length) return
+
+  // 将fileList添加到侧栏 并获取到带key的nodeList
+  const nodeList = patchFileExternal(fileList)
+
+  if (!nodeList || !nodeList.length) return Message.error('导入出错')
+
+  for (const node of nodeList) {
+    saveArticle({
+      id: node.key,
+      title: node.title,
+      code: node.data,
+      lastSavedAt: parseInt(node.key),
+      createAt: parseInt(node.key)
+    })
+  }
+
+  return Message.success('导入成功')
 }
 </script>
 

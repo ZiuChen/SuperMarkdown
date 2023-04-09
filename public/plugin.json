@@ -21,6 +21,26 @@
       "code": "新建Markdown笔记",
       "explain": "新建 Markdown 笔记",
       "cmds": ["New Note", "新建笔记"]
+    },
+    {
+      "code": "导入Markdown文档",
+      "explain": "将Markdown文档导入到超级Markdown",
+      "cmds": [
+        {
+          "type": "files",
+          "label": "从文件创建笔记",
+          "fileType": "file",
+          "match": "/.md$/i"
+        }
+      ]
+    },
+    {
+      "code": "创建Markdown笔记",
+      "explain": "从文本或图片或文件创建笔记",
+      "cmds": [
+        { "type": "over", "label": "从文本创建笔记" },
+        { "type": "img", "label": "从图片创建笔记" }
+      ]
     }
   ]
 }

@@ -19,3 +19,11 @@ export interface IArticleSaveExtend extends IArticle {
   isFeature?: boolean
   isReadonly?: boolean
 }
+
+// uTools onPluginEnter files payload
+export interface IPayloadFile {
+  isFile: boolean
+  isDirectory: boolean
+  name: string
+  path: string
+}

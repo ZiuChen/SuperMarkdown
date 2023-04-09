@@ -1,8 +1,6 @@
-import { isElectron } from '@/utils'
+import { isElectron, readFilesData } from '@/utils'
 import { Message } from '@arco-design/web-vue'
-import { basename, extname, readFileSync } from '@/preload'
 
-const FILE_NOT_NAMED = '导入的文章'
 const FILE_NOT_SELECTED = '操作已取消'
 const FILE_SELECT_TITLE = '选择要导入的 Markdown 文件'
 const FILE_IMPORTING = '导入中'
@@ -13,14 +11,15 @@ export interface IFileImport {
 }
 
 export function useArticleImport() {
-  return isElectron ? readFilesInElectron() : readFilesInBrowser()
+  return isElectron ? getFileListInElectron() : getFileListInBrowser()
 }
 
 /**
- * Electron环境下批量读取文件
+ * Electron环境下获取文件列表
+ * 弹出文件选框 选择文件并批量读取文件 组织为带数据的fileList
  */
-async function readFilesInElectron(): Promise<IFileImport[]> {
-  return new Promise((resolve) => {
+async function getFileListInElectron(): Promise<IFileImport[]> {
+  return new Promise(async (resolve) => {
     const files = utools.showOpenDialog({
       title: FILE_SELECT_TITLE,
       filters: [{ name: 'Markdown', extensions: ['md'] }],
@@ -37,18 +36,7 @@ async function readFilesInElectron(): Promise<IFileImport[]> {
       duration: 0
     })
 
-    const res: IFileImport[] = []
-
-    for (let i = 0; i < files.length; i++) {
-      const fpath = files[i]
-      const title = basename(fpath, extname(fpath))
-      const data = readFileSync(fpath, 'utf-8')
-
-      res.push({
-        title,
-        data
-      })
-    }
+    const res = await readFilesData(files)
 
     msgHandler.close()
 
@@ -57,10 +45,11 @@ async function readFilesInElectron(): Promise<IFileImport[]> {
 }
 
 /**
- * 浏览器环境下批量读取文件
+ * 浏览器环境下获取文件列表
+ * 弹出文件选框 选择文件并批量读取文件 组织为带数据的fileList
  */
-async function readFilesInBrowser(): Promise<IFileImport[]> {
-  return new Promise((resolve) => {
+async function getFileListInBrowser(): Promise<IFileImport[]> {
+  return new Promise(async (resolve) => {
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
@@ -79,18 +68,7 @@ async function readFilesInBrowser(): Promise<IFileImport[]> {
         duration: 0
       })
 
-      const res: IFileImport[] = []
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        const title = file.name.slice(0, -3) || FILE_NOT_NAMED
-        const data = await readAsText(file)
-
-        res.push({
-          title,
-          data
-        })
-      }
+      const res = await readFilesData(files)
 
       msgHandler.close()
 
@@ -98,20 +76,5 @@ async function readFilesInBrowser(): Promise<IFileImport[]> {
     }
 
     input.click()
-  })
-}
-
-/**
- * 浏览器环境下将Blob读取为文本
- * 本质上是FileReader的Promise封装
- */
-async function readAsText(blob: Blob): Promise<string> {
-  const reader = new FileReader()
-  return new Promise((resolve, reject) => {
-    reader.onload = () => {
-      resolve(reader.result as string)
-    }
-    reader.onerror = reject
-    reader.readAsText(blob)
   })
 }

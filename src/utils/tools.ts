@@ -69,3 +69,18 @@ export function copyText(text: string) {
     return false
   }
 }
+
+/**
+ * 浏览器环境下将Blob读取为文本
+ * 本质上是FileReader的Promise封装
+ */
+export async function readAsText(blob: Blob): Promise<string> {
+  const reader = new FileReader()
+  return new Promise((resolve, reject) => {
+    reader.onload = () => {
+      resolve(reader.result as string)
+    }
+    reader.onerror = reject
+    reader.readAsText(blob)
+  })
+}
