@@ -509,6 +509,8 @@ function handleArticleImport(fileList: { title: string; data: string }[]) {
 </script>
 
 <style lang="less" scoped>
+@import '@/style/scrollbar.less';
+
 .side-bar {
   display: flex;
   flex-direction: column;
@@ -533,6 +535,8 @@ function handleArticleImport(fileList: { title: string; data: string }[]) {
 .arco-tree {
   width: 100%;
   align-self: flex-start;
+  overflow: auto;
+  .scrollbar();
 
   :deep(.arco-tree-node-title) {
     font-size: 13px;
