@@ -12,7 +12,6 @@ export function registerCallback() {
     // 通过全局关键字打开文章
     if (code.startsWith('note/')) {
       const docId = code.split('/')[1]
-
       emitWithWatch(ENTER_FILE, docId)
     }
 
@@ -46,9 +45,10 @@ function emitWithWatch(event: symbol, payload?: any) {
   if (store.isReady) {
     $emit(event, payload)
   } else {
-    // 如果当前在其他页面 则跳转回editor
-    if (window.location.pathname !== '/' && window.location.pathname !== 'editor')
-      window.history.back()
+    // 如果当前在其他页面 则跳转回editor页面
+    if (window.location.hash !== '#/editor') {
+      window.location.hash = '#/editor'
+    }
 
     // 等待编辑器初始化完毕后emit
     // 执行完毕后立刻cancel掉监听
