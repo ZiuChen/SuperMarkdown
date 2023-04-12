@@ -177,6 +177,7 @@ function handleEditorInit() {
   // 初始化完毕
   mainStore.isReady = true
   $emit(EDITOR_LOADED, store.id)
+  nextTick(() => $emit(FOCUS_EDITOR))
 }
 
 /**

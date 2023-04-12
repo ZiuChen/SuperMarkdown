@@ -143,7 +143,8 @@ import {
   ENTER_IMPORT,
   ENTER_CONTENT,
   IMPORT_CONTENT_FLAG,
-  RENAME_NODE
+  RENAME_NODE,
+  FOCUS_EDITOR
 } from '@/common/symbol'
 import { IPayloadFile } from '@/types'
 
@@ -452,6 +453,9 @@ function clearKeyword(ev: KeyboardEvent) {
 function handleSelect(_: any, data: any) {
   // 更新当前激活的节点
   selectedNode.value = data.node
+
+  // 选中的节点是文章 需要聚焦编辑器
+  if (!data.node?.children) $emit(FOCUS_EDITOR)
 }
 
 /**
