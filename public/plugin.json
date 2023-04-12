@@ -1,6 +1,6 @@
 {
   "pluginName": "超级Markdown",
-  "description": "强大的Markdown编辑器 从文本创建笔记",
+  "description": "强大的Markdown编辑器 从文本与图片创建笔记",
   "author": "ZiuChen",
   "homepage": "https://github.com/ZiuChen",
   "main": "index.html",
@@ -39,7 +39,13 @@
       "explain": "从文本或图片创建笔记",
       "cmds": [
         { "type": "over", "label": "从文本创建笔记", "maxLength": 999999 },
-        { "type": "img", "label": "从图片创建笔记" }
+        { "type": "img", "label": "从图片创建笔记" },
+        {
+          "type": "regex",
+          "label": "从文本与图片创建笔记",
+          "match": "/^__IMPORT_CONTENT_FLAG__*/",
+          "maxLength": 999999
+        }
       ]
     }
   ]

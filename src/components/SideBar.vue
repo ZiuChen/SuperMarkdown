@@ -272,6 +272,48 @@ useEventBus(ENTER_IMPORT, async (payload: IPayloadFile[]) => {
 useEventBus(ENTER_CONTENT, async ({ type, payload }: { type: string; payload: string }) => {
   // 文本内容
   if (type === 'over') {
+    // 纯文本 正常导入
+    const nodeList = handleArticleImport([
+      {
+        title: '导入的文章',
+        data: payload
+      }
+    ])
+
+    const len = nodeList.length
+    if (!len) return
+
+    // 选中导入的最后一个文章
+    const node = nodeList[len - 1]
+    if (node) selectedNode.value = node
+
+    return
+  }
+
+  // 图片内容 上传图片
+  if (type === 'img') {
+    useImageUpload(payload).then((hash) => {
+      if (!hash) return Message.error('图片上传失败')
+
+      const nodeList = handleArticleImport([
+        {
+          title: '导入的文章',
+          data: `![导入的图片](attachment:${hash})`
+        }
+      ])
+
+      const len = nodeList.length
+      if (!len) return
+
+      // 选中导入的最后一个文章
+      const node = nodeList[len - 1]
+      if (node) selectedNode.value = node
+    })
+    return
+  }
+
+  // 结构化数据
+  if (type === 'regex') {
     // 检查是否为结构化数据
     if (payload.startsWith(IMPORT_CONTENT_FLAG.description!)) {
       const data = payload.replace(IMPORT_CONTENT_FLAG.description!, '')
@@ -312,45 +354,6 @@ useEventBus(ENTER_CONTENT, async ({ type, payload }: { type: string; payload: st
       }
       return
     }
-
-    // 纯文本 正常导入
-    const nodeList = handleArticleImport([
-      {
-        title: '导入的文章',
-        data: payload
-      }
-    ])
-
-    const len = nodeList.length
-    if (!len) return
-
-    // 选中导入的最后一个文章
-    const node = nodeList[len - 1]
-    if (node) selectedNode.value = node
-
-    return
-  }
-
-  // 图片内容 上传图片
-  if (type === 'img') {
-    useImageUpload(payload).then((hash) => {
-      if (!hash) return Message.error('图片上传失败')
-
-      const nodeList = handleArticleImport([
-        {
-          title: '导入的文章',
-          data: `![导入的图片](attachment:${hash})`
-        }
-      ])
-
-      const len = nodeList.length
-      if (!len) return
-
-      // 选中导入的最后一个文章
-      const node = nodeList[len - 1]
-      if (node) selectedNode.value = node
-    })
-    return
   }
 })
 
