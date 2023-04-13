@@ -7,11 +7,15 @@ import mermaid from '@bytemd/plugin-mermaid'
 import mediumZoom from '@bytemd/plugin-medium-zoom'
 import gemoji from '@bytemd/plugin-gemoji'
 
+import imageZoom from '@ziuchen/bytemd-plugin-image-zoom'
+import align from '@ziuchen/bytemd-plugin-align'
+import highlightTheme from '@ziuchen/bytemd-plugin-highlight-theme'
+import markdownTheme from '@ziuchen/bytemd-plugin-markdown-theme'
+
+import highlights from '@ziuchen/bytemd-plugin-highlight-theme/dist/highlights.json'
+import themes from '@ziuchen/bytemd-plugin-markdown-theme/dist/themes.json'
+
 import {
-  alignPlugin,
-  imageZoomPlugin,
-  themePlugin,
-  highlightThemePlugin,
   enhancePlugin,
   customImagePlugin,
   imageUploadPlugin,
@@ -35,16 +39,22 @@ export const plugins = [
   frontmatter(),
   highlight(),
   mediumZoom(),
-  alignPlugin(),
-  imageZoomPlugin(),
+  align(),
+  imageZoom(),
   math({
     locale: zhHansMath
   }),
   mermaid({
     locale: zhHansMerimaid
   }),
-  themePlugin(),
-  highlightThemePlugin(),
+  markdownTheme({
+    themes,
+    defaultTheme: 'juejin'
+  }),
+  highlightTheme({
+    highlights,
+    defaultHighlight: 'atom-one-dark'
+  }),
   enhancePlugin(),
   customImagePlugin(),
   exportPlugin(),
