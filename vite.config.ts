@@ -1,3 +1,6 @@
+import path from 'path'
+import fs from 'fs'
+import process from 'process'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import utools from 'vite-plugin-utools'
@@ -5,9 +8,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ArcoResolver } from 'unplugin-vue-components/resolvers'
 import { createStyleImportPlugin } from 'vite-plugin-style-import'
-import process from 'process'
-import fs from 'fs'
-import path from 'path'
+import postBuildPlugin from './build/postBuildPlugin'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -73,6 +74,9 @@ export default defineConfig({
           }
         }
       ]
+    }),
+    postBuildPlugin({
+      files: ['index.html', 'plugin.json', 'preload.js']
     })
   ]
 })
