@@ -540,6 +540,7 @@ function handleArticleImport(fileList: { title: string; data: string }[]) {
 }
 
 .arco-tree {
+  height: 100%;
   width: 100%;
   align-self: flex-start;
   overflow: auto;
