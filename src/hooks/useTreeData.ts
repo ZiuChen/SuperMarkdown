@@ -235,15 +235,15 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
             if (index !== undefined) {
               parent[0].children?.splice(index, 1)
 
-              // 检查前一个节点是否存在
-              if (index - 1 >= 0) {
-                // 存在则选中前一个节点
-                activeNode.value = parent[0].children![index - 1]
-              }
               // 检查后一个节点是否存在
-              else if (index + 1 <= parent[0].children!.length) {
+              if (index + 1 <= parent[0].children!.length) {
                 // 存在则选中后一个节点
                 activeNode.value = parent[0].children![index]
+              }
+              // 检查前一个节点是否存在
+              else if (index - 1 >= 0) {
+                // 存在则选中前一个节点
+                activeNode.value = parent[0].children![index - 1]
               }
 
               $emit(DELETE_FILE, node.key)
@@ -266,16 +266,17 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
     const node = activeNode.value!
     let title = activeNode.value!.title
 
+    const InputInstance = h(Input, {
+      defaultValue: title,
+      onInput: (value: string) => {
+        title = value
+      }
+    })
+
     Modal.confirm({
       title: `重命名${node.children ? '文件夹' : '文章'}：【${node.title}】`,
       cancelText: '取消',
-      content: () =>
-        h(Input, {
-          defaultValue: title,
-          onInput: (value: string) => {
-            title = value
-          }
-        }),
+      content: () => InputInstance,
       onOk() {
         if (!title) {
           Message.error('标题不能为空')
@@ -295,6 +296,12 @@ export function useTreeData(activeNode: Ref<SidebarItem | null>, treeData: Ref<S
         $emit(RENAME_NODE, node.key)
         $emit(CATEGORY_CHANGE)
         Message.success('重命名成功')
+      },
+      onOpen() {
+        // 打开弹窗后自动聚焦并全选
+        InputInstance?.el?.querySelector('input').select()
+        // @ts-ignore
+        InputInstance.component?.ctx?.focus()
       }
     })
   }
