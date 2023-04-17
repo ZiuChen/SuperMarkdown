@@ -103,7 +103,6 @@
 import type { Input } from '@arco-design/web-vue'
 import { throttle } from 'lodash-es'
 import 'bytemd/dist/index.css'
-import 'highlight.js/styles/default.css'
 import 'katex/dist/katex.css'
 import '@/style/theme/normalize.css' // 编辑器样式重置(copy from juejin)
 import zhHans from 'bytemd/locales/zh_Hans.json'

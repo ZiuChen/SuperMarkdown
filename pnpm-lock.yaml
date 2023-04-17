@@ -32,14 +32,14 @@ dependencies:
     specifier: ^1.0.1
     version: 1.0.1(bytemd@1.20.2)
   '@ziuchen/bytemd-plugin-highlight-theme':
-    specifier: ^1.0.4
-    version: 1.0.4(bytemd@1.20.2)
+    specifier: ^1.0.6
+    version: 1.0.6(bytemd@1.20.2)
   '@ziuchen/bytemd-plugin-image-zoom':
     specifier: ^1.0.1
     version: 1.0.1(bytemd@1.20.2)
   '@ziuchen/bytemd-plugin-markdown-theme':
-    specifier: ^1.0.1
-    version: 1.0.1(bytemd@1.20.2)
+    specifier: ^1.0.2
+    version: 1.0.2(bytemd@1.20.2)
   bytemd:
     specifier: ^1.20.2
     version: 1.20.2
@@ -991,8 +991,8 @@ packages:
       bytemd: 1.20.2
     dev: false
 
-  /@ziuchen/bytemd-plugin-highlight-theme@1.0.4(bytemd@1.20.2):
-    resolution: {integrity: sha512-msXr0fUL/qfeOPB6i7ha/xhtmLfw+Ia6hXrFr5CBBvjLeuPtfsEeOAcUQfJfXGjcMN3udVCnMGdenm3okFEsrw==}
+  /@ziuchen/bytemd-plugin-highlight-theme@1.0.6(bytemd@1.20.2):
+    resolution: {integrity: sha512-mZlX9VKTJ/9lpiObC9F8ZOQjedZH/EvNYYrStBS9DtqaZNxqZhy/OVADSsOKju7aCS9olrZT/h8VIQyIwpm5Kg==}
     peerDependencies:
       bytemd: ^1.20.2
     dependencies:
@@ -1009,8 +1009,8 @@ packages:
       bytemd: 1.20.2
     dev: false
 
-  /@ziuchen/bytemd-plugin-markdown-theme@1.0.1(bytemd@1.20.2):
-    resolution: {integrity: sha512-BQ3ZpylcxEZuASMjzIjIYZnZCVgx8SDnCssTHpslPsoSGbZXqDomNBJhyN9UdbU55MYzLa/uNiiVViSzr7j1Ow==}
+  /@ziuchen/bytemd-plugin-markdown-theme@1.0.2(bytemd@1.20.2):
+    resolution: {integrity: sha512-pD+hy6T5XTY9mMgdVpSjqvoR6AVRurlnM++sE3ukpS06w92uvS1hrzCQ0Blh4xqQ28HO2MJriKLwkuidf6QFrQ==}
     peerDependencies:
       bytemd: ^1.20.2
     dependencies:
