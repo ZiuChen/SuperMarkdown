@@ -36,3 +36,4 @@ jobs:
         with:
           folder: ./dist
           branch: gh-pages
+          ssh-key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
