@@ -12,6 +12,7 @@ import postBuildPlugin from './build/postBuildPlugin'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: './',
   resolve: {
     alias: {
       '@': '/src'
@@ -21,7 +22,18 @@ export default defineConfig({
   // external
   build: {
     rollupOptions: {
-      external: ['electron', 'utools', 'process', 'vm', 'fs']
+      external: ['electron', 'utools', 'process', 'vm', 'fs'],
+      output: {
+        sanitizeFileName(name) {
+          const INVALID_CHAR_REGEX = /[\x00-\x1F\x7F<>*#"{}|^[\]`;?:&=+$,]/g
+          const DRIVE_LETTER_REGEX = /^[a-z]:/i
+
+          const match = DRIVE_LETTER_REGEX.exec(name)
+          const driveLetter = match ? match[0] : ''
+          // substr 是被淘汰語法，因此要改 slice
+          return driveLetter + name.slice(driveLetter.length).replace(INVALID_CHAR_REGEX, '')
+        }
+      }
     }
   },
   esbuild: {
