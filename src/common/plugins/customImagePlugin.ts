@@ -31,11 +31,16 @@ export function customImagePlugin(): BytemdPlugin {
         visit(tree, (node) => {
           if (node.type === 'element' && node.tagName === 'img') {
             const image = markdownImages[count]
+            // 处理自定义图片
             if (image && image.url.startsWith('attachment:')) {
               const attachmentId = image.url.split(':')[1]
               const imageData = imageCache[attachmentId] || loadImage(attachmentId)
               imageCache[attachmentId] = imageData
               node.properties.src = imageData
+            }
+            // 处理Base64图片
+            if (image && image.url.startsWith('data:image')) {
+              node.properties.src = image.url
             }
             count++
           }
