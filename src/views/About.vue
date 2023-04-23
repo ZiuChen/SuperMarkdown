@@ -19,6 +19,7 @@ import { openLink } from '@/utils'
 
 const btns = [
   { text: '插件主页', url: 'https://ziuchen.gitee.io/project/Markdown/' },
+  { text: '开源地址', url: 'https://github.com/ZiuChen/SuperMarkdown' },
   { text: '快捷键一览', url: 'https://ziuchen.gitee.io/project/Markdown/shortcut/' },
   { text: '更新日志', url: 'https://ziuchen.gitee.io/project/Markdown/log/' }
 ]
