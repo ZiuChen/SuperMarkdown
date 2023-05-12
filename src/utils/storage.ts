@@ -1,5 +1,13 @@
 import { isElectron } from '@/utils'
 import { Message } from '@arco-design/web-vue'
+import {
+  setItem as _setItem,
+  getItem as _getItem,
+  removeItem as _removeItem,
+  postAttachment as _postAttachment,
+  getAttachment as _getAttachment,
+  allDocs as _allDocs
+} from './webdav'
 
 type TPostAttachment = Parameters<typeof utools.db.postAttachment>
 type TGetAttachment = Parameters<typeof utools.db.getAttachment>
@@ -34,22 +42,6 @@ export function removeItem(key: string) {
   dbStorage.removeItem(key)
 }
 
-export function putDoc(doc: DbDoc) {
-  if (!isElectron) {
-    Message.error('当前环境暂不支持此功能')
-    return
-  }
-  return utools.db.put(doc)
-}
-
-export function getDoc(docId: string) {
-  if (!isElectron) {
-    Message.error('当前环境暂不支持此功能')
-    return
-  }
-  return utools.db.get(docId)
-}
-
 export function removeDoc(doc: DbDoc | string) {
   if (!isElectron) {
     Message.error('当前环境暂不支持此功能')
@@ -71,6 +63,9 @@ export function postAttachment(...args: TPostAttachment) {
     Message.error('当前环境暂不支持此功能')
     return
   }
+  _postAttachment(...args)
+  _allDocs('attachment/').then((res) => console.log(res))
+
   return utools.db.postAttachment(...args)
 }
 
