@@ -72,32 +72,6 @@ export function enhancePlugin(): BytemdPlugin {
             // 阻止默认行为
             ev.preventDefault()
             ev.stopPropagation()
-
-            // TODO: content -> footnote的跳转
-
-            // const content = markdownBody.querySelector(
-            //   `a#user-content-${footnoteId}`
-            // ) as HTMLLinkElement | null
-
-            // console.log(`a#user-content-${footnoteId}`, content)
-
-            // if (content) {
-            //   // 在容器内滚动 使得footnote在容器内可见
-            //   // 两种可能：split preview | 只读的viewer
-            //   const container1 = document.querySelector('.bytemd-preview') as HTMLElement | null
-            //   const container2 = document.querySelector('.viewer-container') as HTMLElement | null
-
-            //   console.log('container1', container1)
-            //   console.log('container2', container2)
-
-            //   if (container1) {
-            //     container1.scrollTop = content.offsetTop - container1.offsetTop
-            //   }
-
-            //   if (container2) {
-            //     container2.scrollTop = content.offsetTop - container2.offsetTop
-            //   }
-            // }
           }
         }
       })

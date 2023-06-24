@@ -19,6 +19,9 @@ export default defineConfig({
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.vue']
   },
+  optimizeDeps: {
+    include: ['@arco-design/web-vue/es']
+  },
   // external
   build: {
     rollupOptions: {

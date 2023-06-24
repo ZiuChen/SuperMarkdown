@@ -1,13 +1,12 @@
 import type { BytemdPlugin } from 'bytemd'
-import { loadImage } from '@/utils'
 import { visit } from 'unist-util-visit'
+import { markdownImages, imageCache } from './instance'
+import { loadImage } from '@/utils'
 
 /**
  * 自定义解析图片链接插件
  */
 export function customImagePlugin(): BytemdPlugin {
-  const markdownImages: any[] = []
-  const imageCache: Record<string, string> = {}
   return {
     remark: (processor) => {
       // @ts-ignore
@@ -31,11 +30,16 @@ export function customImagePlugin(): BytemdPlugin {
         visit(tree, (node) => {
           if (node.type === 'element' && node.tagName === 'img') {
             const image = markdownImages[count]
+            // 处理自定义图片
             if (image && image.url.startsWith('attachment:')) {
               const attachmentId = image.url.split(':')[1]
               const imageData = imageCache[attachmentId] || loadImage(attachmentId)
               imageCache[attachmentId] = imageData
               node.properties.src = imageData
+            }
+            // 处理Base64图片
+            if (image && image.url.startsWith('data:image')) {
+              node.properties.src = image.url
             }
             count++
           }

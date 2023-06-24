@@ -15,11 +15,7 @@ export function loadImage(docId: string) {
 }
 
 export function openLink(url: string) {
-  if (isElectron) {
-    utools.shellOpenExternal(url)
-  } else {
-    window.open(url)
-  }
+  isElectron ? utools.shellOpenExternal(url) : window.open(url)
 }
 
 /**
