@@ -1,4 +1,5 @@
 import type { BytemdPlugin } from 'bytemd'
+import { Message } from '@arco-design/web-vue'
 import { useArticleStore } from '@/store'
 import { markdownImages, imageCache } from './instance'
 import { Buffer, resolve, mkdirSync, writeFileSync } from '@/preload'
@@ -38,7 +39,13 @@ export function exportPlugin(): BytemdPlugin {
 
                   // 为文章创建新的文件夹
                   const folder = resolve(utools.getPath('downloads'), title)
-                  mkdirSync(folder)
+                  const file = resolve(folder, `${title}.md`)
+                  try {
+                    mkdirSync(folder)
+                  } catch (error) {
+                    Message.error('导出失败: ' + error)
+                    utools.shellShowItemInFolder(file)
+                  }
 
                   // 将内联的图片保存到本地
                   for (const { url } of markdownImages) {
@@ -60,7 +67,10 @@ export function exportPlugin(): BytemdPlugin {
                   )
 
                   // 保存到本地
-                  writeFileSync(resolve(folder, `${title}.md`), dataWithRelativePath)
+                  writeFileSync(file, dataWithRelativePath)
+
+                  // 定位到目标文件
+                  utools.shellShowItemInFolder(file)
                 }
               }
             }
