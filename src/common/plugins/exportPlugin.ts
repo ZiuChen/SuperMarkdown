@@ -1,5 +1,8 @@
 import type { BytemdPlugin } from 'bytemd'
 import { useArticleStore } from '@/store'
+import { markdownImages, imageCache } from './instance'
+import { Buffer, resolve, mkdirSync, writeFileSync } from '@/preload'
+import { isElectron } from '@/utils'
 
 export function exportPlugin(): BytemdPlugin {
   const store = useArticleStore()
@@ -12,30 +15,6 @@ export function exportPlugin(): BytemdPlugin {
         handler: {
           type: 'dropdown',
           actions: [
-            // {
-            //   title: '导出为 HTML',
-            //   icon: '',
-            //   handler: {
-            //     type: 'action',
-            //     click: (ctx) => {}
-            //   }
-            // },
-            // {
-            //   title: '导出为 PDF',
-            //   icon: '',
-            //   handler: {
-            //     type: 'action',
-            //     click: (ctx) => {}
-            //   }
-            // },
-            // {
-            //   title: '导出为图片',
-            //   icon: '',
-            //   handler: {
-            //     type: 'action',
-            //     click: (ctx) => {}
-            //   }
-            // },
             {
               title: '导出为 Markdown',
               icon: '',
@@ -44,12 +23,44 @@ export function exportPlugin(): BytemdPlugin {
                 click: ({ editor }) => {
                   const title = store.title
                   const data = editor.getValue()
-                  const blob = new Blob([data], { type: 'text/plain;charset=utf-8' })
-                  const url = URL.createObjectURL(blob)
-                  const link = document.createElement('a')
-                  link.href = url
-                  link.download = `${title}.md`
-                  link.click()
+
+                  // 浏览器环境的图片为链接/base64 直接内联即可
+                  // Electron则为attachment开头的哈希索引 需要从缓存中保存到本地
+                  if (!isElectron) {
+                    const blob = new Blob([data], { type: 'text/plain;charset=utf-8' })
+                    const url = URL.createObjectURL(blob)
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.download = `${title}.md`
+                    link.click()
+                    return
+                  }
+
+                  // 为文章创建新的文件夹
+                  const folder = resolve(utools.getPath('downloads'), title)
+                  mkdirSync(folder)
+
+                  // 将内联的图片保存到本地
+                  for (const { url } of markdownImages) {
+                    const hash = url.split(':').pop()
+                    const base64 = imageCache[hash] || ''
+                    if (base64) {
+                      const matches = base64.match(/^data:([A-Za-z-+/]+);base64,(.+)$/)
+                      const fileType = (matches && matches[1]) || '' // 文件类型，例如 "image/png"
+                      const fileData = (matches && matches[2]) || '' // 文件数据部分
+                      const buffer = Buffer.from(fileData, 'base64')
+                      writeFileSync(resolve(folder, `${hash}.${fileType.split('/').pop()}`), buffer)
+                    }
+                  }
+
+                  // 替换MD文档中的图片路径为相对路径
+                  const dataWithRelativePath = data.replace(
+                    /\!\[(.*?)\]\(attachment:(.*?)\)/g,
+                    '![$1]($2.png)'
+                  )
+
+                  // 保存到本地
+                  writeFileSync(resolve(folder, `${title}.md`), dataWithRelativePath)
                 }
               }
             }

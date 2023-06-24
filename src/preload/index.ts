@@ -1,5 +1,10 @@
 import type { resolve as _resolve, basename as _basename, extname as _extname } from 'path'
-import type { readFileSync as _readFileSync, statSync as _statSync } from 'fs'
+import type {
+  readFileSync as _readFileSync,
+  statSync as _statSync,
+  mkdirSync as _mkdirSync,
+  writeFileSync as _writeFileSync
+} from 'fs'
 import type { createHash as _createHash } from 'crypto'
 import type { Buffer as _Buffer } from 'buffer'
 
@@ -11,6 +16,8 @@ declare global {
       extname: typeof _extname
       readFileSync: typeof _readFileSync
       statSync: typeof _statSync
+      mkdirSync: typeof _mkdirSync
+      writeFileSync: typeof _writeFileSync
       createHash: typeof _createHash
       Buffer: typeof _Buffer
     }
@@ -34,6 +41,11 @@ export const readFileSync =
   window.preload?.readFileSync || (emptyFuncFactory() as typeof _readFileSync)
 
 export const statSync = window.preload?.statSync || (emptyFuncFactory() as typeof _statSync)
+
+export const mkdirSync = window.preload?.mkdirSync || (emptyFuncFactory() as typeof _mkdirSync)
+
+export const writeFileSync =
+  window.preload?.writeFileSync || (emptyFuncFactory() as typeof _writeFileSync)
 
 export const createHash = window.preload?.createHash || (emptyFuncFactory() as typeof _createHash)
 

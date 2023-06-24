@@ -66,3 +66,9 @@ export const plugins = [
   exportPlugin(),
   pasteImagePlugin()
 ]
+
+// 保存图片DOM节点 包含当前文档图片的hash索引合集
+export const markdownImages = [] as any[]
+
+// 缓存图片数据 hash => base64
+export const imageCache = {} as Record<string, string>

@@ -1,13 +1,12 @@
 import type { BytemdPlugin } from 'bytemd'
-import { loadImage } from '@/utils'
 import { visit } from 'unist-util-visit'
+import { markdownImages, imageCache } from './instance'
+import { loadImage } from '@/utils'
 
 /**
  * 自定义解析图片链接插件
  */
 export function customImagePlugin(): BytemdPlugin {
-  const markdownImages: any[] = []
-  const imageCache: Record<string, string> = {}
   return {
     remark: (processor) => {
       // @ts-ignore
