@@ -54,3 +54,40 @@ defineExpose({
   editor: editorRef.value
 })
 </script>
+
+<style lang="less">
+body.dark {
+  // 鼠标光标颜色
+  .CodeMirror-cursor {
+    border-left: 1px solid var(--text-color);
+  }
+
+  .bytemd {
+    background-color: var(--bg-color);
+    color: #f9fafb;
+    border-color: #4b5563;
+  }
+
+  .bytemd-toolbar {
+    background-color: var(--text-bg-color);
+    border-color: #4b5563;
+  }
+
+  .CodeMirror {
+    background-color: var(--text-bg-color-lighter);
+    color: #f9fafb;
+  }
+
+  .bytemd-split {
+    border-color: #4b5563;
+  }
+
+  .bytemd-status {
+    border-color: #4b5563;
+  }
+
+  .bytemd-toolbar-icon:hover {
+    background-color: var(--text-bg-color-lighter);
+  }
+}
+</style>
