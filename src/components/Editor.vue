@@ -56,6 +56,8 @@ defineExpose({
 </script>
 
 <style lang="less">
+@import '@/style/scrollbar.less';
+
 body.dark {
   // 鼠标光标颜色
   .CodeMirror-cursor {
@@ -78,6 +80,10 @@ body.dark {
     color: #f9fafb;
   }
 
+  .cm-variable-2 {
+    color: #f9fafb;
+  }
+
   .bytemd-split {
     border-color: #4b5563;
   }
@@ -88,6 +94,10 @@ body.dark {
 
   .bytemd-toolbar-icon:hover {
     background-color: var(--text-bg-color-lighter);
+  }
+
+  .bytemd-preview {
+    background: var(--text-color);
   }
 }
 </style>
