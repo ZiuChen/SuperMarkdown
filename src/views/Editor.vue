@@ -2,25 +2,23 @@
   <div class="editor">
     <a-layout>
       <a-layout-sider
-        @collapse="handleSideBarCollapse"
+        v-show="!sideBarCollapsed"
         :width="220"
-        :collapsed-width="25"
         :style="{
           height: '100vh'
         }"
-        collapsible
       >
-        <div v-show="sideBarCollapsed" class="collapse-tip">侧栏已折叠</div>
-        <SideBar v-show="!sideBarCollapsed"></SideBar>
-        <template #trigger>
-          <icon-right-circle v-if="sideBarCollapsed"></icon-right-circle>
-          <icon-left-circle v-else></icon-left-circle>
-        </template>
+        <SideBar></SideBar>
       </a-layout-sider>
 
       <a-layout>
         <a-layout-header>
           <div class="header">
+            <a-button class="menu-btn" @click="handleSideBarCollapse">
+              <icon-menu-unfold v-if="sideBarCollapsed" />
+              <icon-menu-fold v-else />
+            </a-button>
+
             <a-input
               ref="titleInputRef"
               class="title"
@@ -32,7 +30,7 @@
               :disabled="titleInputDisabled"
               :max-length="100"
               :show-word-limit="true"
-            ></a-input>
+            />
 
             <a-dropdown>
               <a-button class="dropdown-btn" :disabled="dropdownDisabled">
@@ -86,7 +84,7 @@
               ></Viewer>
             </div>
 
-            <div class="tips" v-show="store.isEmpty">请在左侧选择文章</div>
+            <div class="tips" v-show="store.isEmpty">选择文章</div>
 
             <div class="tips" v-show="!isReady && !store.isEmpty">
               <a-spin></a-spin>
@@ -101,6 +99,7 @@
 
 <script setup lang="ts">
 import type { Input } from '@arco-design/web-vue'
+import { IconMenuFold, IconMenuUnfold } from '@arco-design/web-vue/es/icon'
 import { throttle } from 'lodash-es'
 import 'bytemd/dist/index.css'
 import 'katex/dist/katex.css'
@@ -121,7 +120,6 @@ import {
   SWITCH_FILE,
   EDITOR_LOADED,
   CHANGE_TITLE,
-  IS_DARK,
   CREATE_FILE,
   FOCUS_EDITOR
 } from '@/common/symbol'
@@ -135,8 +133,6 @@ const titleInputRef = ref<InstanceType<typeof Input> | null>(null)
 
 const titleInputDisabled = computed(() => !isReady.value || store.isEmpty || store.isReadonly)
 const dropdownDisabled = computed(() => !isReady.value || store.isEmpty)
-
-const isDark = inject<Ref<boolean>>(IS_DARK)!
 
 const { handleFeatureClick, handleReadonlyClick, handleInfoClick } = useArticleDropdown(store)
 const { lock } = useScrollLock()
@@ -219,20 +215,14 @@ function handleEditorChange(value: string) {
 /**
  * 侧边栏折叠状态变化时触发
  */
-function handleSideBarCollapse(collapsed: boolean) {
-  sideBarCollapsed.value = collapsed
+function handleSideBarCollapse() {
+  sideBarCollapsed.value = !sideBarCollapsed.value
 }
 </script>
 
 <style lang="less" scoped>
 @import '@/style/scrollbar.less';
 @import '@/style/border.less';
-
-.collapse-tip {
-  text-align: center;
-  color: var(--text-color);
-  margin-top: 25px;
-}
 
 .header {
   display: flex;
@@ -248,6 +238,14 @@ function handleSideBarCollapse(collapsed: boolean) {
     :deep(.arco-input) {
       font-size: 1.2rem;
       font-weight: 500;
+    }
+  }
+
+  .menu-btn {
+    height: 3em;
+    margin-right: 8px;
+    .arco-icon {
+      zoom: 1.2;
     }
   }
 
