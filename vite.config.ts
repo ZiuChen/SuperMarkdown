@@ -8,6 +8,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ArcoResolver } from 'unplugin-vue-components/resolvers'
 import { createStyleImportPlugin } from 'vite-plugin-style-import'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import postBuildPlugin from './build/postBuildPlugin'
 
 // https://vitejs.dev/config/
@@ -55,6 +56,7 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    vueJsx(),
     utools({
       external: 'uTools',
       preload: {

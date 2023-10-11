@@ -66,20 +66,13 @@ export function useArticleDropdown(store: ReturnType<typeof useArticleStore>) {
     Modal.info({
       title: '文档信息',
       alignCenter: true,
-      content: () =>
-        h(
-          'div',
-          {
-            style: {
-              'text-align': 'center'
-            }
-          },
-          [
-            h('p', '文章标题：' + store.title),
-            h('p', '创建时间：' + formatTime(store.createAt)),
-            h('p', '更新时间：' + formatTime(store.lastSavedAt))
-          ]
-        ),
+      content: () => (
+        <div style={{ textAlign: 'center' }}>
+          <p>文章标题：{store.title}</p>
+          <p>创建时间：{formatTime(store.createAt)}</p>
+          <p>更新时间：{formatTime(store.lastSavedAt)}</p>
+        </div>
+      ),
       okText: '确定'
     })
   }

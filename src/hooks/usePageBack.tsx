@@ -14,19 +14,12 @@ export function usePageBack() {
     }
   })
 
-  // return a function cause we need to use it in setup
-  // if directly return a component, it will be called in render
-  // and it will cause an warning: Non-function value encountered for default slot.
   return {
-    BackButton: () =>
-      h(
-        Button,
-        {
-          class: 'back',
-          onClick: back,
-          shape: 'circle'
-        },
-        () => h(IconLeft)
-      )
+    BackButton: () => (
+      <Button class="back" onClick={back} shape="circle">
+        <IconLeft />
+      </Button>
+    ),
+    back
   }
 }
