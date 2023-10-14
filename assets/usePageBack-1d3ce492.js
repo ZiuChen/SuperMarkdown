@@ -1,0 +1,1 @@
+import{c as s,I as c,B as n}from"./useEventListener-34cc2f7e.js";import{ar as r,C as o}from"./index-e3c31140.js";function l(){const a=r(),e=()=>a.push("/editor");return s(document,"keydown",t=>{t.key==="Escape"&&(e(),t.stopPropagation())}),{BackButton:()=>o(n,{class:"back",onClick:e,shape:"circle"},{default:()=>[o(c,null,null)]}),back:e}}export{l as u};
