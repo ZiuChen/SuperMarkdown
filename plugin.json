@@ -1,1 +1,86 @@
-{"pluginName":"超级Markdown","description":"强大的Markdown编辑器 从文本与图片创建笔记","author":"ZiuChen","homepage":"https://github.com/ZiuChen","main":"index.html","preload":"preload.js","development":{"main":"http://localhost:8083/"},"logo":"logo.png","platform":["win32","darwin","linux"],"pluginSetting":{"single":false},"features":[{"code":"超级Markdown","explain":"进入 Markdown 编辑器","cmds":["MD","Markdown","Markdown Notes","超级Markdown"]},{"code":"新建Markdown笔记","explain":"新建 Markdown 笔记","cmds":["New Note","新建笔记"]},{"code":"导入Markdown文档","explain":"将Markdown文档导入到超级Markdown","cmds":[{"type":"files","label":"从文件创建笔记","fileType":"file","match":"/.md$/i"}]},{"code":"创建Markdown笔记","explain":"从文本或图片创建笔记","cmds":[{"type":"over","label":"从文本创建笔记","maxLength":999999},{"type":"img","label":"从图片创建笔记"},{"type":"regex","label":"从文本与图片创建笔记","match":"/^__IMPORT_CONTENT_FLAG__*/","maxLength":999999}]}]}
+{
+  "pluginName": "超级Markdown",
+  "description": "强大的Markdown笔记、强大的待办管理工具 超级待办 超级笔记",
+  "author": "ZiuChen",
+  "homepage": "https://github.com/ZiuChen",
+  "main": "index.html",
+  "preload": "preload.js",
+  "development": {
+    "main": "http://localhost:8083/"
+  },
+  "logo": "logo.png",
+  "platform": ["win32", "darwin", "linux"],
+  "pluginSetting": { "single": false },
+  "features": [
+    {
+      "code": "超级Markdown",
+      "icon": "logo.png",
+      "explain": "进入 Markdown 编辑器",
+      "cmds": ["MD", "Markdown", "Markdown Notes", "超级Markdown"]
+    },
+    {
+      "code": "新建Markdown笔记",
+      "icon": "logo.png",
+      "explain": "新建 Markdown 笔记",
+      "cmds": ["New Note", "新建笔记"]
+    },
+    {
+      "code": "导入Markdown文档",
+      "icon": "logo.png",
+      "explain": "将Markdown文档导入到超级Markdown",
+      "cmds": [
+        {
+          "type": "files",
+          "label": "从文件创建笔记",
+          "fileType": "file",
+          "match": "/.md$/i"
+        }
+      ]
+    },
+    {
+      "code": "创建Markdown笔记",
+      "icon": "logo.png",
+      "explain": "从文本或图片创建笔记",
+      "cmds": [
+        { "type": "over", "label": "从文本创建笔记", "maxLength": 999999 },
+        { "type": "img", "label": "从图片创建笔记" },
+        {
+          "type": "regex",
+          "label": "从文本与图片创建笔记",
+          "match": "/^__IMPORT_CONTENT_FLAG__*/",
+          "maxLength": 999999
+        }
+      ]
+    },
+    {
+      "code": "超级待办",
+      "icon": "logo-todo.png",
+      "explain": "进入待办列表",
+      "cmds": ["待办", "超级待办", "Todo", "SuperTodo"]
+    },
+    {
+      "code": "添加到待办",
+      "icon": "logo-todo.png",
+      "explain": "将当前内容添加到待办列表",
+      "cmds": [
+        {
+          "type": "over",
+          "label": "添加到待办",
+          "maxLength": 100
+        }
+      ]
+    },
+    {
+      "code": "超级快贴",
+      "icon": "logo-paster.png",
+      "explain": "进入快贴列表",
+      "cmds": ["快贴", "超级快贴", "Paster", "SuperPaster"]
+    },
+    {
+      "code": "设置",
+      "icon": "logo-setting.png",
+      "explain": "进入设置页面",
+      "cmds": ["设置", "Setting"]
+    }
+  ]
+}

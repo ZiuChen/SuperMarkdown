@@ -1,0 +1,1 @@
+import{bH as e,br as t}from"./index-dTghAbJe.js";function n(n,r,i,a){t(()=>{n.addEventListener(r,i,a)}),e(()=>{n.removeEventListener(r,i,a)})}export{n as b};

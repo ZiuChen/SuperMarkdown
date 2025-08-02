@@ -1,0 +1,1 @@
+import{c as e}from"./isObjectLike-BaUU8x3C.js";import{b as t}from"./debounce-Dvl9Gccp.js";var n=`Expected a function`;function r(r,i,a){var o=!0,s=!0;if(typeof r!=`function`)throw TypeError(n);return e(a)&&(o=`leading`in a?!!a.leading:o,s=`trailing`in a?!!a.trailing:s),t(r,i,{leading:o,maxWait:i,trailing:s})}var i=r;export{i as b};
