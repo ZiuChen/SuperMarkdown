@@ -1,1 +1,0 @@
-import{t as e}from"./_baseClone-nuQ61EU4.js";var t=4;function n(n){return e(n,t)}var r=n;export{r as t};

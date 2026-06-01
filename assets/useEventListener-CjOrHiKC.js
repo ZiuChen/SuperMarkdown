@@ -1,1 +1,0 @@
-import{En as e,Tn as t}from"./index-S6ttitAQ.js";function n(n,r,i,a){t(()=>{n.addEventListener(r,i,a)}),e(()=>{n.removeEventListener(r,i,a)})}export{n as t};
